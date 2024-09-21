@@ -1,0 +1,22 @@
+<div class="term-weighting-container">
+    <!-- Term name and info icon -->
+    <div class="term-header">
+      <a (click)="showDetailedInfo()">{{ term.name }}</a>
+      <button mat-icon-button (click)="showDetailedInfo()">
+        <mat-icon>info</mat-icon>
+      </button>
+    </div>
+  
+    <!-- Term abstract description -->
+    <p>{{ term.description }}</p>
+  
+    <!-- Source section -->
+    <a href="{{ term.source }}" target="_blank">Source</a>
+  
+    <!-- Weight input -->
+    <mat-form-field appearance="fill">
+      <mat-label>Weight (0-100)</mat-label>
+      <input matInput type="number" [(ngModel)]="weight" min="0" max="100">
+    </mat-form-field>
+  </div>
+  

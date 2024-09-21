@@ -1,0 +1,22 @@
+.term-weighting-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+  }
+  
+  .term-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  
+    a {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  
+    mat-icon {
+      cursor: pointer;
+    }
+  }
+  
