@@ -10,12 +10,12 @@ import { TermsRowComponent } from './terms-row/terms-row.component';
 })
 export class WorldviewBallotComponent {
   // Define sets of terms for each row
-  termsSet1 = [
+  positiveTermsSet = [
     { name: 'Labor Quality', description: 'Labor quality description...', source: 'Link to labor quality source' },
     { name: 'Competitiveness', description: 'Competitiveness description...', source: 'Link to competitiveness source' }
   ];
 
-  termsSet2 = [
+  negativeTermsSet = [
     { name: 'Business Reliability', description: 'Business reliability description...', source: 'Link to business reliability source' }
   ];
 }

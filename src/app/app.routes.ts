@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { HomePageComponent } from './components/home-page/home-page.component';
 // Add imports for all components
 import { AboutPolariComponent } from './components/informational/about-polari/about-polari.component';
-import { PolicyScoringComponent } from './components/policy/policy-scoring/policy-scoring.component';
+import { PolicyScoringComponent } from './components/scoring/policy-scoring/policy-scoring.component';
 import { CompetitiveScoringComponent } from './components/scoring/competitive-scoring/competitive-scoring.component';
 import { PoliticalCompetitorsComponent } from './components/competitors/political-competitors/political-competitors.component';
 import { SolutionScoringComponent } from './components/scoring/solution-scoring/solution-scoring.component';
