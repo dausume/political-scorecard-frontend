@@ -1,8 +1,44 @@
 <div class="worldview-ballot-container">
-    <h2>Worldview Ballot</h2>
-    
-    <!-- Render each row of terms -->
-    <polari-terms-row [terms]="termsSet1"></polari-terms-row>
-    <polari-terms-row [terms]="termsSet2"></polari-terms-row>
+  <div class="ballot-header">
+    <h2>Review Your Auto-Selected Worldview Ballot</h2>
+    <p class="ballot-subtitle">A worldview ballot has been selected for your review based on current activity</p>
+    <button class="browse-ballots-btn" (click)="navigateToBrowseBallots()">Browse Other Active Ballots</button>
   </div>
-  
+
+  <div class="ballot-info">
+    <h3>Ballot: {{ ballotName }}</h3>
+    <p class="ballot-description">{{ ballotDescription }}</p>
+  </div>
+
+  <!-- Context Section with Core and Comparative Contexts -->
+  <app-context-section
+    [coreContexts]="personalContexts"
+    [weightedTerms]="weightedTerms"
+    (coreContextsChange)="onContextsChange($event)">
+  </app-context-section>
+
+  <!-- Two-column layout for categorized terms -->
+  <div class="categorized-terms-container">
+    <app-positive-terms-row
+      [terms]="positiveTerms"
+      [selectedContexts]="personalContexts"
+      (removeTerm)="handleRemovePositive($event)"
+      (weightChange)="handlePositiveWeightChange($event)">
+    </app-positive-terms-row>
+
+    <app-negative-terms-row
+      [terms]="negativeTerms"
+      [selectedContexts]="personalContexts"
+      (removeTerm)="handleRemoveNegative($event)"
+      (weightChange)="handleNegativeWeightChange($event)">
+    </app-negative-terms-row>
+  </div>
+
+  <!-- Term sorting row -->
+  <app-term-sorting-row
+    [availableTerms]="availableTerms"
+    [categorizedTermIds]="categorizedTermIds"
+    (addPositive)="handleAddPositive($event)"
+    (addNegative)="handleAddNegative($event)">
+  </app-term-sorting-row>
+</div>

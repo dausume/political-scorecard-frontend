@@ -1,0 +1,79 @@
+<div class="context-selector-row">
+  <div class="context-left">
+    <div class="context-items">
+      <div class="context-item">
+        <label class="context-label" for="timeframe-selector">Timeframe:</label>
+        <select
+          id="timeframe-selector"
+          class="context-dropdown"
+          [(ngModel)]="selectedTimeframe"
+          (ngModelChange)="onTimeframeChange($event)">
+          <option value="">Select timeframe...</option>
+          @for (option of timeframeOptions; track option.label) {
+            <option [value]="option.label">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="context-item">
+        <label class="context-label" for="location-selector">Location:</label>
+        <select
+          id="location-selector"
+          class="context-dropdown"
+          [(ngModel)]="selectedLocation"
+          (ngModelChange)="onLocationChange($event)">
+          <option value="">Select location...</option>
+          @for (option of locationOptions; track option.label) {
+            <option [value]="option.label">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core context: full score display -->
+  @if (isCore) {
+    <div class="context-score" *ngIf="contextScore">
+      <div class="score-header">Context Score</div>
+      <div class="score-value" [style.color]="getScoreColor()">
+        {{ getScorePercentage() }}
+      </div>
+      <div class="score-details">
+        <div class="detail-item">
+          <span class="detail-label">Positive:</span>
+          <span class="detail-value">+{{ contextScore.positiveContribution.toFixed(3) }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Negative:</span>
+          <span class="detail-value">-{{ contextScore.negativeContribution.toFixed(3) }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Terms:</span>
+          <span class="detail-value">{{ contextScore.termsEvaluated }}/{{ contextScore.termsEvaluated + contextScore.termsMissing }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="context-score no-data" *ngIf="!contextScore">
+      <div class="score-header">Context Score</div>
+      <div class="no-data-message">
+        Select contexts and add weighted terms to see score
+      </div>
+    </div>
+  }
+
+  <!-- Comparative context: compressed score display -->
+  @if (!isCore) {
+    <div class="context-score-compact" *ngIf="contextScore">
+      <div class="score-header">Score</div>
+      <div class="score-value" [style.color]="getScoreColor()">
+        {{ getScorePercentage() }}
+      </div>
+    </div>
+
+    <div class="context-score-compact no-data" *ngIf="!contextScore">
+      <div class="score-header">Score</div>
+      <div class="score-value">N/A</div>
+    </div>
+  }
+</div>

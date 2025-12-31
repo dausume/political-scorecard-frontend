@@ -5,13 +5,17 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 
 // Http/Https -> How we reach out to backend
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 // NgRx
 import { provideStore } from '@ngrx/store';
+import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 // Imports our defined reducers to put into NgRx so all stores are available.
 import { rootReducers } from './state/app.state';
+import { TermsEffects } from './state/effects/terms.effects';
+import { WorldviewBallotEffects } from './state/effects/worldview-ballot.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,8 +25,11 @@ export const appConfig: ApplicationConfig = {
 
     // NgRx (base)
     provideStore(rootReducers),
+    provideEffects([TermsEffects, WorldviewBallotEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
 
-    provideHttpClient(),
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    ),
   ],
 };

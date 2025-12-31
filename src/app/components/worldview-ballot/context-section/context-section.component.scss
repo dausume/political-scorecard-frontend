@@ -1,0 +1,108 @@
+.context-section {
+  margin-bottom: 2rem;
+
+  .section-header {
+    margin-bottom: 1.5rem;
+
+    h3 {
+      margin: 0 0 0.25rem 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #212529;
+    }
+
+    .section-subtitle {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+  }
+
+  .core-context-container,
+  .comparative-context-row {
+    margin-bottom: 1rem;
+  }
+
+  .context-row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: #e9ecef;
+    border-radius: 6px;
+
+    .context-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #495057;
+    }
+
+    .add-comparison-btn,
+    .remove-btn {
+      padding: 0.4rem 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .add-comparison-btn {
+      background: #007bff;
+      color: white;
+
+      &:hover {
+        background: #0056b3;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .remove-btn {
+      background: #dc3545;
+      color: white;
+
+      &:hover {
+        background: #c82333;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  .comparative-contexts-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #dee2e6;
+
+    .comparative-header {
+      margin-bottom: 1rem;
+
+      h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #495057;
+      }
+    }
+
+    .comparative-context-row {
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
+    }
+  }
+}

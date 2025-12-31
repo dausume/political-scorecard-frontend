@@ -1,0 +1,70 @@
+.worldview-ballot-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.ballot-header {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h2 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    font-size: 1.8rem;
+  }
+
+  .ballot-subtitle {
+    color: #666;
+    font-size: 1rem;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .browse-ballots-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #0056b3;
+    }
+  }
+}
+
+.ballot-info {
+  background: #f8f9fa;
+  border-left: 4px solid #007bff;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 4px;
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    font-size: 1.3rem;
+  }
+
+  .ballot-description {
+    color: #666;
+    margin: 0;
+    line-height: 1.6;
+  }
+}
+
+// Two-column layout for categorized terms
+.categorized-terms-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}

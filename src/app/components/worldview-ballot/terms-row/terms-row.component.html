@@ -1,1 +1,29 @@
-<p>term-weighting-row works!</p>
+<div class="sorting-section">
+  <h3 class="sorting-header">Categorize Terms</h3>
+  <p class="sorting-instructions">
+    Click + to add a term to your positive list, - to add to your negative list, or leave it neutral by ignoring it.
+  </p>
+  <div class="terms-sorting-row">
+    <div *ngFor="let term of availableTerms" class="sorting-term-card"
+         [class.categorized]="isTermCategorized(term)">
+      <div class="sorting-term-info">
+        <h4>{{ term.name }}</h4>
+        <p>{{ term.description }}</p>
+      </div>
+      <div class="sorting-term-actions">
+        <button class="action-btn positive-btn"
+                (click)="onAddPositive(term)"
+                [disabled]="isTermCategorized(term)"
+                title="Add to positive terms">
+          +
+        </button>
+        <button class="action-btn negative-btn"
+                (click)="onAddNegative(term)"
+                [disabled]="isTermCategorized(term)"
+                title="Add to negative terms">
+          -
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

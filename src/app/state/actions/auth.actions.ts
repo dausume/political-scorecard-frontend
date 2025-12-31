@@ -1,6 +1,5 @@
 import { createActionGroup, props, emptyProps } from '@ngrx/store';
-
-export type AuthUser = { id: string; name: string };
+import { AuthUser } from '../../classes/auth-user';
 
 export const AuthActions = createActionGroup({
   source: 'Auth',

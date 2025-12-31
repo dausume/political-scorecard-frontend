@@ -1,40 +1,129 @@
 <div class="home-container">
-  <!-- Main Scoring Methods Section -->
-  <mat-card class="scoring-section">
-    <div class="scoring-header">
-      <h1>Political Scorecard</h1>
-      <p>The Political Scorecard allows various user groups to analyze and contribute to the political landscape through three distinct scoring methods: Competitive, Policy, and Solution scoring.</p>
+  <h1>Polari Political Scorecard</h1>
+
+  <!-- Worldview Ballot Section - Front and Center -->
+  <mat-card class="featured-section worldview-section">
+    <div class="section-header">
+      <h2>Cast Your Worldview Ballot</h2>
+      <p class="worldview-description">
+        Participate in the democratic process by weighting terms according to your worldview.
+        Your votes help shape the linear equations that score policies, solutions, and competitors.
+      </p>
     </div>
-
-    <div class="scoring-cards">
-      
-
-      <!-- Policy Scoring -->
-      <mat-card class="scoring-card policy-scoring">
-        <h2>Policy Scoring</h2>
-        <p>
-          Primarily for legal professionals and those interested in making legal assertions and associations between statements and proposed solutions.
-        </p>
-        <button mat-raised-button color="primary" routerLink="/policy-scoring">Explore Policy Scoring</button>
-      </mat-card>
-
-      <!-- Competitive Scoring -->
-      <mat-card class="scoring-card competitive-scoring">
-        <h2>Competitive Scoring</h2>
-        <p>
-          For average citizens to debate and analyze issues using simplified terms and frameworks created by expert democratic systems.
-        </p>
-        <button mat-raised-button color="primary" routerLink="/competitive-scoring">Explore Competitive Scoring</button>
-      </mat-card>
-
-      <!-- Solution Scoring -->
-      <mat-card class="scoring-card solution-scoring">
-        <h2>Solution Scoring</h2>
-        <p>
-          Designed for experts in fields like science, engineering, and economics to propose and vote on comparative flow charts of alternative solutions.
-        </p>
-        <button mat-raised-button color="primary" routerLink="/solution-scoring">Explore Solution Scoring</button>
-      </mat-card>
+    <div class="worldview-ballot-preview">
+      <app-worldview-ballot></app-worldview-ballot>
     </div>
   </mat-card>
+
+  <!-- Competitors Section -->
+  <div class="section-header">
+    <h2>View Competitors</h2>
+    <p class="section-description">
+      Explore how individuals and groups are performing across political and professional arenas.
+      See how the policies they support have turned out.
+    </p>
+  </div>
+  <div class="cards-grid">
+    <mat-card class="feature-card competitor-card">
+      <h3>Political Competitors</h3>
+      <p>
+        Track individuals and groups competing politically. View their policy positions and performance outcomes.
+      </p>
+      <button mat-raised-button color="primary" routerLink="/political-competitors">View Political Competitors</button>
+    </mat-card>
+
+    <mat-card class="feature-card competitor-card">
+      <h3>Professional Competitors</h3>
+      <p>
+        Explore professionals competing to provide solutions. See their track records and expertise.
+      </p>
+      <button mat-raised-button color="primary" routerLink="/professional-competitors">View Professional Competitors</button>
+    </mat-card>
+
+    <mat-card class="feature-card competitor-card">
+      <h3>Policy Competitors</h3>
+      <p>
+        Compare competing policies and their real-world results. Data-driven policy evaluation.
+      </p>
+      <button mat-raised-button color="primary" routerLink="/policy-competitors">View Policy Competitors</button>
+    </mat-card>
+  </div>
+
+  <!-- Scoring Methods Section -->
+  <div class="section-header">
+    <h2>Explore Scoring Methods</h2>
+    <p class="section-description">
+      Three distinct scoring approaches serve different audiences and purposes in evaluating policies and solutions.
+    </p>
+  </div>
+  <div class="cards-grid">
+    <mat-card class="feature-card scoring-card competitive-scoring">
+      <h3>Competitive Scoring</h3>
+      <p>
+        For average citizens to debate and analyze issues using simplified terms and frameworks created by expert democratic systems.
+      </p>
+      <button mat-raised-button color="primary" routerLink="/competitive-scoring">View Competitive Scoring</button>
+    </mat-card>
+
+    <mat-card class="feature-card scoring-card policy-scoring">
+      <h3>Policy Scoring</h3>
+      <p>
+        For legal professionals making legal assertions and associations between statements and proposed solutions.
+      </p>
+      <button mat-raised-button color="primary" routerLink="/policy-scoring">View Policy Scoring</button>
+    </mat-card>
+
+    <mat-card class="feature-card scoring-card solution-scoring">
+      <h3>Solution Scoring</h3>
+      <p>
+        For experts in science, engineering, and economics to propose and vote on comparative flow charts of alternative solutions.
+      </p>
+      <button mat-raised-button color="primary" routerLink="/solution-scoring">View Solution Scoring</button>
+    </mat-card>
+  </div>
+
+  <!-- Terms & Categories Section -->
+  <div class="section-header">
+    <h2>Terms & Categories</h2>
+    <p class="section-description">
+      Explore the raw terms and categories that form the basis of all scores and worldview ballots.
+    </p>
+  </div>
+  <div class="cards-grid two-column">
+    <mat-card class="feature-card terms-card">
+      <h3>Political Categories</h3>
+      <p>
+        Browse the categorized political terms that serve as building blocks for the scoring equations.
+      </p>
+      <button mat-raised-button color="accent" routerLink="/political-categories">View Categories</button>
+    </mat-card>
+
+    <mat-card class="feature-card terms-card">
+      <h3>User Groups</h3>
+      <p>
+        Explore political and professional groups participating in the democratic process.
+      </p>
+      <div class="group-buttons">
+        <button mat-raised-button color="accent" routerLink="/political-groups">Political Groups</button>
+        <button mat-raised-button color="accent" routerLink="/professional-groups">Professional Groups</button>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- About Section -->
+  <div class="about-section">
+    <div class="cards-grid two-column">
+      <mat-card class="info-card">
+        <h3>About Polari</h3>
+        <p>Learn about the Polari platform and our mission.</p>
+        <button mat-stroked-button routerLink="/about-polari">Learn More</button>
+      </mat-card>
+
+      <mat-card class="info-card">
+        <h3>About the Scorecard</h3>
+        <p>Understand how the political scorecard system works.</p>
+        <button mat-stroked-button routerLink="/about-scorecard">Learn More</button>
+      </mat-card>
+    </div>
+  </div>
 </div>

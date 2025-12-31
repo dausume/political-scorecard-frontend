@@ -1,0 +1,47 @@
+<div class="context-section">
+  <div class="section-header">
+    <h3>Context Settings</h3>
+    <p class="section-subtitle">Configure your core context and add comparisons</p>
+  </div>
+
+  <!-- Core Context Row -->
+  <div class="core-context-container">
+    <div class="context-row-header">
+      <span class="context-label">Core Context</span>
+      <button class="add-comparison-btn" (click)="addComparativeContext()">
+        + Add Comparison
+      </button>
+    </div>
+    <app-context-selector-row
+      [contexts]="coreContexts"
+      [weightedTerms]="weightedTerms"
+      [isCore]="true"
+      (contextsChange)="onCoreContextsChange($event)">
+    </app-context-selector-row>
+  </div>
+
+  <!-- Comparative Context Rows -->
+  @if (comparativeContextRows.length > 0) {
+    <div class="comparative-contexts-container">
+      <div class="comparative-header">
+        <h4>Comparative Contexts</h4>
+      </div>
+      @for (row of comparativeContextRows; track row.id) {
+        <div class="comparative-context-row">
+          <div class="context-row-header">
+            <span class="context-label">Comparison {{ $index + 1 }}</span>
+            <button class="remove-btn" (click)="removeComparativeContext(row.id)">
+              Remove
+            </button>
+          </div>
+          <app-context-selector-row
+            [contexts]="row.contexts"
+            [weightedTerms]="weightedTerms"
+            [isCore]="false"
+            (contextsChange)="onComparativeContextsChange(row.id, $event)">
+          </app-context-selector-row>
+        </div>
+      }
+    </div>
+  }
+</div>

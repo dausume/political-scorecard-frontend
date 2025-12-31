@@ -1,0 +1,34 @@
+import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { AuthState } from '../../state/reducers/auth.reducer';
+import { selectAuthState } from '../../state/selectors/auth.selectors';
+import { OidcService } from '../../services/auth/oidc.service';
+
+@Component({
+  selector: 'app-header-bar',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './header-bar.component.html',
+  styleUrl: './header-bar.component.scss'
+})
+export class HeaderBarComponent {
+  authState$: Observable<AuthState>;
+
+  constructor(
+    private store: Store,
+    private oidcService: OidcService
+  ) {
+    this.authState$ = this.store.select(selectAuthState);
+  }
+
+  async login(): Promise<void> {
+    await this.oidcService.login();
+  }
+
+  async logout(): Promise<void> {
+    await this.oidcService.logout();
+  }
+}

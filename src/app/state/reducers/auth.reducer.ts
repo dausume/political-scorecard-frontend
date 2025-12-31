@@ -1,5 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
-import { AuthActions, AuthUser } from '../actions/auth.actions';
+import { AuthActions } from '../actions/auth.actions';
+import { AuthUser } from '../../classes/auth-user';
 
 export const AuthStatuses = {
   Unknown: 'unknown',
@@ -23,20 +24,35 @@ export const initialAuthState: AuthState = {
 export const authReducer = createReducer(
   initialAuthState,
 
-  on(AuthActions.setAuthUser, (state, { user }) => ({
-    ...state,
-    user,
-    status: AuthStatuses.Authenticated,
-  })),
+  on(AuthActions.setAuthUser, (state, { user }) => {
+    // console.log('[AUTH REDUCER] setAuthUser - BEFORE:', state);
+    const newState = {
+      ...state,
+      user,
+      status: AuthStatuses.Authenticated,
+    };
+    // console.log('[AUTH REDUCER] setAuthUser - AFTER:', newState);
+    return newState;
+  }),
 
-  on(AuthActions.clearAuthUser, (state) => ({
-    ...state,
-    user: null,
-    status: AuthStatuses.Unauthenticated,
-  })),
+  on(AuthActions.clearAuthUser, (state) => {
+    // console.log('[AUTH REDUCER] clearAuthUser - BEFORE:', state);
+    const newState = {
+      ...state,
+      user: null,
+      status: AuthStatuses.Unauthenticated,
+    };
+    // console.log('[AUTH REDUCER] clearAuthUser - AFTER:', newState);
+    return newState;
+  }),
 
-  on(AuthActions.authCheckStarted, (state) => ({
-    ...state,
-    status: AuthStatuses.Checking,
-  })),
+  on(AuthActions.authCheckStarted, (state) => {
+    // console.log('[AUTH REDUCER] authCheckStarted - BEFORE:', state);
+    const newState = {
+      ...state,
+      status: AuthStatuses.Checking,
+    };
+    // console.log('[AUTH REDUCER] authCheckStarted - AFTER:', newState);
+    return newState;
+  }),
 );

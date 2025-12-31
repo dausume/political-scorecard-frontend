@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription, take } from 'rxjs';
 
-import { AuthActions, AuthUser } from '../../state/actions/auth.actions';
+import { AuthActions } from '../../state/actions/auth.actions';
+import { AuthUser } from '../../classes/auth-user';
 import { selectAuthStatus, selectAuthUser } from '../../state/selectors/auth.selectors';
 import { AuthStatus } from '../../state/reducers/auth.reducer';
+import { OidcService } from './oidc.service';
 
 /**
  * AuthSessionService
@@ -12,8 +14,7 @@ import { AuthStatus } from '../../state/reducers/auth.reducer';
  * Think of this like a React "auth hook" but at app scope.
  * It centralizes all auth entry points (startup, route gates, 401s, manual login, logout).
  *
- * CURRENT: Mock implementation (no OIDC).
- * LATER: Replace the mock bodies with OIDC calls (see TODO blocks).
+ * Integrates with Keycloak via OIDC using oidc-client-ts.
  */
 @Injectable({ providedIn: 'root' })
 export class AuthSessionService {
@@ -21,7 +22,10 @@ export class AuthSessionService {
   private inFlight = false;
   private sub = new Subscription();
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private oidcService: OidcService
+  ) {}
 
   /**
    * Call once at app startup (e.g., AppComponent.ngOnInit()).
@@ -56,36 +60,36 @@ export class AuthSessionService {
 
   /**
    * Manual login trigger (e.g., Login button).
-   * With OIDC, this typically initiates a redirect or popup.
+   * Initiates OIDC login flow with redirect to Keycloak.
    */
-  login(): void {
-    // TODO(OIDC): trigger the OIDC login flow.
-    // Examples depending on library:
-    // - oidc-client-ts: userManager.signinRedirect() or signinPopup()
-    // - angular-oauth2-oidc: oauthService.initLoginFlow()
-    // - custom: navigate to /auth/login, etc.
-
-    // MOCK: "pretend login succeeded"
-    this.mockSetUser({ id: 'mock-user-123', name: 'Dustin Etts' }, 'manual-login');
+  async login(): Promise<void> {
+    try {
+      await this.oidcService.login();
+    } catch (error) {
+      console.error('Login failed:', error);
+      this.store.dispatch(AuthActions.clearAuthUser());
+    }
   }
 
   /**
    * Manual logout trigger.
+   * Initiates OIDC logout flow with redirect to Keycloak.
    */
-  logout(): void {
-    // TODO(OIDC): trigger OIDC logout flow (end session endpoint).
-    // Examples:
-    // - oidc-client-ts: userManager.signoutRedirect()
-    // - angular-oauth2-oidc: oauthService.logOut()
-
-    // MOCK: clear state immediately
-    this.store.dispatch(AuthActions.clearAuthUser());
+  async logout(): Promise<void> {
+    try {
+      await this.oidcService.logout();
+      this.store.dispatch(AuthActions.clearAuthUser());
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Clear local state even if remote logout fails
+      this.store.dispatch(AuthActions.clearAuthUser());
+    }
   }
 
   /**
    * Ensure the app has determined authentication state.
    * - If already authenticated: do nothing
-   * - If unknown/unauthenticated: attempt to establish session (mock now; OIDC later)
+   * - If unknown/unauthenticated: attempt to establish session via OIDC
    */
   ensureAuth(reason: string): void {
     if (this.inFlight) return;
@@ -96,60 +100,77 @@ export class AuthSessionService {
       .subscribe((user) => {
         if (user) return; // already authenticated
 
-        // At this point, we have no user. Decide whether to attempt session restore.
+        // At this point, we have no user. Attempt to restore session from OIDC.
         this.inFlight = true;
         this.store.dispatch(AuthActions.authCheckStarted());
 
-        // TODO(OIDC): Replace this block with:
-        // - silent token refresh
-        // - check existing session / tokens in storage
-        // - handle callback route
-        // - or perform "signinSilent" / "checkAuth"
-        //
-        // Pseudocode:
-        // try {
-        //   const oidcUser = await oidc.getUser() or await oidc.signinSilent();
-        //   if (oidcUser && oidcUser.profile) dispatch(setAuthUser(...));
-        //   else dispatch(clearAuthUser());
-        // } catch { dispatch(clearAuthUser()); }
-        // finally { inFlight=false; }
-
-        this.mockAttemptSessionRestore(reason);
+        this.attemptSessionRestore(reason);
       });
 
     this.sub.add(s);
   }
 
   /**
-   * MOCK: Simulates "call backend /auth/me" OR "silent auth check".
-   * Swap this out for OIDC silent refresh / session check later.
+   * Attempt to restore session from OIDC storage or via silent authentication
    */
-  private mockAttemptSessionRestore(reason: string): void {
-    // MOCK POLICY:
-    // - For now, we always "find" a session on startup/enter.
-    // - You can change this to randomly fail to test unauth flows.
-    const shouldAuthSucceed = true;
+  private async attemptSessionRestore(reason: string): Promise<void> {
+    try {
+      console.log(`Attempting session restore: ${reason}`);
 
-    setTimeout(() => {
-      if (shouldAuthSucceed) {
-        const mockUser: AuthUser = { id: 'mock-user-123', name: `Mock Auth User` };
-        this.store.dispatch(AuthActions.setAuthUser({ user: mockUser }));
-      } else {
-        this.store.dispatch(AuthActions.clearAuthUser());
+      // First, check if we have a user in storage
+      let oidcUser = await this.oidcService.getUser();
+
+      // If no user in storage, try silent signin
+      if (!oidcUser || oidcUser.expired) {
+        console.log('No valid user in storage, attempting silent signin...');
+        oidcUser = await this.oidcService.signinSilent();
       }
 
+      // If we have a valid user, convert and store it
+      if (oidcUser && !oidcUser.expired) {
+        const authUser = this.oidcService.convertToAuthUser(oidcUser);
+        this.store.dispatch(AuthActions.setAuthUser({ user: authUser }));
+        console.log('Session restored successfully');
+      } else {
+        // No valid session found
+        console.log('No valid session found');
+        this.store.dispatch(AuthActions.clearAuthUser());
+      }
+    } catch (error) {
+      console.error('Session restore failed:', error);
+      this.store.dispatch(AuthActions.clearAuthUser());
+    } finally {
       this.inFlight = false;
-    }, 300);
+    }
   }
 
   /**
-   * MOCK helper to set user without "restore".
+   * Handle the OAuth callback after redirect from Keycloak.
+   * Call this when the app receives the callback on the redirect URI.
    */
-  private mockSetUser(user: AuthUser, reason: string): void {
-    // If you want, you can also set status checking first:
-    // this.store.dispatch(AuthActions.authCheckStarted());
-    this.store.dispatch(AuthActions.setAuthUser({ user }));
-    this.inFlight = false;
+  async handleOAuthCallback(): Promise<void> {
+    try {
+      console.log('Handling OAuth callback...');
+      const oidcUser = await this.oidcService.handleCallback();
+
+      if (oidcUser) {
+        const authUser = this.oidcService.convertToAuthUser(oidcUser);
+        this.store.dispatch(AuthActions.setAuthUser({ user: authUser }));
+        console.log('OAuth callback handled successfully');
+
+        // Restore the original path from state if available
+        const state = oidcUser.state;
+        if (state && typeof state === 'string' && state !== '/') {
+          window.history.replaceState({}, '', state);
+        }
+      } else {
+        console.error('OAuth callback did not return a user');
+        this.store.dispatch(AuthActions.clearAuthUser());
+      }
+    } catch (error) {
+      console.error('OAuth callback handling failed:', error);
+      this.store.dispatch(AuthActions.clearAuthUser());
+    }
   }
 
   /**

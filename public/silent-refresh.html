@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Silent Refresh</title>
+  <script>
+    // This page is used for silent token refresh with oidc-client-ts
+    // It should be served from the same origin as the main app
+    parent.postMessage(location.href, location.origin);
+  </script>
+</head>
+<body>
+  <!-- This page intentionally left blank. It's used only for silent token refresh. -->
+</body>
+</html>

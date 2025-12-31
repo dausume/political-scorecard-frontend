@@ -1,0 +1,58 @@
+<div class="browse-ballots-container">
+  <div class="browse-header">
+    <button class="back-btn" (click)="goBack()">← Back to Current Ballot</button>
+    <h2>Browse Active Worldview Ballots</h2>
+    <p class="browse-subtitle">Select a different ballot to review and provide your input</p>
+  </div>
+
+  <div class="filter-section">
+    <button
+      class="filter-btn"
+      [class.active]="activeBallotsFilter === 'all'"
+      (click)="setFilter('all')">
+      All Ballots
+    </button>
+    <button
+      class="filter-btn"
+      [class.active]="activeBallotsFilter === 'active'"
+      (click)="setFilter('active')">
+      Active
+    </button>
+    <button
+      class="filter-btn"
+      [class.active]="activeBallotsFilter === 'pending'"
+      (click)="setFilter('pending')">
+      Pending
+    </button>
+    <button
+      class="filter-btn"
+      [class.active]="activeBallotsFilter === 'closed'"
+      (click)="setFilter('closed')">
+      Closed
+    </button>
+  </div>
+
+  <div class="ballots-list">
+    <div
+      *ngFor="let ballot of filteredBallots"
+      class="ballot-card"
+      [class.active]="ballot.status === 'active'"
+      [class.pending]="ballot.status === 'pending'"
+      [class.closed]="ballot.status === 'closed'"
+      (click)="selectBallot(ballot.id)">
+      <div class="ballot-card-header">
+        <h3>{{ ballot.name }}</h3>
+        <span class="status-badge" [class]="ballot.status">{{ ballot.status }}</span>
+      </div>
+      <p class="ballot-card-description">{{ ballot.description }}</p>
+      <div class="ballot-card-footer">
+        <span class="response-count">{{ ballot.responseCount }} responses</span>
+        <span class="created-date">Created: {{ ballot.createdDate | date:'mediumDate' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="filteredBallots.length === 0" class="no-ballots">
+    <p>No ballots found for the selected filter.</p>
+  </div>
+</div>

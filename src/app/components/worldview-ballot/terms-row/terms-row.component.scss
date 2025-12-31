@@ -1,5 +1,115 @@
-.terms-row-container {
-    display: flex;
-    gap: 20px;  // Space between each term
+.sorting-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 2rem;
+  border: 2px solid #e9ecef;
+
+  .sorting-header {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    font-size: 1.4rem;
   }
-  
+
+  .sorting-instructions {
+    color: #666;
+    margin: 0 0 1.5rem 0;
+    font-size: 0.95rem;
+  }
+}
+
+.terms-sorting-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sorting-term-card {
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &.categorized {
+    border-color: #6c757d;
+    background: #f8f9fa;
+    opacity: 0.7;
+  }
+
+  .sorting-term-info {
+    flex: 1;
+
+    h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1rem;
+      color: #333;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.4;
+    }
+  }
+
+  .sorting-term-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .action-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled):hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .positive-btn {
+    background: #28a745;
+    color: white;
+
+    &:not(:disabled):hover {
+      background: #218838;
+    }
+  }
+
+  .negative-btn {
+    background: #dc3545;
+    color: white;
+
+    &:not(:disabled):hover {
+      background: #c82333;
+    }
+  }
+}

@@ -1,0 +1,73 @@
+<div class="terms-column negative-column">
+  <div class="column-header">
+    <h3>Negative Terms</h3>
+    <span class="term-count">{{ terms.length }}</span>
+  </div>
+  <div class="terms-list">
+    <div *ngIf="terms.length === 0" class="empty-state">
+      No negative terms categorized yet. Use the sorting row below to add terms.
+    </div>
+    <div *ngFor="let term of terms" class="term-card" [class.missing-context]="!hasContextualizedTerm(term)">
+      <div class="term-content">
+        <div class="term-left" *ngIf="getContextualizedTerm(term) as ctTerm">
+          <div class="normalization-info">
+            <div class="norm-item">
+              <span class="norm-label">Pre-normalized:</span>
+              <span class="norm-value">{{ ctTerm.getFormattedPreNormalizedValue() }}</span>
+            </div>
+            <div class="norm-item">
+              <span class="norm-label">Post-normalized:</span>
+              <span class="norm-value">{{ ctTerm.postNormalizedValue.toFixed(4) }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="term-left" *ngIf="!getContextualizedTerm(term) && selectedContexts.length > 0">
+          <div class="missing-contexts-info">
+            <span class="error-icon">⚠</span>
+            <span class="error-message">{{ getMissingContextsMessage(term) }}</span>
+          </div>
+        </div>
+        <div class="term-main">
+          <div class="term-header">
+            <h4>{{ term.name }}</h4>
+            <button class="remove-btn" (click)="onRemoveTerm(term)" title="Remove term">×</button>
+          </div>
+          <p class="term-description">{{ term.description }}</p>
+          <a [href]="term.source" target="_blank" class="term-source">View Source</a>
+
+          <div class="weight-control">
+            <div class="weight-header">
+              <span class="weight-label">Weight:</span>
+              <span class="weight-value">{{ getTermWeight(term.id) }}%</span>
+            </div>
+            <div class="weight-slider-container">
+              <button
+                class="weight-btn"
+                (click)="decrementWeight(term)"
+                [disabled]="getTermWeight(term.id) === 0"
+                title="Decrease weight">
+                ▼
+              </button>
+              <input
+                type="range"
+                class="weight-slider"
+                [value]="getTermWeight(term.id)"
+                (input)="onWeightChange(term, +$any($event.target).value)"
+                min="0"
+                max="100"
+                step="1"
+                title="Adjust term weight" />
+              <button
+                class="weight-btn"
+                (click)="incrementWeight(term)"
+                [disabled]="getTermWeight(term.id) === 100"
+                title="Increase weight">
+                ▲
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

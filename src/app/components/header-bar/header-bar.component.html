@@ -1,0 +1,28 @@
+<header class="header-bar">
+  <div class="header-content" *ngIf="authState$ | async as authState">
+    <div class="logo-section">
+      <h1 routerLink="/" style="cursor: pointer;">Political Scorecard</h1>
+    </div>
+
+    <div class="user-section">
+      <ng-container [ngSwitch]="authState.status">
+        <div *ngSwitchCase="'authenticated'" class="user-info">
+          <span class="user-name">{{ authState.user?.username }}</span>
+          <button class="logout-button" (click)="logout()">Logout</button>
+        </div>
+
+        <div *ngSwitchCase="'checking'" class="auth-status">
+          <span class="status-text">Checking authentication...</span>
+        </div>
+
+        <div *ngSwitchCase="'unauthenticated'" class="auth-status">
+          <button class="login-button" (click)="login()">Login</button>
+        </div>
+
+        <div *ngSwitchDefault class="auth-status">
+          <button class="login-button" (click)="login()">Login</button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</header>
