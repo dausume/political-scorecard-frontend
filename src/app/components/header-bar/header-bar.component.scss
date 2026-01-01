@@ -13,18 +13,29 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 2rem;
 }
 
-.logo-section h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
+.logo-section {
+  flex: 0 0 auto;
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+app-connection-status-indicator {
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .user-section {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex: 0 0 auto;
 }
 
 .user-info {

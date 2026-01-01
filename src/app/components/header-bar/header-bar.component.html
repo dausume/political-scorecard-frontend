@@ -4,6 +4,8 @@
       <h1 routerLink="/" style="cursor: pointer;">Political Scorecard</h1>
     </div>
 
+    <app-connection-status-indicator></app-connection-status-indicator>
+
     <div class="user-section">
       <ng-container [ngSwitch]="authState.status">
         <div *ngSwitchCase="'authenticated'" class="user-info">

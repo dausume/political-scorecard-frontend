@@ -5,6 +5,7 @@
 
 export interface Environment {
   production: boolean;
+  backendHttpsUri: string;
   backendUri: string;
   keycloak: {
     authority: string;
@@ -20,8 +21,11 @@ export interface Environment {
 
 export const environment: Environment = {
   production: false,
-  backendUri: 'https://localhost:8443/',
+  // Frontend runs in browser, so use localhost with exposed Docker ports
+  backendHttpsUri: 'https://localhost:8580/',
+  backendUri: 'http://localhost:8580/',
   keycloak: {
+    // Browser needs to access Keycloak via localhost, not Docker hostname
     authority: 'https://localhost:8443/realms/Political-Scorecard',
     clientId: 'political-scorecard-frontend',
     realm: 'Political-Scorecard',

@@ -1,0 +1,77 @@
+.connection-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  cursor: help;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+
+    &.status-no-access {
+      background-color: #dc3545; // Red for no access
+      box-shadow: 0 0 8px rgba(220, 53, 69, 0.6);
+    }
+
+    &.status-general-access {
+      background-color: #ffc107; // Amber for general access
+      box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+    }
+
+    &.status-auth-access {
+      background-color: #28a745; // Green for authenticated access
+      box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+    }
+
+    &.status-checking {
+      background-color: #6c757d; // Gray for checking
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    &.status-unknown {
+      background-color: #6c757d; // Gray for unknown
+    }
+  }
+
+  .status-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #ffffff;
+    white-space: nowrap;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Dark mode support (optional)
+@media (prefers-color-scheme: dark) {
+  .connection-status-indicator {
+    background-color: rgba(255, 255, 255, 0.1);
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .status-text {
+      color: #f0f0f0;
+    }
+  }
+}

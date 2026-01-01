@@ -10,10 +10,20 @@ import { OidcService } from '../services/auth/oidc.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const oidcService = inject(OidcService);
 
+  // Skip auth for requests marked with X-Skip-Auth header (e.g., health checks)
+  if (req.headers.has('X-Skip-Auth')) {
+    const clonedRequest = req.clone({
+      headers: req.headers.delete('X-Skip-Auth')
+    });
+    return next(clonedRequest);
+  }
+
   // Only add token to requests to the backend
   // Check if request is to backend (you can customize this logic)
   const isBackendRequest = req.url.includes('/api/') ||
-                          req.url.startsWith('http://localhost:8080/');
+                          req.url.startsWith('http://localhost:8080/') ||
+                          req.url.startsWith('http://localhost:8580/') ||
+                          req.url.startsWith('https://localhost:8443/');
 
   if (!isBackendRequest) {
     return next(req);
