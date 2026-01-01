@@ -33,7 +33,7 @@
             <button class="remove-btn" (click)="onRemoveTerm(term)" title="Remove term">×</button>
           </div>
           <p class="term-description">{{ term.description }}</p>
-          <a [href]="term.source" target="_blank" class="term-source">View Source</a>
+          <a [routerLink]="['/terms', term.id]" class="term-source">View Details</a>
 
           <div class="weight-control">
             <div class="weight-header">

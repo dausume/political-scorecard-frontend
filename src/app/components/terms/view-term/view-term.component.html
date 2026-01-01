@@ -1,0 +1,71 @@
+<div class="view-term-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <p>Loading term details...</p>
+  </div>
+
+  <!-- Term Not Found -->
+  <div *ngIf="!loading && !term" class="not-found-container">
+    <mat-card class="not-found-card">
+      <h2>Term Not Found</h2>
+      <p>The requested term could not be found.</p>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        Back to Terms
+      </button>
+    </mat-card>
+  </div>
+
+  <!-- Term Details -->
+  <div *ngIf="!loading && term" class="term-details">
+    <!-- Header with Back Button -->
+    <div class="header-actions">
+      <button mat-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Terms
+      </button>
+    </div>
+
+    <!-- Term Information Card -->
+    <mat-card class="term-info-card">
+      <div class="term-header">
+        <div class="term-title-section">
+          <h1>{{ term.name }}</h1>
+          <span class="category-badge">{{ getCategoryDisplay(term.category) }}</span>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="term-details-section">
+        <div class="detail-row">
+          <h3>Description</h3>
+          <p>{{ term.description }}</p>
+        </div>
+
+        <div class="detail-row">
+          <h3>Source</h3>
+          <div class="source-info">
+            <p>{{ term.source }}</p>
+            <button mat-stroked-button color="primary" (click)="openSource()" *ngIf="term.source.startsWith('http')">
+              <mat-icon>open_in_new</mat-icon>
+              View Source
+            </button>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <h3>Term ID</h3>
+          <p class="term-id">{{ term.id }}</p>
+        </div>
+      </div>
+    </mat-card>
+
+    <!-- Contextualized Term Data Table -->
+    <mat-card class="contextualized-data-card">
+      <app-contextualized-term-table
+        [term]="term"
+        [contextualizedTerms]="contextualizedTerms">
+      </app-contextualized-term-table>
+    </mat-card>
+  </div>
+</div>

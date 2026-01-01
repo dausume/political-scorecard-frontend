@@ -57,20 +57,23 @@
     </p>
   </div>
   <div class="cards-grid">
-    <mat-card class="feature-card scoring-card competitive-scoring">
-      <h3>Competitive Scoring</h3>
-      <p>
-        For average citizens to debate and analyze issues using simplified terms and frameworks created by expert democratic systems.
-      </p>
-      <button mat-raised-button color="primary" routerLink="/competitive-scoring">View Competitive Scoring</button>
-    </mat-card>
-
     <mat-card class="feature-card scoring-card policy-scoring">
       <h3>Policy Scoring</h3>
       <p>
         For legal professionals making legal assertions and associations between statements and proposed solutions.
       </p>
       <button mat-raised-button color="primary" routerLink="/policy-scoring">View Policy Scoring</button>
+    </mat-card>
+
+    <mat-card class="feature-card scoring-card competitive-scoring">
+      <h3>Competitive Scoring</h3>
+      <p>
+        For average citizens to debate and analyze issues using simplified terms and frameworks created by expert democratic systems.
+      </p>
+      <div class="group-buttons">
+        <button mat-raised-button color="primary" routerLink="/competitive-scoring">View Competitive Scoring</button>
+        <button mat-raised-button color="primary" routerLink="/terms">View Competitive Terms</button>
+      </div>
     </mat-card>
 
     <mat-card class="feature-card scoring-card solution-scoring">
@@ -89,7 +92,15 @@
       Explore the raw terms and categories that form the basis of all scores and worldview ballots.
     </p>
   </div>
-  <div class="cards-grid two-column">
+  <div class="cards-grid">
+    <mat-card class="feature-card terms-card">
+      <h3>All Terms</h3>
+      <p>
+        Browse all general terms and their contextualized data that form the foundation of the scoring system.
+      </p>
+      <button mat-raised-button color="accent" routerLink="/terms">View All Terms</button>
+    </mat-card>
+
     <mat-card class="feature-card terms-card">
       <h3>Political Categories</h3>
       <p>

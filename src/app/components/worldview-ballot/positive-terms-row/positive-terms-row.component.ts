@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ContextualizedTerm } from '../../../classes/terms/contextualized-term';
 
 export interface Term {
@@ -18,7 +19,7 @@ export interface TermWeight {
 @Component({
   selector: 'app-positive-terms-row',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './positive-terms-row.component.html',
   styleUrl: './positive-terms-row.component.scss'
 })

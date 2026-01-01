@@ -1,0 +1,71 @@
+<div class="terms-page-container">
+  <div class="page-header">
+    <h1>Terms</h1>
+    <p class="page-description">
+      Explore all general terms that form the basis of scoring equations and worldview ballots.
+    </p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading terms...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <mat-card class="error-card">
+      <h3>Error Loading Terms</h3>
+      <p>{{ error }}</p>
+    </mat-card>
+  </div>
+
+  <!-- Terms Table -->
+  <div *ngIf="!loading && !error" class="terms-table-container">
+    <mat-card>
+      <table mat-table [dataSource]="terms" class="terms-table">
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Term Name</th>
+          <td mat-cell *matCellDef="let term">
+            <strong>{{ term.name }}</strong>
+          </td>
+        </ng-container>
+
+        <!-- Category Column -->
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef>Category</th>
+          <td mat-cell *matCellDef="let term">
+            <span class="category-badge">{{ getCategoryDisplay(term.category) }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let term" class="description-cell">
+            {{ term.description }}
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let term">
+            <button mat-raised-button color="primary" (click)="viewTerm(term)">
+              View Details
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <!-- Empty State -->
+      <div *ngIf="terms.length === 0" class="empty-state">
+        <p>No terms available.</p>
+      </div>
+    </mat-card>
+  </div>
+</div>

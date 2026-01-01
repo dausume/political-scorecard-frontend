@@ -16,6 +16,8 @@ import { PolicyCompetitorsComponent } from './components/competitors/policy-comp
 import { PoliticalCategoriesComponent } from './components/political-categories/political-categories.component';
 import { WorldviewBallotComponent } from './components/worldview-ballot/worldview-ballot.component';
 import { BrowseWorldviewBallotsComponent } from './components/worldview-ballot/browse-worldview-ballots/browse-worldview-ballots.component';
+import { TermsPageComponent } from './components/terms/terms-page.component';
+import { ViewTermComponent } from './components/terms/view-term/view-term.component';
 
 export const routes: Routes = [
     { path: '', component: HomePageComponent },
@@ -29,6 +31,9 @@ export const routes: Routes = [
     { path: 'policy-competitors', component: PolicyCompetitorsComponent },
     // Categories
     { path: 'political-categories', component: PoliticalCategoriesComponent },
+    // Terms Components
+    { path: 'terms', component: TermsPageComponent },
+    { path: 'terms/:id', component: ViewTermComponent },
     // Worldview Ballot Components
     { path: 'worldview-ballot', component: WorldviewBallotComponent },
     { path: 'browse-worldview-ballots', component: BrowseWorldviewBallotsComponent },
