@@ -21,7 +21,7 @@
             </div>
           </div>
         </div>
-        <div class="term-left" *ngIf="!getContextualizedTerm(term) && selectedContexts.length > 0">
+        <div class="term-left" *ngIf="!getContextualizedTerm(term)">
           <div class="missing-contexts-info">
             <span class="error-icon">⚠</span>
             <span class="error-message">{{ getMissingContextsMessage(term) }}</span>

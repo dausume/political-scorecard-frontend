@@ -10,7 +10,7 @@
     <div *ngFor="let term of terms" class="term-card" [class.missing-context]="!hasContextualizedTerm(term)">
       <div class="term-content">
         <div class="term-left" *ngIf="getContextualizedTerm(term) as ctTerm">
-          <div class="normalization-info">
+          <div class="normalization-info">          
             <div class="norm-item">
               <span class="norm-label">Pre-normalized:</span>
               <span class="norm-value">{{ ctTerm.getFormattedPreNormalizedValue() }}</span>
@@ -21,7 +21,7 @@
             </div>
           </div>
         </div>
-        <div class="term-left" *ngIf="!getContextualizedTerm(term) && selectedContexts.length > 0">
+        <div class="term-left" *ngIf="!getContextualizedTerm(term)">
           <div class="missing-contexts-info">
             <span class="error-icon">⚠</span>
             <span class="error-message">{{ getMissingContextsMessage(term) }}</span>

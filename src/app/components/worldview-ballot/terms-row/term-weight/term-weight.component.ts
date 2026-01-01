@@ -17,7 +17,7 @@ export class TermWeightComponent {
 
   // This method would open a more detailed view of the term
   showDetailedInfo() {
-    console.log(`Showing detailed info for: ${this.term.name}`);
+    // console.log(`Showing detailed info for: ${this.term.name}`);
     // Logic for displaying a modal or additional details
   }
 }

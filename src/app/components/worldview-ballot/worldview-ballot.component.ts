@@ -11,7 +11,7 @@ import { NegativeTermsRowComponent } from './negative-terms-row/negative-terms-r
 import { TermsRowComponent } from './terms-row/terms-row.component';
 import { ContextSectionComponent } from './context-section/context-section.component';
 import { ContextualizedWorldviewBallot } from '../../classes/contextualized-worldview-ballot';
-import { TermContext } from '../../classes/terms/contextualized-term';
+import { TermContext, ContextualizedTerm } from '../../classes/terms/contextualized-term';
 import { WeightedWorldviewTerm } from '../../classes/terms/weighted-worldview-term';
 import { WorldviewScoringService } from '../../services/scoring/worldview-scoring.service';
 import { AppState } from '../../state/app.state';
@@ -52,6 +52,8 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
   negativeTerms$: Observable<Term[]>;
   weightedTerms$: Observable<WeightedWorldviewTerm[]>;
   categorizedTermIds$: Observable<string[]>;
+  positiveContextualizedTermsMap$: Observable<Map<string, ContextualizedTerm | undefined>>;
+  negativeContextualizedTermsMap$: Observable<Map<string, ContextualizedTerm | undefined>>;
 
   // Local state for template access
   currentBallot: ContextualizedWorldviewBallot | null = null;
@@ -60,6 +62,8 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
   negativeTerms: Term[] = [];
   weightedTerms: WeightedWorldviewTerm[] = [];
   categorizedTermIds: string[] = [];
+  positiveContextualizedTermsMap: Map<string, ContextualizedTerm | undefined> = new Map();
+  negativeContextualizedTermsMap: Map<string, ContextualizedTerm | undefined> = new Map();
 
   // Auto-selected ballot information
   get ballotName(): string {
@@ -100,6 +104,8 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
     this.negativeTerms$ = this.store.select(WorldviewBallotSelectors.selectNegativeTerms);
     this.weightedTerms$ = this.store.select(WorldviewBallotSelectors.selectWeightedTerms);
     this.categorizedTermIds$ = this.store.select(WorldviewBallotSelectors.selectCategorizedTermIds);
+    this.positiveContextualizedTermsMap$ = this.store.select(WorldviewBallotSelectors.selectPositiveContextualizedTermsMap);
+    this.negativeContextualizedTermsMap$ = this.store.select(WorldviewBallotSelectors.selectNegativeContextualizedTermsMap);
   }
 
   ngOnInit(): void {
@@ -110,7 +116,11 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
 
     this.personalContexts$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(contexts => this.personalContexts = contexts);
+      .subscribe(contexts => {
+        console.log('[WORLDVIEW-BALLOT] 🟣 Store subscription fired - new personalContexts from store:', contexts);
+        this.personalContexts = contexts;
+        console.log('[WORLDVIEW-BALLOT] 🟣 Local personalContexts property updated. Angular change detection should propagate to children.');
+      });
 
     this.positiveTerms$
       .pipe(takeUntil(this.destroy$))
@@ -127,6 +137,20 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
     this.categorizedTermIds$
       .pipe(takeUntil(this.destroy$))
       .subscribe(ids => this.categorizedTermIds = ids);
+
+    this.positiveContextualizedTermsMap$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(map => {
+        console.log('[WORLDVIEW-BALLOT] 🟢 Positive contextualized terms map updated:', map);
+        this.positiveContextualizedTermsMap = map;
+      });
+
+    this.negativeContextualizedTermsMap$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(map => {
+        console.log('[WORLDVIEW-BALLOT] 🟢 Negative contextualized terms map updated:', map);
+        this.negativeContextualizedTermsMap = map;
+      });
 
     // Load ballots and select the first one
     this.store.dispatch(WorldviewBallotActions.loadAllBallots());
@@ -204,6 +228,8 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
 
   // Handle context changes - dispatch to store
   onContextsChange(newContexts: TermContext[]) {
+    console.log('[WORLDVIEW-BALLOT] 🟡 Received contextsChange event:', newContexts);
+    console.log('[WORLDVIEW-BALLOT] 🟡 Dispatching updatePersonalContexts action to store');
     this.store.dispatch(WorldviewBallotActions.updatePersonalContexts({ contexts: newContexts }));
   }
 

@@ -63,7 +63,12 @@ export class ContextSelectorRowComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // Recalculate score whenever contexts or weighted terms change
     if (changes['contexts'] || changes['weightedTerms']) {
+      // Re-initialize selections if contexts changed
+      if (changes['contexts']) {
+        this.initializeSelections();
+      }
       this.calculateScore();
     }
   }
@@ -148,8 +153,10 @@ export class ContextSelectorRowComponent implements OnChanges {
   }
 
   onLocationChange(selectedLabel: string): void {
+    console.log('[CONTEXT-SELECTOR] 🔵 Location dropdown changed to:', selectedLabel);
     const option = this.locationOptions.find(opt => opt.label === selectedLabel);
     if (option) {
+      console.log('[CONTEXT-SELECTOR] 🔵 Creating new LocationContext:', option);
       const newContext = new LocationContext({
         label: option.state ? 'State' : 'Nation',
         country: option.country,
@@ -164,10 +171,12 @@ export class ContextSelectorRowComponent implements OnChanges {
     if (index !== -1) {
       const newContexts = [...this.contexts];
       newContexts[index] = updatedContext;
+      console.log('[CONTEXT-SELECTOR] 🟢 Emitting updated contexts (replaced at index', index, '):', newContexts);
       this.contextsChange.emit(newContexts);
     } else {
       // Add new context if it doesn't exist
       const newContexts = [...this.contexts, updatedContext];
+      console.log('[CONTEXT-SELECTOR] 🟢 Emitting updated contexts (added new):', newContexts);
       this.contextsChange.emit(newContexts);
     }
   }

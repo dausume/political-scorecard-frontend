@@ -21,14 +21,14 @@
   <div class="categorized-terms-container">
     <app-positive-terms-row
       [terms]="positiveTerms"
-      [selectedContexts]="personalContexts"
+      [contextualizedTermsMap]="positiveContextualizedTermsMap"
       (removeTerm)="handleRemovePositive($event)"
       (weightChange)="handlePositiveWeightChange($event)">
     </app-positive-terms-row>
 
     <app-negative-terms-row
       [terms]="negativeTerms"
-      [selectedContexts]="personalContexts"
+      [contextualizedTermsMap]="negativeContextualizedTermsMap"
       (removeTerm)="handleRemoveNegative($event)"
       (weightChange)="handleNegativeWeightChange($event)">
     </app-negative-terms-row>
