@@ -1,0 +1,76 @@
+<div class="election-creator-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <button mat-icon-button (click)="cancel()" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        Create New Election
+      </mat-card-title>
+      <mat-card-subtitle>Set up a new worldview ballot election</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="electionForm">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Election Name</mat-label>
+          <input matInput formControlName="name"
+                 placeholder="e.g., Healthcare System Accountability 2024" required>
+          <mat-hint>A clear, descriptive name for this worldview election</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="3"
+                    placeholder="Describe the issue or state of society this election will define and account for"></textarea>
+          <mat-hint>Explain what meaning and accountability system this election will establish</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Election Type</mat-label>
+          <input matInput formControlName="electionType"
+                 placeholder="e.g., economic-policy, healthcare-system, education-accountability" required>
+          <mat-hint>Category of issue or societal concern being defined</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status" required>
+            <mat-option *ngFor="let status of electionStatuses" [value]="status">
+              {{ status }}
+            </mat-option>
+          </mat-select>
+          <mat-hint>Current status of the election</mat-hint>
+        </mat-form-field>
+
+        <div class="date-fields">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+            <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+            <mat-hint>When voting begins</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>End Date</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+            <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+            <mat-hint>When voting ends</mat-hint>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button (click)="cancel()">Cancel</button>
+      <button mat-raised-button color="primary"
+              (click)="createElection()"
+              [disabled]="loading || !electionForm.valid">
+        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+        <span *ngIf="!loading">Create Election</span>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

@@ -20,13 +20,22 @@ export interface DraftBallot {
   lastSaved: Date;
 }
 
+export interface SubmittedBallot {
+  ballotId: string;
+  personalContexts: TermContext[];
+  weightedTerms: WeightedWorldviewTerm[];
+  submittedAt: Date;
+}
+
 export interface WorldviewBallotState {
   ballots: ContextualizedWorldviewBallot[];
   selectedBallot: ContextualizedWorldviewBallot | null;
   personalContexts: TermContext[];
   weightedTerms: WeightedWorldviewTerm[];
   drafts: Map<string, DraftBallot>; // Map of ballotId -> draft
+  submittedBallots: Map<string, SubmittedBallot>; // Map of ballotId -> submitted ballot
   status: WorldviewBallotStatus;
+  submissionStatus: 'idle' | 'submitting' | 'unsubmitting';
   error: string | null;
 }
 
@@ -36,7 +45,9 @@ export const initialWorldviewBallotState: WorldviewBallotState = {
   personalContexts: [],
   weightedTerms: [],
   drafts: new Map<string, DraftBallot>(),
+  submittedBallots: new Map<string, SubmittedBallot>(),
   status: WorldviewBallotStatuses.Idle,
+  submissionStatus: 'idle',
   error: null,
 };
 
@@ -232,5 +243,92 @@ export const worldviewBallotReducer = createReducer(
   on(WorldviewBallotActions.clearDrafts, (state) => ({
     ...state,
     drafts: new Map<string, DraftBallot>(),
+  })),
+
+  // Submit ballot
+  on(WorldviewBallotActions.submitBallot, (state) => ({
+    ...state,
+    submissionStatus: 'submitting' as const,
+    error: null,
+  })),
+
+  on(WorldviewBallotActions.submitBallotSuccess, (state, { ballotId, submittedAt }) => {
+    if (!state.selectedBallot || state.selectedBallot.id !== ballotId) {
+      return state;
+    }
+
+    const submittedBallot: SubmittedBallot = {
+      ballotId,
+      personalContexts: [...state.personalContexts],
+      weightedTerms: [...state.weightedTerms],
+      submittedAt,
+    };
+
+    const newSubmittedBallots = new Map(state.submittedBallots);
+    newSubmittedBallots.set(ballotId, submittedBallot);
+
+    // Remove draft after successful submission
+    const newDrafts = new Map(state.drafts);
+    newDrafts.delete(ballotId);
+
+    return {
+      ...state,
+      submittedBallots: newSubmittedBallots,
+      drafts: newDrafts,
+      submissionStatus: 'idle' as const,
+      error: null,
+    };
+  }),
+
+  on(WorldviewBallotActions.submitBallotFailure, (state, { error }) => ({
+    ...state,
+    submissionStatus: 'idle' as const,
+    error,
+  })),
+
+  // Unsubmit ballot
+  on(WorldviewBallotActions.unsubmitBallot, (state) => ({
+    ...state,
+    submissionStatus: 'unsubmitting' as const,
+    error: null,
+  })),
+
+  on(WorldviewBallotActions.unsubmitBallotSuccess, (state, { ballotId }) => {
+    const submittedBallot = state.submittedBallots.get(ballotId);
+    if (!submittedBallot) {
+      return {
+        ...state,
+        submissionStatus: 'idle' as const,
+      };
+    }
+
+    // Remove from submitted ballots
+    const newSubmittedBallots = new Map(state.submittedBallots);
+    newSubmittedBallots.delete(ballotId);
+
+    // Restore to draft
+    const draft: DraftBallot = {
+      ballotId: submittedBallot.ballotId,
+      personalContexts: [...submittedBallot.personalContexts],
+      weightedTerms: [...submittedBallot.weightedTerms],
+      lastSaved: new Date(),
+    };
+
+    const newDrafts = new Map(state.drafts);
+    newDrafts.set(ballotId, draft);
+
+    return {
+      ...state,
+      submittedBallots: newSubmittedBallots,
+      drafts: newDrafts,
+      submissionStatus: 'idle' as const,
+      error: null,
+    };
+  }),
+
+  on(WorldviewBallotActions.unsubmitBallotFailure, (state, { error }) => ({
+    ...state,
+    submissionStatus: 'idle' as const,
+    error,
   }))
 );

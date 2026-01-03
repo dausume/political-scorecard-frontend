@@ -1,28 +1,28 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CompetitiveScoringService {
-  private apiUrl = 'http://your-api-url/api'; // Adjust to your backend API
 
   constructor(private http: HttpClient) {}
 
   getTerms(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/terms`);
+    return this.http.get(`${environment.backendUri}/terms`);
   }
 
   getScores(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/scores`);
+    return this.http.get(`${environment.backendUri}/scores`);
   }
 
   getWorldViewBallots(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/worldview-ballots`);
+    return this.http.get(`${environment.backendUri}/worldview-ballots`);
   }
 
   getCategories(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/categories`);
+    return this.http.get(`${environment.backendUri}/categories`);
   }
 }

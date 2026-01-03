@@ -1,0 +1,130 @@
+<div class="manage-elections-container">
+  <div class="header">
+    <div class="title-section">
+      <button mat-icon-button (click)="goHome()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1>Worldview Elections</h1>
+        <p class="subtitle">Define meaning and accountability systems for issues through democratic worldview ballots</p>
+      </div>
+    </div>
+    <button mat-raised-button color="primary" (click)="createElection()">
+      <mat-icon>add</mat-icon> Create New Election
+    </button>
+  </div>
+
+  <!-- Filter Chips -->
+  <div class="filters">
+    <mat-chip-set>
+      <mat-chip [highlighted]="statusFilter === 'all'" (click)="setFilter('all')">
+        All Elections
+      </mat-chip>
+      <mat-chip [highlighted]="statusFilter === 'DRAFT'" (click)="setFilter('DRAFT')">
+        Draft
+      </mat-chip>
+      <mat-chip [highlighted]="statusFilter === 'ACTIVE'" (click)="setFilter('ACTIVE')">
+        Active
+      </mat-chip>
+      <mat-chip [highlighted]="statusFilter === 'CLOSED'" (click)="setFilter('CLOSED')">
+        Closed
+      </mat-chip>
+      <mat-chip [highlighted]="statusFilter === 'ARCHIVED'" (click)="setFilter('ARCHIVED')">
+        Archived
+      </mat-chip>
+    </mat-chip-set>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <!-- Elections List -->
+  <div *ngIf="!loading" class="elections-grid">
+    <mat-card *ngFor="let election of filteredElections" class="election-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ election.name }}
+          <mat-chip [color]="getStatusColor(election.status)">
+            {{ election.status }}
+          </mat-chip>
+        </mat-card-title>
+        <mat-card-subtitle>{{ election.electionType }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p class="description">{{ election.description }}</p>
+
+        <div class="election-info">
+          <div class="info-item">
+            <mat-icon>event</mat-icon>
+            <span>Start: {{ formatDate(election.startDate) }}</span>
+          </div>
+          <div class="info-item">
+            <mat-icon>event</mat-icon>
+            <span>End: {{ formatDate(election.endDate) }}</span>
+          </div>
+          <div class="info-item">
+            <mat-icon>how_to_vote</mat-icon>
+            <span>{{ election.totalBallots || 0 }} Ballots</span>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="viewElection(election.id!)">
+          <mat-icon>visibility</mat-icon> View Details
+        </button>
+        <button mat-button color="primary" (click)="viewBallots(election.id!)">
+          <mat-icon>ballot</mat-icon> View Ballots
+        </button>
+        <button mat-button color="accent" (click)="createBallot(election.id!)"
+                [disabled]="election.status !== 'ACTIVE'">
+          <mat-icon>add</mat-icon> Create Ballot
+        </button>
+
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-button">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="changeStatus(election, 'DRAFT')"
+                  [disabled]="election.status === 'DRAFT'">
+            <mat-icon>edit</mat-icon>
+            <span>Set to Draft</span>
+          </button>
+          <button mat-menu-item (click)="changeStatus(election, 'ACTIVE')"
+                  [disabled]="election.status === 'ACTIVE'">
+            <mat-icon>play_arrow</mat-icon>
+            <span>Set to Active</span>
+          </button>
+          <button mat-menu-item (click)="changeStatus(election, 'CLOSED')"
+                  [disabled]="election.status === 'CLOSED'">
+            <mat-icon>block</mat-icon>
+            <span>Close Election</span>
+          </button>
+          <button mat-menu-item (click)="changeStatus(election, 'ARCHIVED')"
+                  [disabled]="election.status === 'ARCHIVED'">
+            <mat-icon>archive</mat-icon>
+            <span>Archive</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="deleteElection(election.id!)" class="delete-action">
+            <mat-icon>delete</mat-icon>
+            <span>Delete Election</span>
+          </button>
+        </mat-menu>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredElections.length === 0" class="empty-state">
+      <mat-icon>inbox</mat-icon>
+      <h3>No worldview elections found</h3>
+      <p>{{ statusFilter === 'all' ? 'Create your first worldview election to define issue meanings and accountability systems' : 'No elections with status: ' + statusFilter }}</p>
+      <button mat-raised-button color="primary" (click)="createElection()">
+        <mat-icon>add</mat-icon> Create Worldview Election
+      </button>
+    </div>
+  </div>
+</div>

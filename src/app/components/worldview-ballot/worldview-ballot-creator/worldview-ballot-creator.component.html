@@ -1,0 +1,237 @@
+<div class="worldview-ballot-creator">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Create Worldview Ballot</mat-card-title>
+      <mat-card-subtitle>Define how you believe an issue should be measured and held accountable</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingData" diameter="50"></mat-spinner>
+
+      <mat-stepper *ngIf="!loadingData" linear #stepper>
+        <!-- Step 1: Select Election -->
+        <mat-step [stepControl]="electionForm" label="Select Worldview Election">
+          <form [formGroup]="electionForm">
+            <div class="step-content">
+              <h3>Choose an Active Worldview Election</h3>
+              <p class="help-text">Select which issue or societal concern you want to define the meaning and accountability for</p>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Worldview Election</mat-label>
+                <mat-select formControlName="electionId" required>
+                  <mat-option *ngFor="let election of activeElections" [value]="election.id">
+                    {{ election.name }} ({{ election.electionType }})
+                  </mat-option>
+                </mat-select>
+                <mat-hint *ngIf="activeElections.length === 0">No active worldview elections available</mat-hint>
+              </mat-form-field>
+
+              <div class="step-actions">
+                <button mat-raised-button color="primary" matStepperNext
+                        [disabled]="!electionForm.valid">Next</button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Step 2: Personal Contexts -->
+        <mat-step [stepControl]="personalContextsForm" label="Personal Contexts">
+          <form [formGroup]="personalContextsForm">
+            <div class="step-content">
+              <h3>Define Your Personal Contexts</h3>
+              <p class="help-text">Add contexts that define your perspective on this issue (location, timeframe, demographics, etc.)</p>
+
+              <button mat-raised-button type="button" (click)="addPersonalContext()" color="primary" class="add-button">
+                <mat-icon>add</mat-icon> Add Context
+              </button>
+
+              <div formArrayName="selectedContextIds">
+                <div *ngFor="let control of selectedContextIdsArray.controls; let i = index" class="context-row">
+                  <mat-form-field appearance="outline" class="flex-grow">
+                    <mat-label>Context {{ i + 1 }}</mat-label>
+                    <mat-select [formControlName]="i" required>
+                      <mat-option *ngFor="let context of existingContexts" [value]="context.id">
+                        [{{ context.type }}] {{ context.label }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <button mat-icon-button color="warn" type="button" (click)="removePersonalContext(i)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+              <div class="step-actions">
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-raised-button color="primary" matStepperNext
+                        [disabled]="selectedContextIdsArray.length === 0">Next</button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Step 3: Term Scores (Weights) -->
+        <mat-step [stepControl]="termScoresForm" label="Weight Issue Components">
+          <form [formGroup]="termScoresForm">
+            <div class="step-content">
+              <h3>Define Accountability Weights</h3>
+              <p class="help-text">Choose which aspects of this issue matter most for accountability and assign their relative importance (must sum to 100%)</p>
+
+              <div class="weight-summary">
+                <span>Total Weight: {{ (getTotalWeight() * 100).toFixed(1) }}%</span>
+                <span [class.valid]="isWeightValid()" [class.invalid]="!isWeightValid()">
+                  {{ isWeightValid() ? '✓ Valid' : '✗ Must equal 100%' }}
+                </span>
+                <button mat-stroked-button type="button" (click)="normalizeWeights()"
+                        [disabled]="getTotalWeight() === 0">
+                  Normalize to 100%
+                </button>
+              </div>
+
+              <button mat-raised-button type="button" (click)="addTermScore()" color="primary" class="add-button">
+                <mat-icon>add</mat-icon> Add Term
+              </button>
+
+              <div formArrayName="termScores">
+                <mat-card *ngFor="let scoreGroup of termScoresArray.controls; let i = index"
+                          [formGroupName]="i" class="score-card">
+                  <mat-card-header>
+                    <mat-card-title>
+                      Term {{ i + 1 }}
+                      <button mat-icon-button color="warn" type="button"
+                              (click)="removeTermScore(i)" class="delete-button">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Contextualized Term</mat-label>
+                      <mat-select formControlName="contextualizedTermId" required>
+                        <mat-option *ngFor="let term of availableContextualizedTerms" [value]="term.id">
+                          {{ term.term?.name || 'Unknown Term' }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Weight</mat-label>
+                      <input matInput type="number" formControlName="weight"
+                             step="0.01" min="0" max="1" required>
+                      <mat-hint>{{ (scoreGroup.get('weight')?.value * 100).toFixed(1) }}%</mat-hint>
+                    </mat-form-field>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="step-actions">
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-raised-button color="primary" matStepperNext
+                        [disabled]="termScoresArray.length === 0 || !isWeightValid()">Next</button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Step 4: Critical Contexts (Optional) -->
+        <mat-step [stepControl]="criticalContextsForm" label="Critical Contexts (Optional)">
+          <form [formGroup]="criticalContextsForm">
+            <div class="step-content">
+              <h3>Critical Contexts</h3>
+              <p class="help-text">Optionally define critical contexts with different scenarios to consider</p>
+
+              <button mat-raised-button type="button" (click)="addCriticalContext()" color="accent" class="add-button">
+                <mat-icon>add</mat-icon> Add Critical Context
+              </button>
+
+              <div formArrayName="criticalContexts">
+                <mat-card *ngFor="let ccGroup of criticalContextsArray.controls; let i = index"
+                          [formGroupName]="i" class="critical-context-card">
+                  <mat-card-header>
+                    <mat-card-title>
+                      Critical Context {{ i + 1 }}
+                      <button mat-icon-button color="warn" type="button"
+                              (click)="removeCriticalContext(i)" class="delete-button">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Name</mat-label>
+                      <input matInput formControlName="name" placeholder="e.g., Economic Recession Scenario" required>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Description</mat-label>
+                      <textarea matInput formControlName="description" rows="2"
+                                placeholder="Describe why this context is critical" required></textarea>
+                    </mat-form-field>
+
+                    <div class="variations-section">
+                      <h4>Context Variations</h4>
+                      <button mat-stroked-button type="button" (click)="addContextVariation(i)">
+                        <mat-icon>add</mat-icon> Add Variation
+                      </button>
+
+                      <div [formArrayName]="'contextVariationIds'">
+                        <div *ngFor="let variation of getContextVariationsArray(i).controls; let j = index" class="variation-row">
+                          <mat-form-field appearance="outline" class="flex-grow">
+                            <mat-label>Variation {{ j + 1 }}</mat-label>
+                            <mat-select [formControlName]="j" required>
+                              <mat-option *ngFor="let context of existingContexts" [value]="context.id">
+                                [{{ context.type }}] {{ context.label }}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                          <button mat-icon-button color="warn" type="button" (click)="removeContextVariation(i, j)">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="step-actions">
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-raised-button color="primary" matStepperNext>Next</button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Step 5: Ballot Details -->
+        <mat-step [stepControl]="ballotDetailsForm" label="Ballot Details">
+          <form [formGroup]="ballotDetailsForm">
+            <div class="step-content">
+              <h3>Name Your Worldview Ballot</h3>
+              <p class="help-text">Give your ballot a name that reflects your accountability perspective</p>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Ballot Name</mat-label>
+                <input matInput formControlName="name" placeholder="e.g., My Healthcare Accountability Framework" required>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Ballot Type (Optional)</mat-label>
+                <input matInput formControlName="ballotType" placeholder="e.g., economic, social-policy">
+              </mat-form-field>
+
+              <div class="step-actions">
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-raised-button color="accent"
+                        (click)="createWorldviewBallot()"
+                        [disabled]="loading || !isFormValid()">
+                  <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+                  <span *ngIf="!loading">Create Ballot</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+      </mat-stepper>
+    </mat-card-content>
+  </mat-card>
+</div>

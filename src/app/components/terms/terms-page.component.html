@@ -1,9 +1,19 @@
 <div class="terms-page-container">
   <div class="page-header">
-    <h1>Terms</h1>
-    <p class="page-description">
-      Explore all general terms that form the basis of scoring equations and worldview ballots.
-    </p>
+    <div class="title-section">
+      <h1>Terms</h1>
+      <p class="page-description">
+        Explore all general terms that form the basis of scoring equations and worldview ballots.
+      </p>
+    </div>
+    <div class="action-buttons">
+      <button mat-raised-button color="accent" routerLink="/terms/create">
+        <mat-icon>add</mat-icon> Create New Term
+      </button>
+      <button mat-raised-button color="primary" routerLink="/contextualized-terms/create">
+        <mat-icon>add_circle</mat-icon> Create Contextualized Term
+      </button>
+    </div>
   </div>
 
   <!-- Loading State -->

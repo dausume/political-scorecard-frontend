@@ -16,8 +16,13 @@ import { PolicyCompetitorsComponent } from './components/competitors/policy-comp
 import { PoliticalCategoriesComponent } from './components/political-categories/political-categories.component';
 import { WorldviewBallotComponent } from './components/worldview-ballot/worldview-ballot.component';
 import { BrowseWorldviewBallotsComponent } from './components/worldview-ballot/browse-worldview-ballots/browse-worldview-ballots.component';
+import { ManageElectionsComponent } from './components/worldview-ballot/manage-elections/manage-elections.component';
+import { ElectionCreatorComponent } from './components/worldview-ballot/election-creator/election-creator.component';
+import { WorldviewBallotCreatorComponent } from './components/worldview-ballot/worldview-ballot-creator/worldview-ballot-creator.component';
 import { TermsPageComponent } from './components/terms/terms-page.component';
 import { ViewTermComponent } from './components/terms/view-term/view-term.component';
+import { TermCreatorComponent } from './components/terms/term-creator/term-creator.component';
+import { ContextualizedTermCreatorComponent } from './components/terms/contextualized-term-creator/contextualized-term-creator.component';
 
 export const routes: Routes = [
     { path: '', component: HomePageComponent },
@@ -33,8 +38,13 @@ export const routes: Routes = [
     { path: 'political-categories', component: PoliticalCategoriesComponent },
     // Terms Components
     { path: 'terms', component: TermsPageComponent },
+    { path: 'terms/create', component: TermCreatorComponent },
     { path: 'terms/:id', component: ViewTermComponent },
-    // Worldview Ballot Components
+    { path: 'contextualized-terms/create', component: ContextualizedTermCreatorComponent },
+    // Worldview Election & Ballot Components
+    { path: 'worldview-elections', component: ManageElectionsComponent },
+    { path: 'worldview-elections/create', component: ElectionCreatorComponent },
+    { path: 'worldview-ballots/create', component: WorldviewBallotCreatorComponent },
     { path: 'worldview-ballot', component: WorldviewBallotComponent },
     { path: 'browse-worldview-ballots', component: BrowseWorldviewBallotsComponent },
     // Informational Components

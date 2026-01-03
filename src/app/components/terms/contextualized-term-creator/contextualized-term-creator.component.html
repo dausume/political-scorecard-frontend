@@ -1,0 +1,373 @@
+<div class="contextualized-term-creator">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Create Contextualized Term</mat-card-title>
+      <mat-card-subtitle>Define a term with specific contexts and values</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingData" diameter="50"></mat-spinner>
+
+      <mat-stepper *ngIf="!loadingData" linear #stepper>
+        <!-- Step 1: Term -->
+        <mat-step [stepControl]="termForm" label="Select or Create Term">
+          <form [formGroup]="termForm">
+            <div class="step-content">
+              <mat-radio-group formControlName="useExisting">
+                <mat-radio-button [value]="true">Use Existing Term</mat-radio-button>
+                <mat-radio-button [value]="false">Create New Term</mat-radio-button>
+              </mat-radio-group>
+
+              <!-- Existing Term Selection -->
+              <mat-form-field *ngIf="usingExistingTerm" appearance="outline" class="full-width">
+                <mat-label>Select Term</mat-label>
+                <mat-select formControlName="existingTermId" required>
+                  <mat-option *ngFor="let term of existingTerms" [value]="term.id">
+                    {{ term.name }} <span *ngIf="term.category">({{ term.category }})</span>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <!-- New Term Creation -->
+              <div *ngIf="!usingExistingTerm" formGroupName="newTerm" class="new-term-form">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Term Name</mat-label>
+                  <input matInput formControlName="name" placeholder="e.g., Unemployment Rate" required>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Description</mat-label>
+                  <textarea matInput formControlName="description" rows="3"
+                            placeholder="Brief description of what this term measures"></textarea>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Source</mat-label>
+                  <input matInput formControlName="source"
+                         placeholder="e.g., Bureau of Labor Statistics">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Category</mat-label>
+                  <input matInput formControlName="category" placeholder="e.g., Economic">
+                </mat-form-field>
+              </div>
+
+              <div class="step-actions">
+                <button mat-raised-button color="primary" matStepperNext>Next</button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Step 2: Contexts -->
+        <mat-step [stepControl]="contextsForm" label="Add Contexts">
+          <form [formGroup]="contextsForm">
+            <div class="step-content">
+              <h3>Contexts</h3>
+              <p class="help-text">Add contexts to specify when/where this term applies (e.g., California, 2024)</p>
+
+              <!-- Existing Contexts -->
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Select Existing Contexts ({{ selectedContextsArray.length }})
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <button mat-stroked-button type="button" (click)="addSelectedContext()" class="add-button">
+                  <mat-icon>add</mat-icon> Add Existing Context
+                </button>
+
+                <div formArrayName="selectedContexts">
+                  <div *ngFor="let control of selectedContextsArray.controls; let i = index" class="context-row">
+                    <mat-form-field appearance="outline" class="flex-grow">
+                      <mat-label>Context {{ i + 1 }}</mat-label>
+                      <mat-select [formControlName]="i">
+                        <mat-option *ngFor="let context of existingContexts" [value]="context.id">
+                          [{{ context.type }}] {{ context.label }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <button mat-icon-button color="warn" type="button" (click)="removeSelectedContext(i)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+
+              <!-- New Contexts -->
+              <mat-expansion-panel [expanded]="true">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Create New Contexts ({{ newContextsArray.length }})
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="context-type-buttons">
+                  <button mat-raised-button type="button" (click)="addNewContext('TIMEFRAME')" color="primary">
+                    <mat-icon>schedule</mat-icon> Add Timeframe
+                  </button>
+                  <button mat-raised-button type="button" (click)="addNewContext('LOCATION')" color="primary">
+                    <mat-icon>location_on</mat-icon> Add Location
+                  </button>
+                  <button mat-raised-button type="button" (click)="addNewContext('DEMOGRAPHIC')" color="primary">
+                    <mat-icon>people</mat-icon> Add Demographic
+                  </button>
+                  <button mat-raised-button type="button" (click)="addNewContext('ECONOMIC')" color="primary">
+                    <mat-icon>attach_money</mat-icon> Add Economic
+                  </button>
+                  <button mat-raised-button type="button" (click)="addNewContext('CUSTOM')" color="primary">
+                    <mat-icon>extension</mat-icon> Add Custom
+                  </button>
+                </div>
+
+                <div formArrayName="newContexts">
+                  <mat-card *ngFor="let contextGroup of newContextsArray.controls; let i = index"
+                            [formGroupName]="i" class="context-card">
+                    <mat-card-header>
+                      <mat-card-title>
+                        New Context {{ i + 1 }}
+                        <button mat-icon-button color="warn" type="button"
+                                (click)="removeNewContext(i)" class="delete-context">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Context Type</mat-label>
+                        <mat-select formControlName="type"
+                                    (selectionChange)="onContextTypeChange(i, $event.value)"
+                                    required>
+                          <mat-option *ngFor="let type of contextTypes" [value]="type">
+                            {{ type }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Label</mat-label>
+                        <input matInput formControlName="label"
+                               placeholder="e.g., California, 2024" required>
+                      </mat-form-field>
+
+                      <!-- Timeframe Fields -->
+                      <ng-container *ngIf="contextGroup.get('type')?.value === 'TIMEFRAME'">
+                        <mat-form-field appearance="outline" class="full-width">
+                          <mat-label>Timeframe Type</mat-label>
+                          <mat-select formControlName="timeframeType" required>
+                            <mat-option *ngFor="let type of timeframeTypes" [value]="type">
+                              {{ type.replace('_', ' ') }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Start Date</mat-label>
+                          <input matInput type="date" formControlName="startDate" required>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>End Date</mat-label>
+                          <input matInput type="date" formControlName="endDate" required>
+                        </mat-form-field>
+                      </ng-container>
+
+                      <!-- Location Fields -->
+                      <ng-container *ngIf="contextGroup.get('type')?.value === 'LOCATION'">
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Region</mat-label>
+                          <input matInput formControlName="region" placeholder="e.g., North America">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Country</mat-label>
+                          <input matInput formControlName="country" placeholder="e.g., United States">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>State</mat-label>
+                          <input matInput formControlName="state" placeholder="e.g., California">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>City</mat-label>
+                          <input matInput formControlName="city" placeholder="e.g., San Francisco">
+                        </mat-form-field>
+                      </ng-container>
+
+                      <!-- Demographic Fields -->
+                      <ng-container *ngIf="contextGroup.get('type')?.value === 'DEMOGRAPHIC'">
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Age Range</mat-label>
+                          <input matInput formControlName="ageRange" placeholder="e.g., 25-34">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Income Level</mat-label>
+                          <input matInput formControlName="incomeLevel" placeholder="e.g., $75k-$100k">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Education</mat-label>
+                          <input matInput formControlName="education" placeholder="e.g., Bachelor's Degree">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Occupation</mat-label>
+                          <input matInput formControlName="occupation" placeholder="e.g., Tech Industry">
+                        </mat-form-field>
+                      </ng-container>
+
+                      <!-- Economic Fields -->
+                      <ng-container *ngIf="contextGroup.get('type')?.value === 'ECONOMIC'">
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>GDP Range</mat-label>
+                          <input matInput formControlName="gdpRange" placeholder="e.g., 2-3%">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Inflation Rate</mat-label>
+                          <input matInput formControlName="inflationRate" placeholder="e.g., 3-4%">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Unemployment Rate</mat-label>
+                          <input matInput formControlName="unemploymentRate" placeholder="e.g., 3.5%">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Market Condition</mat-label>
+                          <input matInput formControlName="marketCondition" placeholder="e.g., Bull Market">
+                        </mat-form-field>
+                      </ng-container>
+
+                      <!-- Custom Fields -->
+                      <ng-container *ngIf="contextGroup.get('type')?.value === 'CUSTOM'">
+                        <mat-form-field appearance="outline" class="full-width">
+                          <mat-label>Value</mat-label>
+                          <input matInput formControlName="value" placeholder="Custom context value" required>
+                        </mat-form-field>
+                      </ng-container>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              </mat-expansion-panel>
+
+              <div class="step-actions">
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-raised-button color="primary" matStepperNext>Next</button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Step 3: Value Metadata -->
+        <mat-step [stepControl]="metadataForm" label="Value Metadata">
+          <form [formGroup]="metadataForm">
+            <div class="step-content">
+              <h3>Value Metadata</h3>
+              <p class="help-text">Define how the value should be interpreted and displayed</p>
+
+              <mat-radio-group formControlName="useExisting">
+                <mat-radio-button [value]="true">Use Existing Metadata</mat-radio-button>
+                <mat-radio-button [value]="false">Create New Metadata</mat-radio-button>
+              </mat-radio-group>
+
+              <!-- Existing Metadata -->
+              <mat-form-field *ngIf="usingExistingMetadata" appearance="outline" class="full-width">
+                <mat-label>Select Metadata</mat-label>
+                <mat-select formControlName="existingMetadataId" required>
+                  <mat-option *ngFor="let metadata of existingMetadata" [value]="metadata.id">
+                    {{ metadata.label }} ({{ metadata.type }}, {{ metadata.isPositive ? 'Positive' : 'Negative' }})
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <!-- New Metadata -->
+              <div *ngIf="!usingExistingMetadata" formGroupName="newMetadata">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Value Type</mat-label>
+                  <mat-select formControlName="type" required>
+                    <mat-option *ngFor="let type of valueTypes" [value]="type">
+                      {{ type }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint>How should this value be formatted?</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Label</mat-label>
+                  <input matInput formControlName="label"
+                         placeholder="e.g., Unemployment Rate" required>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Unit</mat-label>
+                  <input matInput formControlName="unit" placeholder="e.g., %, $, people">
+                  <mat-hint>Optional unit symbol</mat-hint>
+                </mat-form-field>
+
+                <div class="polarity-section">
+                  <label>Is this a positive indicator?</label>
+                  <mat-radio-group formControlName="isPositive" required>
+                    <mat-radio-button [value]="true">
+                      Yes (Higher is better)
+                    </mat-radio-button>
+                    <mat-radio-button [value]="false">
+                      No (Lower is better)
+                    </mat-radio-button>
+                  </mat-radio-group>
+                  <mat-hint>
+                    Positive: Higher values are better (e.g., GDP Growth)<br>
+                    Negative: Lower values are better (e.g., Unemployment)
+                  </mat-hint>
+                </div>
+              </div>
+
+              <div class="step-actions">
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-raised-button color="primary" matStepperNext>Next</button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Step 4: Values -->
+        <mat-step [stepControl]="valuesForm" label="Set Values">
+          <form [formGroup]="valuesForm">
+            <div class="step-content">
+              <h3>Values</h3>
+              <p class="help-text">Enter the actual measured value and its normalized equivalent</p>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Pre-Normalized Value</mat-label>
+                <input matInput type="number" formControlName="preNormalizedValue"
+                       step="0.01" required>
+                <mat-hint>The actual measured value (e.g., 4.5 for 4.5% unemployment)</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Post-Normalized Value (0-1)</mat-label>
+                <input matInput type="number" formControlName="postNormalizedValue"
+                       step="0.0001" min="0" max="1" required>
+                <mat-hint>Normalized value between 0 (worst) and 1 (best)</mat-hint>
+              </mat-form-field>
+
+              <div class="step-actions">
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-raised-button color="accent"
+                        (click)="createContextualizedTerm()"
+                        [disabled]="loading">
+                  <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+                  <span *ngIf="!loading">Create Contextualized Term</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+      </mat-stepper>
+    </mat-card-content>
+  </mat-card>
+</div>

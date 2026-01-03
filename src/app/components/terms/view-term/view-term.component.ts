@@ -11,6 +11,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { Term } from '../../../classes/terms/term';
 import { ContextualizedTerm } from '../../../classes/terms/contextualized-term';
 import { AppState } from '../../../state/app.state';
+import { TermsActions } from '../../../state/actions/terms.actions';
 import * as TermsSelectors from '../../../state/selectors/terms.selectors';
 import { ContextualizedTermTableComponent } from '../contextualized-term-table/contextualized-term-table.component';
 import { getContextualizedTermsForTerm } from '../../../state/mock-data/contextualized-terms.mock';
@@ -85,8 +86,8 @@ export class ViewTermComponent implements OnInit, OnDestroy {
   }
 
   private loadTermData(): void {
-    // In a real app, you would dispatch an action to load the term data
-    // For now, we rely on the terms already loaded in the store
+    // Dispatch action to load all terms if not already loaded
+    this.store.dispatch(TermsActions.loadAllTerms());
   }
 
   goBack(): void {

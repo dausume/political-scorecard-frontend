@@ -1,44 +1,136 @@
-<div class="worldview-ballot-container">
-  <div class="ballot-header">
-    <h2>Review Your Auto-Selected Worldview Ballot</h2>
-    <p class="ballot-subtitle">A worldview ballot has been selected for your review based on current activity</p>
-    <button class="browse-ballots-btn" (click)="navigateToBrowseBallots()">Browse Other Active Ballots</button>
+<div class="worldview-ballot-container" [class.minimized]="isMinimized">
+  <!-- Minimized View -->
+  <div *ngIf="isMinimized" class="minimized-view">
+    <div class="minimized-header">
+      <div class="minimized-info">
+        <h3 class="minimized-title">{{ ballotName }}</h3>
+        <p class="minimized-description">{{ ballotDescription }}</p>
+        <div class="minimized-summary">
+          <span class="summary-item positive">{{ positiveTerms.length }} positive terms</span>
+          <span class="summary-separator">|</span>
+          <span class="summary-item negative">{{ negativeTerms.length }} negative terms</span>
+          <span class="summary-separator">|</span>
+          <span class="summary-item contexts">{{ personalContexts.length }} contexts</span>
+          <span class="summary-separator" *ngIf="isAuthenticated">|</span>
+          <span class="summary-item submitted" *ngIf="isAuthenticated && submittedBallot">
+            <mat-icon>check_circle</mat-icon>
+            Submitted
+          </span>
+          <span class="summary-item draft" *ngIf="isAuthenticated && !submittedBallot">
+            <mat-icon>edit_note</mat-icon>
+            Draft
+          </span>
+        </div>
+      </div>
+      <button class="toggle-btn expand-btn" (click)="toggleMinimized()" title="Expand ballot">
+        <span class="toggle-icon">▼</span>
+        Expand
+      </button>
+    </div>
   </div>
 
-  <div class="ballot-info">
-    <h3>Ballot: {{ ballotName }}</h3>
-    <p class="ballot-description">{{ ballotDescription }}</p>
+  <!-- Full View -->
+  <div *ngIf="!isMinimized" class="full-view">
+    <div class="ballot-header">
+      <div class="header-content">
+        <div>
+          <h2>Review Your Auto-Selected Worldview Ballot</h2>
+          <p class="ballot-subtitle">A worldview ballot has been selected for your review based on current activity</p>
+        </div>
+        <button class="toggle-btn minimize-btn" (click)="toggleMinimized()" title="Minimize ballot">
+          <span class="toggle-icon">▲</span>
+          Minimize
+        </button>
+      </div>
+      <button class="browse-ballots-btn" (click)="navigateToBrowseBallots()">Browse Other Active Ballots</button>
+    </div>
+
+    <div class="ballot-info">
+      <h3>Ballot: {{ ballotName }}</h3>
+      <p class="ballot-description">{{ ballotDescription }}</p>
+    </div>
+
+    <!-- Submission Section -->
+    <div class="submission-section">
+      <!-- Not Authenticated -->
+      <div *ngIf="!isAuthenticated" class="auth-required-message">
+        <mat-icon>lock</mat-icon>
+        <div class="message-content">
+          <h4>Authentication Required</h4>
+          <p>You must be logged in to submit your worldview ballot. Your current work is saved as a draft.</p>
+        </div>
+      </div>
+
+      <!-- Authenticated - Not Submitted -->
+      <div *ngIf="isAuthenticated && !submittedBallot" class="submission-actions">
+        <div class="submission-info">
+          <mat-icon>edit_note</mat-icon>
+          <div class="info-content">
+            <h4>Draft Ballot</h4>
+            <p>This ballot is currently a draft. You can modify it at any time. Submit it to record your official vote.</p>
+          </div>
+        </div>
+        <button mat-raised-button color="primary"
+                (click)="submitBallot()"
+                [disabled]="isSubmitting">
+          <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+          <mat-icon *ngIf="isSubmitting" class="spinner">hourglass_empty</mat-icon>
+          {{ isSubmitting ? 'Submitting...' : 'Submit Ballot' }}
+        </button>
+      </div>
+
+      <!-- Authenticated - Submitted -->
+      <div *ngIf="isAuthenticated && submittedBallot" class="submission-actions submitted">
+        <div class="submission-info">
+          <mat-icon>check_circle</mat-icon>
+          <div class="info-content">
+            <h4>Ballot Submitted</h4>
+            <p>
+              This ballot was submitted on {{ submittedBallot.submittedAt | date:'medium' }}.
+              You can still view and modify a draft version, but your official submission is saved separately.
+            </p>
+          </div>
+        </div>
+        <button mat-raised-button color="warn"
+                (click)="unsubmitBallot()"
+                [disabled]="isUnsubmitting">
+          <mat-icon *ngIf="!isUnsubmitting">undo</mat-icon>
+          <mat-icon *ngIf="isUnsubmitting" class="spinner">hourglass_empty</mat-icon>
+          {{ isUnsubmitting ? 'Withdrawing...' : 'Withdraw Submission' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Context Section with Core and Comparative Contexts -->
+    <app-context-section
+      [coreContexts]="personalContexts"
+      [weightedTerms]="weightedTerms"
+      (coreContextsChange)="onContextsChange($event)">
+    </app-context-section>
+
+    <!-- Two-column layout for categorized terms -->
+    <div class="categorized-terms-container">
+      <app-positive-terms-row
+        [terms]="positiveTerms"
+        [contextualizedTermsMap]="positiveContextualizedTermsMap"
+        (removeTerm)="handleRemovePositive($event)"
+        (weightChange)="handlePositiveWeightChange($event)">
+      </app-positive-terms-row>
+
+      <app-negative-terms-row
+        [terms]="negativeTerms"
+        [contextualizedTermsMap]="negativeContextualizedTermsMap"
+        (removeTerm)="handleRemoveNegative($event)"
+        (weightChange)="handleNegativeWeightChange($event)">
+      </app-negative-terms-row>
+    </div>
+
+    <!-- Term sorting row -->
+    <app-term-sorting-row
+      [availableTerms]="availableTerms"
+      [categorizedTermIds]="categorizedTermIds"
+      (addPositive)="handleAddPositive($event)"
+      (addNegative)="handleAddNegative($event)">
+    </app-term-sorting-row>
   </div>
-
-  <!-- Context Section with Core and Comparative Contexts -->
-  <app-context-section
-    [coreContexts]="personalContexts"
-    [weightedTerms]="weightedTerms"
-    (coreContextsChange)="onContextsChange($event)">
-  </app-context-section>
-
-  <!-- Two-column layout for categorized terms -->
-  <div class="categorized-terms-container">
-    <app-positive-terms-row
-      [terms]="positiveTerms"
-      [contextualizedTermsMap]="positiveContextualizedTermsMap"
-      (removeTerm)="handleRemovePositive($event)"
-      (weightChange)="handlePositiveWeightChange($event)">
-    </app-positive-terms-row>
-
-    <app-negative-terms-row
-      [terms]="negativeTerms"
-      [contextualizedTermsMap]="negativeContextualizedTermsMap"
-      (removeTerm)="handleRemoveNegative($event)"
-      (weightChange)="handleNegativeWeightChange($event)">
-    </app-negative-terms-row>
-  </div>
-
-  <!-- Term sorting row -->
-  <app-term-sorting-row
-    [availableTerms]="availableTerms"
-    [categorizedTermIds]="categorizedTermIds"
-    (addPositive)="handleAddPositive($event)"
-    (addNegative)="handleAddNegative($event)">
-  </app-term-sorting-row>
 </div>

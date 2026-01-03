@@ -6,17 +6,50 @@
 
 .page-header {
   margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
 
-  h1 {
-    margin: 0 0 0.5rem 0;
-    font-size: 2.5rem;
-    color: #333;
+  .title-section {
+    flex: 1;
+
+    h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 2.5rem;
+      color: #333;
+    }
+
+    .page-description {
+      font-size: 1.1rem;
+      color: #666;
+      margin: 0;
+    }
   }
 
-  .page-description {
-    font-size: 1.1rem;
-    color: #666;
-    margin: 0;
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-shrink: 0;
+
+    button {
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+
+    .action-buttons {
+      width: 100%;
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
   }
 }
 

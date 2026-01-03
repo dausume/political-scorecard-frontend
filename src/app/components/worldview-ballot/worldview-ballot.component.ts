@@ -4,19 +4,25 @@ import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MOCK_TERMS } from '../../state/mock-data/terms.mock';
 import { MOCK_CONTEXTUALIZED_WORLDVIEW_BALLOTS } from '../../state/mock-data/contextualized-worldview-ballots.mock';
 import { PositiveTermsRowComponent } from './positive-terms-row/positive-terms-row.component';
 import { NegativeTermsRowComponent } from './negative-terms-row/negative-terms-row.component';
 import { TermsRowComponent } from './terms-row/terms-row.component';
 import { ContextSectionComponent } from './context-section/context-section.component';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from './confirmation-dialog/confirmation-dialog.component';
 import { ContextualizedWorldviewBallot } from '../../classes/contextualized-worldview-ballot';
 import { TermContext, ContextualizedTerm } from '../../classes/terms/contextualized-term';
 import { WeightedWorldviewTerm } from '../../classes/terms/weighted-worldview-term';
+import { SubmittedBallot } from '../../state/reducers/worldview-ballot.reducer';
 import { WorldviewScoringService } from '../../services/scoring/worldview-scoring.service';
 import { AppState } from '../../state/app.state';
 import { WorldviewBallotActions } from '../../state/actions/worldview-ballot.actions';
 import * as WorldviewBallotSelectors from '../../state/selectors/worldview-ballot.selectors';
+import * as AuthSelectors from '../../state/selectors/auth.selectors';
 
 export interface Term {
   id: string;
@@ -35,6 +41,9 @@ export interface TermWeight {
   standalone: true,
   imports: [
     CommonModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
     PositiveTermsRowComponent,
     NegativeTermsRowComponent,
     TermsRowComponent,
@@ -54,6 +63,9 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
   categorizedTermIds$: Observable<string[]>;
   positiveContextualizedTermsMap$: Observable<Map<string, ContextualizedTerm | undefined>>;
   negativeContextualizedTermsMap$: Observable<Map<string, ContextualizedTerm | undefined>>;
+  isAuthenticated$: Observable<boolean>;
+  isSubmitting$: Observable<boolean>;
+  isUnsubmitting$: Observable<boolean>;
 
   // Local state for template access
   currentBallot: ContextualizedWorldviewBallot | null = null;
@@ -64,6 +76,11 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
   categorizedTermIds: string[] = [];
   positiveContextualizedTermsMap: Map<string, ContextualizedTerm | undefined> = new Map();
   negativeContextualizedTermsMap: Map<string, ContextualizedTerm | undefined> = new Map();
+  isMinimized = false;
+  isAuthenticated = false;
+  isSubmitting = false;
+  isUnsubmitting = false;
+  submittedBallot: SubmittedBallot | null = null;
 
   // Auto-selected ballot information
   get ballotName(): string {
@@ -95,7 +112,8 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private store: Store<AppState>,
-    private scoringService: WorldviewScoringService
+    private scoringService: WorldviewScoringService,
+    private dialog: MatDialog
   ) {
     // Initialize observables from store
     this.currentBallot$ = this.store.select(WorldviewBallotSelectors.selectSelectedBallot);
@@ -106,13 +124,26 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
     this.categorizedTermIds$ = this.store.select(WorldviewBallotSelectors.selectCategorizedTermIds);
     this.positiveContextualizedTermsMap$ = this.store.select(WorldviewBallotSelectors.selectPositiveContextualizedTermsMap);
     this.negativeContextualizedTermsMap$ = this.store.select(WorldviewBallotSelectors.selectNegativeContextualizedTermsMap);
+    this.isAuthenticated$ = this.store.select(AuthSelectors.selectIsAuthenticated);
+    this.isSubmitting$ = this.store.select(WorldviewBallotSelectors.selectIsSubmitting);
+    this.isUnsubmitting$ = this.store.select(WorldviewBallotSelectors.selectIsUnsubmitting);
   }
 
   ngOnInit(): void {
     // Subscribe to store state and update local properties for template access
     this.currentBallot$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(ballot => this.currentBallot = ballot);
+      .subscribe(ballot => {
+        this.currentBallot = ballot;
+        // Update submitted ballot when current ballot changes
+        if (ballot) {
+          this.store.select(WorldviewBallotSelectors.selectSubmittedBallotByBallotId(ballot.id))
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(submittedBallot => {
+              this.submittedBallot = submittedBallot || null;
+            });
+        }
+      });
 
     this.personalContexts$
       .pipe(takeUntil(this.destroy$))
@@ -151,6 +182,20 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
         console.log('[WORLDVIEW-BALLOT] 🟢 Negative contextualized terms map updated:', map);
         this.negativeContextualizedTermsMap = map;
       });
+
+    // Subscribe to authentication status
+    this.isAuthenticated$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isAuth => this.isAuthenticated = isAuth);
+
+    // Subscribe to submission status
+    this.isSubmitting$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isSubmitting => this.isSubmitting = isSubmitting);
+
+    this.isUnsubmitting$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isUnsubmitting => this.isUnsubmitting = isUnsubmitting);
 
     // Load ballots and select the first one
     this.store.dispatch(WorldviewBallotActions.loadAllBallots());
@@ -236,5 +281,58 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
   // Save current progress as draft
   saveDraft() {
     this.store.dispatch(WorldviewBallotActions.saveDraft());
+  }
+
+  // Toggle minimized state
+  toggleMinimized() {
+    this.isMinimized = !this.isMinimized;
+  }
+
+  // Submit ballot with confirmation
+  submitBallot() {
+    if (!this.currentBallot) return;
+
+    const dialogData: ConfirmationDialogData = {
+      title: 'Submit Worldview Ballot',
+      message: 'Are you sure you want to submit this ballot? Once submitted, you can view it separately from your working draft.',
+      confirmText: 'Submit',
+      cancelText: 'Cancel',
+      confirmColor: 'primary'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '450px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.store.dispatch(WorldviewBallotActions.submitBallot());
+      }
+    });
+  }
+
+  // Unsubmit ballot with confirmation
+  unsubmitBallot() {
+    if (!this.currentBallot) return;
+
+    const dialogData: ConfirmationDialogData = {
+      title: 'Withdraw Ballot Submission',
+      message: 'Are you sure you want to withdraw your ballot submission? Your ballot will be restored as a draft that you can modify.',
+      confirmText: 'Withdraw',
+      cancelText: 'Cancel',
+      confirmColor: 'warn'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '450px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.store.dispatch(WorldviewBallotActions.unsubmitBallot());
+      }
+    });
   }
 }

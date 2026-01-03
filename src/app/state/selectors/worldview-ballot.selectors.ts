@@ -80,6 +80,36 @@ export const selectHasDraft = (ballotId: string) => createSelector(
   (drafts) => drafts.has(ballotId)
 );
 
+export const selectSubmittedBallots = createSelector(
+  selectWorldviewBallotState,
+  (state: WorldviewBallotState) => state.submittedBallots
+);
+
+export const selectSubmittedBallotByBallotId = (ballotId: string) => createSelector(
+  selectSubmittedBallots,
+  (submittedBallots) => submittedBallots.get(ballotId)
+);
+
+export const selectHasSubmittedBallot = (ballotId: string) => createSelector(
+  selectSubmittedBallots,
+  (submittedBallots) => submittedBallots.has(ballotId)
+);
+
+export const selectSubmissionStatus = createSelector(
+  selectWorldviewBallotState,
+  (state: WorldviewBallotState) => state.submissionStatus
+);
+
+export const selectIsSubmitting = createSelector(
+  selectSubmissionStatus,
+  (status) => status === 'submitting'
+);
+
+export const selectIsUnsubmitting = createSelector(
+  selectSubmissionStatus,
+  (status) => status === 'unsubmitting'
+);
+
 /**
  * Helper function to find contextualized term matching given contexts
  * This matches the logic from WorldviewScoringService

@@ -37,5 +37,15 @@ export const WorldviewBallotActions = createActionGroup({
     'Load Draft': props<{ ballotId: string }>(),
     'Delete Draft': props<{ ballotId: string }>(),
     'Clear Drafts': emptyProps(),
+
+    // Submit ballot (final submission by authenticated user)
+    'Submit Ballot': emptyProps(),
+    'Submit Ballot Success': props<{ ballotId: string; submittedAt: Date }>(),
+    'Submit Ballot Failure': props<{ error: string }>(),
+
+    // Unsubmit ballot (withdraw submission)
+    'Unsubmit Ballot': emptyProps(),
+    'Unsubmit Ballot Success': props<{ ballotId: string }>(),
+    'Unsubmit Ballot Failure': props<{ error: string }>(),
   },
 });
