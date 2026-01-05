@@ -20,7 +20,10 @@
                 <mat-label>Worldview Election</mat-label>
                 <mat-select formControlName="electionId" required>
                   <mat-option *ngFor="let election of activeElections" [value]="election.id">
-                    {{ election.name }} ({{ election.electionType }})
+                    {{ election.name }}
+                    <span *ngIf="election.electionTypes && election.electionTypes.length > 0">
+                      ({{ election.electionTypes.join(', ') }})
+                    </span>
                   </mat-option>
                 </mat-select>
                 <mat-hint *ngIf="activeElections.length === 0">No active worldview elections available</mat-hint>

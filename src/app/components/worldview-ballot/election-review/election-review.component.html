@@ -1,0 +1,124 @@
+<div class="election-review-container">
+  <div class="header">
+    <button mat-button (click)="goBack()" class="back-button">
+      Back to Elections
+    </button>
+    <h1>Election Results Review</h1>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading election results...</p>
+  </div>
+
+  <!-- Election Info & Results -->
+  <div *ngIf="!loading && election" class="content">
+    <!-- Election Details Card -->
+    <mat-card class="election-info-card">
+      <mat-card-header>
+        <mat-card-title>{{ election.name }}</mat-card-title>
+        <mat-card-subtitle>
+          <mat-chip [color]="'warn'">{{ election.status }}</mat-chip>
+          <span class="election-types">
+            <span *ngFor="let type of election.electionTypes; let last = last">
+              {{ type }}<span *ngIf="!last">, </span>
+            </span>
+          </span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="description">{{ election.description }}</p>
+        <div class="election-meta">
+          <div class="meta-item">
+            <strong>Start Date:</strong> {{ formatDate(election.startDate) }}
+          </div>
+          <div class="meta-item">
+            <strong>End Date:</strong> {{ formatDate(election.endDate) }}
+          </div>
+          <div class="meta-item">
+            <strong>Total Ballots:</strong> {{ election.totalBallots || 0 }}
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tabs for General and Group-Specific Results -->
+    <mat-tab-group class="results-tabs">
+      <!-- General Results Tab -->
+      <mat-tab label="General Results">
+        <div class="tab-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Overall Election Results</mat-card-title>
+              <mat-card-subtitle>Aggregated results from all participants</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div *ngIf="generalResults" class="results-section">
+                <!-- Display general results here -->
+                <pre>{{ generalResults | json }}</pre>
+              </div>
+              <div *ngIf="!generalResults" class="empty-state">
+                <p>No general results available</p>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-raised-button color="primary" (click)="createGeneralScore()"
+                      [disabled]="!generalResults">
+                Create General Score
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Group-Specific Results Tab -->
+      <mat-tab label="Group-Specific Results">
+        <div class="tab-content">
+          <div *ngIf="loadingGroups" class="loading-container">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Loading group data...</p>
+          </div>
+
+          <div *ngIf="!loadingGroups && availableGroups.length === 0" class="empty-state">
+            <p>No group-specific data available for this election</p>
+          </div>
+
+          <mat-accordion *ngIf="!loadingGroups && availableGroups.length > 0">
+            <mat-expansion-panel *ngFor="let group of availableGroups">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ group.name }}
+                </mat-panel-title>
+                <mat-panel-description>
+                  {{ group.participantCount || 0 }} participants
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <div class="group-results">
+                <p class="group-description">{{ group.description }}</p>
+
+                <div *ngIf="groupResults.get(group.id)" class="results-section">
+                  <!-- Display group-specific results here -->
+                  <pre>{{ groupResults.get(group.id) | json }}</pre>
+                </div>
+
+                <div *ngIf="!groupResults.get(group.id)" class="loading-indicator">
+                  <mat-spinner diameter="30"></mat-spinner>
+                </div>
+
+                <div class="group-actions">
+                  <button mat-raised-button color="accent"
+                          (click)="createGroupScore(group.id, group.name)"
+                          [disabled]="!groupResults.get(group.id)">
+                    Create {{ group.name }} Score
+                  </button>
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

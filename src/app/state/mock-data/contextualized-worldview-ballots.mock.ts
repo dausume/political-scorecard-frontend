@@ -6,13 +6,13 @@ export const MOCK_CONTEXTUALIZED_WORLDVIEW_BALLOTS: ContextualizedWorldviewBallo
     id: 'cwb-1',
     competitiveScoreId: 'cs-1',
     voterId: 'voter-1',
-    name: 'Labor Quality Per State 2022-2023',
+    name: 'Labor Quality Per State 2022',
     ballotType: 'labor-quality', // Added to identify ballot type
     personalContexts: [
       new TimeframeContext({
         label: 'Timeframe',
         startDate: new Date('2022-01-01'),
-        endDate: new Date('2023-12-31')
+        endDate: new Date('2022-12-31')
       }),
       new LocationContext({
         label: 'State',

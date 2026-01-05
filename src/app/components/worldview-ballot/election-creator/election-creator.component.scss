@@ -39,6 +39,51 @@
           width: 100%;
         }
 
+        .election-types-section {
+          margin-bottom: 1rem;
+
+          .section-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 0.6);
+            margin-bottom: 0.5rem;
+          }
+
+          .select-types-button {
+            margin-bottom: 1rem;
+          }
+
+          .selected-types {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+          }
+
+          .hint-text {
+            font-size: 0.75rem;
+            color: rgba(0, 0, 0, 0.6);
+            margin: 0.5rem 0 0 0;
+          }
+        }
+
+        .checkbox-section {
+          padding: 1rem;
+          background-color: rgba(0, 0, 0, 0.02);
+          border-radius: 4px;
+          margin-bottom: 1rem;
+
+          mat-checkbox {
+            display: block;
+            margin-bottom: 0.5rem;
+          }
+
+          .hint-text {
+            font-size: 0.75rem;
+            color: rgba(0, 0, 0, 0.6);
+            margin: 0.5rem 0 0 0;
+          }
+        }
+
         .date-fields {
           display: flex;
           gap: 1rem;

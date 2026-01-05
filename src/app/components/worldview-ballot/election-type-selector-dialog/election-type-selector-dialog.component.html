@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>Select Election Types</h2>
+
+<mat-dialog-content>
+  <p>Select one or more types that apply to this worldview election:</p>
+
+  <div class="type-list">
+    <div *ngFor="let type of availableTypes" class="type-item">
+      <mat-checkbox
+        [checked]="isSelected(type)"
+        (change)="toggleType(type)">
+        {{ type }}
+      </mat-checkbox>
+    </div>
+  </div>
+
+  <div *ngIf="selectedTypes.size === 0" class="warning-message">
+    Please select at least one type.
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary"
+          (click)="onConfirm()"
+          [disabled]="selectedTypes.size === 0">
+    Confirm
+  </button>
+</mat-dialog-actions>

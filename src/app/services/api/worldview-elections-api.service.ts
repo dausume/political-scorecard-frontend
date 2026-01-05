@@ -9,7 +9,7 @@ export interface WorldviewElectionDTO {
   id?: string;
   name: string;
   description?: string;
-  electionType: string;
+  electionTypes: string[];
   status: 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ARCHIVED';
   startDate?: string;
   endDate?: string;
@@ -90,6 +90,48 @@ export class WorldviewElectionsApiService {
    */
   closeElection(id: string): Observable<WorldviewElectionDTO> {
     return this.http.post<ApiResponse<WorldviewElectionDTO>>(`${this.API_URL}/${id}/close`, {})
+      .pipe(map(response => response.data));
+  }
+
+  /**
+   * Get aggregated results for an election
+   * Returns the compiled voting results from all ballots
+   */
+  getElectionResults(id: string): Observable<any> {
+    return this.http.get<ApiResponse<any>>(`${this.API_URL}/${id}/results`)
+      .pipe(map(response => response.data));
+  }
+
+  /**
+   * Get group-specific results for an election
+   * Groups are determined by keycloak roles/attributes
+   */
+  getElectionGroupResults(id: string, groupId: string): Observable<any> {
+    return this.http.get<ApiResponse<any>>(`${this.API_URL}/${id}/results/group/${groupId}`)
+      .pipe(map(response => response.data));
+  }
+
+  /**
+   * Get available groups that participated in an election
+   */
+  getElectionGroups(id: string): Observable<any[]> {
+    return this.http.get<ApiResponse<any[]>>(`${this.API_URL}/${id}/groups`)
+      .pipe(map(response => response.data));
+  }
+
+  /**
+   * Create a General Score from election results
+   */
+  createGeneralScoreFromElection(electionId: string, scoreData: any): Observable<any> {
+    return this.http.post<ApiResponse<any>>(`${this.API_URL}/${electionId}/create-general-score`, scoreData)
+      .pipe(map(response => response.data));
+  }
+
+  /**
+   * Create a Group-Specific Score from election results
+   */
+  createGroupScoreFromElection(electionId: string, groupId: string, scoreData: any): Observable<any> {
+    return this.http.post<ApiResponse<any>>(`${this.API_URL}/${electionId}/create-group-score/${groupId}`, scoreData)
       .pipe(map(response => response.data));
   }
 }

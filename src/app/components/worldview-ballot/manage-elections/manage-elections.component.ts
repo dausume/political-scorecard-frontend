@@ -110,6 +110,10 @@ export class ManageElectionsComponent implements OnInit {
     this.router.navigate(['/worldview-elections', electionId, 'ballots']);
   }
 
+  reviewElection(electionId: string): void {
+    this.router.navigate(['/worldview-elections', electionId, 'review']);
+  }
+
   changeStatus(election: WorldviewElectionDTO, newStatus: 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ARCHIVED'): void {
     const updatedElection = { ...election, status: newStatus };
     this.electionsApi.updateElection(election.id!, updatedElection).subscribe({

@@ -29,10 +29,10 @@ const MIN_WAGE_RANGE = { min: 7.25, max: 17.50 }; // Federal min to DC max
 const IMPOVERISHED_RANGE = { min: 5.0, max: 15.0 }; // Inverted range
 
 // Common timeframe for all data points
-const TIMEFRAME_2022_2023 = new TimeframeContext({
+const TIMEFRAME_2022 = new TimeframeContext({
   label: 'Timeframe',
   startDate: new Date('2022-01-01'),
-  endDate: new Date('2023-12-31')
+  endDate: new Date('2022-12-31')
 });
 
 // ===== ALABAMA =====
@@ -45,7 +45,7 @@ const ALABAMA_LOCATION = new LocationContext({
 export const ALABAMA_UNION_PARTICIPATION = new ContextualizedTerm({
   id: 'ct-alabama-union-2022',
   term: getTerm('term-union-participation'),
-  contexts: [TIMEFRAME_2022_2023, ALABAMA_LOCATION],
+  contexts: [TIMEFRAME_2022, ALABAMA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Union Participation Rate',
@@ -58,7 +58,7 @@ export const ALABAMA_UNION_PARTICIPATION = new ContextualizedTerm({
 export const ALABAMA_LFPR = new ContextualizedTerm({
   id: 'ct-alabama-lfpr-2022',
   term: getTerm('term-labor-force-participation'),
-  contexts: [TIMEFRAME_2022_2023, ALABAMA_LOCATION],
+  contexts: [TIMEFRAME_2022, ALABAMA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Labor Force Participation Rate',
@@ -71,7 +71,7 @@ export const ALABAMA_LFPR = new ContextualizedTerm({
 export const ALABAMA_MIN_WAGE = new ContextualizedTerm({
   id: 'ct-alabama-minwage-2022',
   term: getTerm('term-minimum-wage'),
-  contexts: [TIMEFRAME_2022_2023, ALABAMA_LOCATION],
+  contexts: [TIMEFRAME_2022, ALABAMA_LOCATION],
   valueMetadata: {
     type: ValueType.CURRENCY,
     unit: '$',
@@ -85,7 +85,7 @@ export const ALABAMA_MIN_WAGE = new ContextualizedTerm({
 export const ALABAMA_IMPOVERISHED = new ContextualizedTerm({
   id: 'ct-alabama-impoverished-2022',
   term: getTerm('term-impoverished-workforce'),
-  contexts: [TIMEFRAME_2022_2023, ALABAMA_LOCATION],
+  contexts: [TIMEFRAME_2022, ALABAMA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Impoverished Workforce Rate',
@@ -105,7 +105,7 @@ const CALIFORNIA_LOCATION = new LocationContext({
 export const CALIFORNIA_UNION_PARTICIPATION = new ContextualizedTerm({
   id: 'ct-california-union-2022',
   term: getTerm('term-union-participation'),
-  contexts: [TIMEFRAME_2022_2023, CALIFORNIA_LOCATION],
+  contexts: [TIMEFRAME_2022, CALIFORNIA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Union Participation Rate',
@@ -118,7 +118,7 @@ export const CALIFORNIA_UNION_PARTICIPATION = new ContextualizedTerm({
 export const CALIFORNIA_LFPR = new ContextualizedTerm({
   id: 'ct-california-lfpr-2022',
   term: getTerm('term-labor-force-participation'),
-  contexts: [TIMEFRAME_2022_2023, CALIFORNIA_LOCATION],
+  contexts: [TIMEFRAME_2022, CALIFORNIA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Labor Force Participation Rate',
@@ -131,7 +131,7 @@ export const CALIFORNIA_LFPR = new ContextualizedTerm({
 export const CALIFORNIA_MIN_WAGE = new ContextualizedTerm({
   id: 'ct-california-minwage-2022',
   term: getTerm('term-minimum-wage'),
-  contexts: [TIMEFRAME_2022_2023, CALIFORNIA_LOCATION],
+  contexts: [TIMEFRAME_2022, CALIFORNIA_LOCATION],
   valueMetadata: {
     type: ValueType.CURRENCY,
     unit: '$',
@@ -145,7 +145,7 @@ export const CALIFORNIA_MIN_WAGE = new ContextualizedTerm({
 export const CALIFORNIA_IMPOVERISHED = new ContextualizedTerm({
   id: 'ct-california-impoverished-2022',
   term: getTerm('term-impoverished-workforce'),
-  contexts: [TIMEFRAME_2022_2023, CALIFORNIA_LOCATION],
+  contexts: [TIMEFRAME_2022, CALIFORNIA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Impoverished Workforce Rate',
@@ -165,7 +165,7 @@ const DC_LOCATION = new LocationContext({
 export const DC_UNION_PARTICIPATION = new ContextualizedTerm({
   id: 'ct-dc-union-2022',
   term: getTerm('term-union-participation'),
-  contexts: [TIMEFRAME_2022_2023, DC_LOCATION],
+  contexts: [TIMEFRAME_2022, DC_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Union Participation Rate',
@@ -178,7 +178,7 @@ export const DC_UNION_PARTICIPATION = new ContextualizedTerm({
 export const DC_LFPR = new ContextualizedTerm({
   id: 'ct-dc-lfpr-2022',
   term: getTerm('term-labor-force-participation'),
-  contexts: [TIMEFRAME_2022_2023, DC_LOCATION],
+  contexts: [TIMEFRAME_2022, DC_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Labor Force Participation Rate',
@@ -191,7 +191,7 @@ export const DC_LFPR = new ContextualizedTerm({
 export const DC_MIN_WAGE = new ContextualizedTerm({
   id: 'ct-dc-minwage-2022',
   term: getTerm('term-minimum-wage'),
-  contexts: [TIMEFRAME_2022_2023, DC_LOCATION],
+  contexts: [TIMEFRAME_2022, DC_LOCATION],
   valueMetadata: {
     type: ValueType.CURRENCY,
     unit: '$',
@@ -205,7 +205,7 @@ export const DC_MIN_WAGE = new ContextualizedTerm({
 export const DC_IMPOVERISHED = new ContextualizedTerm({
   id: 'ct-dc-impoverished-2022',
   term: getTerm('term-impoverished-workforce'),
-  contexts: [TIMEFRAME_2022_2023, DC_LOCATION],
+  contexts: [TIMEFRAME_2022, DC_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Impoverished Workforce Rate',
@@ -225,7 +225,7 @@ const IDAHO_LOCATION = new LocationContext({
 export const IDAHO_UNION_PARTICIPATION = new ContextualizedTerm({
   id: 'ct-idaho-union-2022',
   term: getTerm('term-union-participation'),
-  contexts: [TIMEFRAME_2022_2023, IDAHO_LOCATION],
+  contexts: [TIMEFRAME_2022, IDAHO_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Union Participation Rate',
@@ -238,7 +238,7 @@ export const IDAHO_UNION_PARTICIPATION = new ContextualizedTerm({
 export const IDAHO_LFPR = new ContextualizedTerm({
   id: 'ct-idaho-lfpr-2022',
   term: getTerm('term-labor-force-participation'),
-  contexts: [TIMEFRAME_2022_2023, IDAHO_LOCATION],
+  contexts: [TIMEFRAME_2022, IDAHO_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Labor Force Participation Rate',
@@ -251,7 +251,7 @@ export const IDAHO_LFPR = new ContextualizedTerm({
 export const IDAHO_MIN_WAGE = new ContextualizedTerm({
   id: 'ct-idaho-minwage-2022',
   term: getTerm('term-minimum-wage'),
-  contexts: [TIMEFRAME_2022_2023, IDAHO_LOCATION],
+  contexts: [TIMEFRAME_2022, IDAHO_LOCATION],
   valueMetadata: {
     type: ValueType.CURRENCY,
     unit: '$',
@@ -265,7 +265,7 @@ export const IDAHO_MIN_WAGE = new ContextualizedTerm({
 export const IDAHO_IMPOVERISHED = new ContextualizedTerm({
   id: 'ct-idaho-impoverished-2022',
   term: getTerm('term-impoverished-workforce'),
-  contexts: [TIMEFRAME_2022_2023, IDAHO_LOCATION],
+  contexts: [TIMEFRAME_2022, IDAHO_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Impoverished Workforce Rate',
@@ -285,7 +285,7 @@ const TEXAS_LOCATION = new LocationContext({
 export const TEXAS_UNION_PARTICIPATION = new ContextualizedTerm({
   id: 'ct-texas-union-2022',
   term: getTerm('term-union-participation'),
-  contexts: [TIMEFRAME_2022_2023, TEXAS_LOCATION],
+  contexts: [TIMEFRAME_2022, TEXAS_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Union Participation Rate',
@@ -298,7 +298,7 @@ export const TEXAS_UNION_PARTICIPATION = new ContextualizedTerm({
 export const TEXAS_LFPR = new ContextualizedTerm({
   id: 'ct-texas-lfpr-2022',
   term: getTerm('term-labor-force-participation'),
-  contexts: [TIMEFRAME_2022_2023, TEXAS_LOCATION],
+  contexts: [TIMEFRAME_2022, TEXAS_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Labor Force Participation Rate',
@@ -311,7 +311,7 @@ export const TEXAS_LFPR = new ContextualizedTerm({
 export const TEXAS_MIN_WAGE = new ContextualizedTerm({
   id: 'ct-texas-minwage-2022',
   term: getTerm('term-minimum-wage'),
-  contexts: [TIMEFRAME_2022_2023, TEXAS_LOCATION],
+  contexts: [TIMEFRAME_2022, TEXAS_LOCATION],
   valueMetadata: {
     type: ValueType.CURRENCY,
     unit: '$',
@@ -325,7 +325,7 @@ export const TEXAS_MIN_WAGE = new ContextualizedTerm({
 export const TEXAS_IMPOVERISHED = new ContextualizedTerm({
   id: 'ct-texas-impoverished-2022',
   term: getTerm('term-impoverished-workforce'),
-  contexts: [TIMEFRAME_2022_2023, TEXAS_LOCATION],
+  contexts: [TIMEFRAME_2022, TEXAS_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Impoverished Workforce Rate',
@@ -345,7 +345,7 @@ const FLORIDA_LOCATION = new LocationContext({
 export const FLORIDA_UNION_PARTICIPATION = new ContextualizedTerm({
   id: 'ct-florida-union-2022',
   term: getTerm('term-union-participation'),
-  contexts: [TIMEFRAME_2022_2023, FLORIDA_LOCATION],
+  contexts: [TIMEFRAME_2022, FLORIDA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Union Participation Rate',
@@ -358,7 +358,7 @@ export const FLORIDA_UNION_PARTICIPATION = new ContextualizedTerm({
 export const FLORIDA_LFPR = new ContextualizedTerm({
   id: 'ct-florida-lfpr-2022',
   term: getTerm('term-labor-force-participation'),
-  contexts: [TIMEFRAME_2022_2023, FLORIDA_LOCATION],
+  contexts: [TIMEFRAME_2022, FLORIDA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Labor Force Participation Rate',
@@ -371,7 +371,7 @@ export const FLORIDA_LFPR = new ContextualizedTerm({
 export const FLORIDA_MIN_WAGE = new ContextualizedTerm({
   id: 'ct-florida-minwage-2022',
   term: getTerm('term-minimum-wage'),
-  contexts: [TIMEFRAME_2022_2023, FLORIDA_LOCATION],
+  contexts: [TIMEFRAME_2022, FLORIDA_LOCATION],
   valueMetadata: {
     type: ValueType.CURRENCY,
     unit: '$',
@@ -385,7 +385,7 @@ export const FLORIDA_MIN_WAGE = new ContextualizedTerm({
 export const FLORIDA_IMPOVERISHED = new ContextualizedTerm({
   id: 'ct-florida-impoverished-2022',
   term: getTerm('term-impoverished-workforce'),
-  contexts: [TIMEFRAME_2022_2023, FLORIDA_LOCATION],
+  contexts: [TIMEFRAME_2022, FLORIDA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Impoverished Workforce Rate',
@@ -405,7 +405,7 @@ const ALASKA_LOCATION = new LocationContext({
 export const ALASKA_UNION_PARTICIPATION = new ContextualizedTerm({
   id: 'ct-alaska-union-2022',
   term: getTerm('term-union-participation'),
-  contexts: [TIMEFRAME_2022_2023, ALASKA_LOCATION],
+  contexts: [TIMEFRAME_2022, ALASKA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Union Participation Rate',
@@ -418,7 +418,7 @@ export const ALASKA_UNION_PARTICIPATION = new ContextualizedTerm({
 export const ALASKA_LFPR = new ContextualizedTerm({
   id: 'ct-alaska-lfpr-2022',
   term: getTerm('term-labor-force-participation'),
-  contexts: [TIMEFRAME_2022_2023, ALASKA_LOCATION],
+  contexts: [TIMEFRAME_2022, ALASKA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Labor Force Participation Rate',
@@ -431,7 +431,7 @@ export const ALASKA_LFPR = new ContextualizedTerm({
 export const ALASKA_MIN_WAGE = new ContextualizedTerm({
   id: 'ct-alaska-minwage-2022',
   term: getTerm('term-minimum-wage'),
-  contexts: [TIMEFRAME_2022_2023, ALASKA_LOCATION],
+  contexts: [TIMEFRAME_2022, ALASKA_LOCATION],
   valueMetadata: {
     type: ValueType.CURRENCY,
     unit: '$',
@@ -445,7 +445,7 @@ export const ALASKA_MIN_WAGE = new ContextualizedTerm({
 export const ALASKA_IMPOVERISHED = new ContextualizedTerm({
   id: 'ct-alaska-impoverished-2022',
   term: getTerm('term-impoverished-workforce'),
-  contexts: [TIMEFRAME_2022_2023, ALASKA_LOCATION],
+  contexts: [TIMEFRAME_2022, ALASKA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Impoverished Workforce Rate',
@@ -467,7 +467,7 @@ const SOUTH_DAKOTA_LOCATION = new LocationContext({
 export const SOUTH_DAKOTA_UNION_PARTICIPATION = new ContextualizedTerm({
   id: 'ct-south-dakota-union-2022',
   term: getTerm('term-union-participation'),
-  contexts: [TIMEFRAME_2022_2023, SOUTH_DAKOTA_LOCATION],
+  contexts: [TIMEFRAME_2022, SOUTH_DAKOTA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Union Participation Rate',
@@ -480,7 +480,7 @@ export const SOUTH_DAKOTA_UNION_PARTICIPATION = new ContextualizedTerm({
 export const SOUTH_DAKOTA_LFPR = new ContextualizedTerm({
   id: 'ct-south-dakota-lfpr-2022',
   term: getTerm('term-labor-force-participation'),
-  contexts: [TIMEFRAME_2022_2023, SOUTH_DAKOTA_LOCATION],
+  contexts: [TIMEFRAME_2022, SOUTH_DAKOTA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Labor Force Participation Rate',
@@ -493,7 +493,7 @@ export const SOUTH_DAKOTA_LFPR = new ContextualizedTerm({
 export const SOUTH_DAKOTA_MIN_WAGE = new ContextualizedTerm({
   id: 'ct-south-dakota-minwage-2022',
   term: getTerm('term-minimum-wage'),
-  contexts: [TIMEFRAME_2022_2023, SOUTH_DAKOTA_LOCATION],
+  contexts: [TIMEFRAME_2022, SOUTH_DAKOTA_LOCATION],
   valueMetadata: {
     type: ValueType.CURRENCY,
     unit: '$',
@@ -507,7 +507,7 @@ export const SOUTH_DAKOTA_MIN_WAGE = new ContextualizedTerm({
 export const SOUTH_DAKOTA_IMPOVERISHED = new ContextualizedTerm({
   id: 'ct-south-dakota-impoverished-2022',
   term: getTerm('term-impoverished-workforce'),
-  contexts: [TIMEFRAME_2022_2023, SOUTH_DAKOTA_LOCATION],
+  contexts: [TIMEFRAME_2022, SOUTH_DAKOTA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Impoverished Workforce Rate',
@@ -527,7 +527,7 @@ const WEST_VIRGINIA_LOCATION = new LocationContext({
 export const WEST_VIRGINIA_UNION_PARTICIPATION = new ContextualizedTerm({
   id: 'ct-west-virginia-union-2022',
   term: getTerm('term-union-participation'),
-  contexts: [TIMEFRAME_2022_2023, WEST_VIRGINIA_LOCATION],
+  contexts: [TIMEFRAME_2022, WEST_VIRGINIA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Union Participation Rate',
@@ -540,7 +540,7 @@ export const WEST_VIRGINIA_UNION_PARTICIPATION = new ContextualizedTerm({
 export const WEST_VIRGINIA_LFPR = new ContextualizedTerm({
   id: 'ct-west-virginia-lfpr-2022',
   term: getTerm('term-labor-force-participation'),
-  contexts: [TIMEFRAME_2022_2023, WEST_VIRGINIA_LOCATION],
+  contexts: [TIMEFRAME_2022, WEST_VIRGINIA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Labor Force Participation Rate',
@@ -553,7 +553,7 @@ export const WEST_VIRGINIA_LFPR = new ContextualizedTerm({
 export const WEST_VIRGINIA_MIN_WAGE = new ContextualizedTerm({
   id: 'ct-west-virginia-minwage-2022',
   term: getTerm('term-minimum-wage'),
-  contexts: [TIMEFRAME_2022_2023, WEST_VIRGINIA_LOCATION],
+  contexts: [TIMEFRAME_2022, WEST_VIRGINIA_LOCATION],
   valueMetadata: {
     type: ValueType.CURRENCY,
     unit: '$',
@@ -567,7 +567,7 @@ export const WEST_VIRGINIA_MIN_WAGE = new ContextualizedTerm({
 export const WEST_VIRGINIA_IMPOVERISHED = new ContextualizedTerm({
   id: 'ct-west-virginia-impoverished-2022',
   term: getTerm('term-impoverished-workforce'),
-  contexts: [TIMEFRAME_2022_2023, WEST_VIRGINIA_LOCATION],
+  contexts: [TIMEFRAME_2022, WEST_VIRGINIA_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Impoverished Workforce Rate',
@@ -587,7 +587,7 @@ const OHIO_LOCATION = new LocationContext({
 export const OHIO_UNION_PARTICIPATION = new ContextualizedTerm({
   id: 'ct-ohio-union-2022',
   term: getTerm('term-union-participation'),
-  contexts: [TIMEFRAME_2022_2023, OHIO_LOCATION],
+  contexts: [TIMEFRAME_2022, OHIO_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Union Participation Rate',
@@ -600,7 +600,7 @@ export const OHIO_UNION_PARTICIPATION = new ContextualizedTerm({
 export const OHIO_LFPR = new ContextualizedTerm({
   id: 'ct-ohio-lfpr-2022',
   term: getTerm('term-labor-force-participation'),
-  contexts: [TIMEFRAME_2022_2023, OHIO_LOCATION],
+  contexts: [TIMEFRAME_2022, OHIO_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Labor Force Participation Rate',
@@ -613,7 +613,7 @@ export const OHIO_LFPR = new ContextualizedTerm({
 export const OHIO_MIN_WAGE = new ContextualizedTerm({
   id: 'ct-ohio-minwage-2022',
   term: getTerm('term-minimum-wage'),
-  contexts: [TIMEFRAME_2022_2023, OHIO_LOCATION],
+  contexts: [TIMEFRAME_2022, OHIO_LOCATION],
   valueMetadata: {
     type: ValueType.CURRENCY,
     unit: '$',
@@ -627,7 +627,7 @@ export const OHIO_MIN_WAGE = new ContextualizedTerm({
 export const OHIO_IMPOVERISHED = new ContextualizedTerm({
   id: 'ct-ohio-impoverished-2022',
   term: getTerm('term-impoverished-workforce'),
-  contexts: [TIMEFRAME_2022_2023, OHIO_LOCATION],
+  contexts: [TIMEFRAME_2022, OHIO_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Impoverished Workforce Rate',
@@ -647,7 +647,7 @@ const NEW_JERSEY_LOCATION = new LocationContext({
 export const NEW_JERSEY_UNION_PARTICIPATION = new ContextualizedTerm({
   id: 'ct-new-jersey-union-2022',
   term: getTerm('term-union-participation'),
-  contexts: [TIMEFRAME_2022_2023, NEW_JERSEY_LOCATION],
+  contexts: [TIMEFRAME_2022, NEW_JERSEY_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Union Participation Rate',
@@ -660,7 +660,7 @@ export const NEW_JERSEY_UNION_PARTICIPATION = new ContextualizedTerm({
 export const NEW_JERSEY_LFPR = new ContextualizedTerm({
   id: 'ct-new-jersey-lfpr-2022',
   term: getTerm('term-labor-force-participation'),
-  contexts: [TIMEFRAME_2022_2023, NEW_JERSEY_LOCATION],
+  contexts: [TIMEFRAME_2022, NEW_JERSEY_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Labor Force Participation Rate',
@@ -673,7 +673,7 @@ export const NEW_JERSEY_LFPR = new ContextualizedTerm({
 export const NEW_JERSEY_MIN_WAGE = new ContextualizedTerm({
   id: 'ct-new-jersey-minwage-2022',
   term: getTerm('term-minimum-wage'),
-  contexts: [TIMEFRAME_2022_2023, NEW_JERSEY_LOCATION],
+  contexts: [TIMEFRAME_2022, NEW_JERSEY_LOCATION],
   valueMetadata: {
     type: ValueType.CURRENCY,
     unit: '$',
@@ -687,7 +687,7 @@ export const NEW_JERSEY_MIN_WAGE = new ContextualizedTerm({
 export const NEW_JERSEY_IMPOVERISHED = new ContextualizedTerm({
   id: 'ct-new-jersey-impoverished-2022',
   term: getTerm('term-impoverished-workforce'),
-  contexts: [TIMEFRAME_2022_2023, NEW_JERSEY_LOCATION],
+  contexts: [TIMEFRAME_2022, NEW_JERSEY_LOCATION],
   valueMetadata: {
     type: ValueType.PERCENTAGE,
     label: 'Impoverished Workforce Rate',

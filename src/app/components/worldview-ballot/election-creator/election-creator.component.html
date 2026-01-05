@@ -2,8 +2,8 @@
   <mat-card>
     <mat-card-header>
       <mat-card-title>
-        <button mat-icon-button (click)="cancel()" class="back-button">
-          <mat-icon>arrow_back</mat-icon>
+        <button mat-button (click)="cancel()" class="back-button">
+          Back
         </button>
         Create New Election
       </mat-card-title>
@@ -26,12 +26,26 @@
           <mat-hint>Explain what meaning and accountability system this election will establish</mat-hint>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Election Type</mat-label>
-          <input matInput formControlName="electionType"
-                 placeholder="e.g., economic-policy, healthcare-system, education-accountability" required>
-          <mat-hint>Category of issue or societal concern being defined</mat-hint>
-        </mat-form-field>
+        <div class="election-types-section full-width">
+          <label class="section-label">Election Types *</label>
+          <button mat-raised-button type="button" (click)="openElectionTypeSelector()" class="select-types-button">
+            {{ selectedElectionTypes.length === 0 ? 'Select Election Types' : 'Change Election Types' }}
+          </button>
+
+          <div *ngIf="selectedElectionTypes.length > 0" class="selected-types">
+            <mat-chip-set>
+              <mat-chip *ngFor="let type of selectedElectionTypes"
+                        (removed)="removeElectionType(type)">
+                {{ type }}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+
+          <p class="hint-text">Select one or more types that apply to this worldview election</p>
+        </div>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Status</mat-label>
