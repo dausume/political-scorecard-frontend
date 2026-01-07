@@ -20,6 +20,7 @@ import { selectAuthUser } from '../../../state/selectors/auth.selectors';
 import { DebateInputComponent } from '../debate-input/debate-input.component';
 import { DebateMessageComponent, DebateMessageDTO } from '../debate-message/debate-message.component';
 import { AuthUser } from '../../../classes/auth-user';
+import { DebateWebSocketService } from '../../../services/debate-websocket.service';
 
 @Component({
   selector: 'app-election-debate',
@@ -50,7 +51,8 @@ export class ElectionDebateComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store<AppState>,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private wsService: DebateWebSocketService
   ) {}
 
   ngOnInit(): void {
@@ -94,9 +96,66 @@ export class ElectionDebateComponent implements OnInit, OnDestroy {
     // Set selected election and load messages
     this.store.dispatch(DebateActions.selectElection({ electionId }));
     this.store.dispatch(DebateActions.loadMessagesForElection({ electionId }));
+
+    // Initialize WebSocket connection
+    this.initializeWebSocket(electionId);
+  }
+
+  private initializeWebSocket(electionId: string): void {
+    console.log('[Debate] Initializing WebSocket for election:', electionId);
+
+    // Connect to WebSocket if not already connected
+    if (!this.wsService.isConnected()) {
+      this.wsService.connect();
+    }
+
+    // Wait for connection and subscribe
+    this.wsService.connectionStatus$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isConnected => {
+        if (isConnected) {
+          console.log('[Debate] WebSocket connected, subscribing to election:', electionId);
+          this.wsService.subscribeToElection(electionId);
+        }
+      });
+
+    // Listen for new messages
+    this.wsService.newMessage$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(message => {
+        if (message && message.electionId === electionId) {
+          console.log('[Debate] Received new message via WebSocket:', message);
+          this.store.dispatch(DebateActions.messageReceived({ message }));
+        }
+      });
+
+    // Listen for updated messages
+    this.wsService.updatedMessage$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(message => {
+        if (message && message.electionId === electionId) {
+          console.log('[Debate] Received updated message via WebSocket:', message);
+          this.store.dispatch(DebateActions.updateMessageSuccess({ message }));
+        }
+      });
+
+    // Listen for deleted messages
+    this.wsService.deletedMessage$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(messageId => {
+        if (messageId) {
+          console.log('[Debate] Received deleted message via WebSocket:', messageId);
+          this.store.dispatch(DebateActions.deleteMessageSuccess({ messageId }));
+        }
+      });
   }
 
   ngOnDestroy(): void {
+    // Unsubscribe from WebSocket
+    if (this.resolvedElectionId) {
+      this.wsService.unsubscribeFromElection(this.resolvedElectionId);
+    }
+
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -119,7 +178,14 @@ export class ElectionDebateComponent implements OnInit, OnDestroy {
       message: messageText
     };
 
-    this.store.dispatch(DebateActions.sendMessage({ message }));
+    // Use WebSocket if connected, otherwise fallback to REST API
+    if (this.wsService.isConnected()) {
+      console.log('[Debate] Sending message via WebSocket');
+      this.wsService.sendMessage(this.resolvedElectionId, message);
+    } else {
+      console.log('[Debate] WebSocket not connected, using REST API');
+      this.store.dispatch(DebateActions.sendMessage({ message }));
+    }
   }
 
   onEditMessage(message: DebateMessageDTO): void {
@@ -131,15 +197,30 @@ export class ElectionDebateComponent implements OnInit, OnDestroy {
         ...message,
         message: updatedText.trim()
       };
-      this.store.dispatch(DebateActions.updateMessage({
-        messageId: message.id,
-        message: updatedMessage
-      }));
+
+      // Use WebSocket if connected, otherwise fallback to REST API
+      if (this.wsService.isConnected() && this.resolvedElectionId) {
+        console.log('[Debate] Updating message via WebSocket');
+        this.wsService.updateMessage(this.resolvedElectionId, updatedMessage);
+      } else {
+        console.log('[Debate] WebSocket not connected, using REST API');
+        this.store.dispatch(DebateActions.updateMessage({
+          messageId: message.id,
+          message: updatedMessage
+        }));
+      }
     }
   }
 
   onDeleteMessage(messageId: string): void {
-    this.store.dispatch(DebateActions.deleteMessage({ messageId }));
+    // Use WebSocket if connected, otherwise fallback to REST API
+    if (this.wsService.isConnected() && this.resolvedElectionId) {
+      console.log('[Debate] Deleting message via WebSocket');
+      this.wsService.deleteMessage(this.resolvedElectionId, messageId);
+    } else {
+      console.log('[Debate] WebSocket not connected, using REST API');
+      this.store.dispatch(DebateActions.deleteMessage({ messageId }));
+    }
   }
 
   isOwnMessage(message: DebateMessageDTO): boolean {
