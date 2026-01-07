@@ -7,6 +7,7 @@ import { routes } from './app.routes';
 // Http/Https -> How we reach out to backend
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './interceptors/auth.interceptor';
+import { errorInterceptor } from './interceptors/error.interceptor';
 
 // NgRx
 import { provideStore } from '@ngrx/store';
@@ -31,7 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
 
     provideHttpClient(
-      withInterceptors([authInterceptor])
+      withInterceptors([authInterceptor, errorInterceptor])
     ),
   ],
 };
