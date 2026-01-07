@@ -1,0 +1,57 @@
+<div class="election-debate-container" [class.sidepanel-mode]="mode === 'sidepanel'">
+  <mat-card class="debate-card">
+    <mat-card-header>
+      <mat-card-title>Election Discussion</mat-card-title>
+      <mat-card-subtitle *ngIf="mode === 'standalone'">
+        Join the conversation about this election
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <!-- Loading State -->
+      <div class="loading-container" *ngIf="loading$ | async">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading messages...</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="error-container" *ngIf="error$ | async as error">
+        <p class="error-message">{{ error }}</p>
+      </div>
+
+      <!-- Messages List -->
+      <div class="messages-container" *ngIf="!(loading$ | async)">
+        <div class="messages-list" *ngIf="(messages$ | async) as messages">
+          <!-- No Messages -->
+          <div class="no-messages" *ngIf="messages.length === 0">
+            <p>No messages yet. Be the first to start the conversation!</p>
+          </div>
+
+          <!-- Messages -->
+          <app-debate-message
+            *ngFor="let message of messages; trackBy: trackByMessageId"
+            [message]="message"
+            [currentUserId]="currentUser?.id || null"
+            [isOwnMessage]="isOwnMessage(message)"
+            (editMessage)="onEditMessage($event)"
+            (deleteMessage)="onDeleteMessage($event)"
+          ></app-debate-message>
+        </div>
+
+        <!-- Input Component -->
+        <app-debate-input
+          [disabled]="!currentUser"
+          [sending]="(sending$ | async) || false"
+          (sendMessage)="onSendMessage($event)"
+        ></app-debate-input>
+
+        <!-- Not Authenticated Message -->
+        <div class="auth-required" *ngIf="!currentUser">
+          <p>Please log in to participate in the discussion.</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

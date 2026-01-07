@@ -1,0 +1,86 @@
+.message-card {
+  margin-bottom: 12px;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.own-message {
+    background-color: #e3f2fd;
+    border-left: 4px solid #1976d2;
+  }
+
+  .message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      .username {
+        font-weight: 600;
+        color: #1976d2;
+      }
+
+      .timestamp {
+        font-size: 0.85rem;
+        color: #666;
+      }
+
+      .edited-indicator {
+        font-size: 0.8rem;
+        color: #999;
+        font-style: italic;
+      }
+    }
+
+    .message-actions {
+      display: flex;
+      gap: 4px;
+
+      .action-button {
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+
+        &.delete-button {
+          color: #d32f2f;
+
+          &:hover {
+            background-color: rgba(211, 47, 47, 0.1);
+          }
+        }
+      }
+    }
+  }
+
+  mat-card-header {
+    margin-bottom: 8px;
+  }
+
+  mat-card-content {
+    .message-text {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      line-height: 1.5;
+
+      &.deleted-message {
+        color: #999;
+        font-style: italic;
+      }
+    }
+  }
+}

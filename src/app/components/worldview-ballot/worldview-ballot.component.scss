@@ -167,6 +167,41 @@
       align-items: center;
       text-align: center;
     }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+
+      .debate-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: transparent;
+        border: 2px solid #007bff;
+        color: #007bff;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background: #007bff;
+          color: white;
+        }
+
+        &.active {
+          background: #007bff;
+          color: white;
+        }
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
   }
 
   h2 {
@@ -361,4 +396,11 @@
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+}
+
+// Debate Sidepanel
+.debate-sidepanel {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e9ecef;
 }

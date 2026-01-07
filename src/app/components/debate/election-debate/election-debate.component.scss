@@ -1,0 +1,126 @@
+.election-debate-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  &.sidepanel-mode {
+    padding: 16px;
+    max-width: 100%;
+
+    .debate-card {
+      mat-card-header {
+        mat-card-title {
+          font-size: 1.25rem;
+        }
+      }
+    }
+  }
+
+  .debate-card {
+    mat-card-content {
+      padding: 16px 0;
+    }
+
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      gap: 16px;
+
+      p {
+        margin: 0;
+        color: #666;
+      }
+    }
+
+    .error-container {
+      padding: 16px;
+      background-color: #ffebee;
+      border-left: 4px solid #d32f2f;
+      border-radius: 4px;
+      margin: 16px 0;
+
+      .error-message {
+        margin: 0;
+        color: #d32f2f;
+        font-weight: 500;
+      }
+    }
+
+    .messages-container {
+      padding: 0 16px;
+
+      .no-messages {
+        text-align: center;
+        padding: 48px 24px;
+        color: #666;
+
+        p {
+          margin: 0;
+          font-size: 1.1rem;
+        }
+      }
+
+      .messages-list {
+        max-height: 600px;
+        overflow-y: auto;
+        margin-bottom: 16px;
+        padding: 8px 0;
+
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 4px;
+
+          &:hover {
+            background: #555;
+          }
+        }
+      }
+
+      .auth-required {
+        text-align: center;
+        padding: 16px;
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        border-radius: 4px;
+        margin-top: 16px;
+
+        p {
+          margin: 0;
+          color: #856404;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .election-debate-container {
+    padding: 16px;
+
+    &.sidepanel-mode {
+      padding: 8px;
+    }
+
+    .debate-card {
+      .messages-container {
+        .messages-list {
+          max-height: 400px;
+        }
+      }
+    }
+  }
+}

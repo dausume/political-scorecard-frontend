@@ -15,6 +15,7 @@ export interface ContextualizedTermScore {
 
 export class ContextualizedWorldviewBallot {
   id: string;
+  electionId: string;
   competitiveScoreId: string;
   voterId: string;
   name: string;
@@ -29,6 +30,7 @@ export class ContextualizedWorldviewBallot {
 
   constructor(data: {
     id: string;
+    electionId: string;
     competitiveScoreId: string;
     voterId: string;
     name: string;
@@ -38,6 +40,7 @@ export class ContextualizedWorldviewBallot {
     criticalContexts?: CriticalContext[];
   }) {
     this.id = data.id;
+    this.electionId = data.electionId;
     this.competitiveScoreId = data.competitiveScoreId;
     this.voterId = data.voterId;
     this.name = data.name;

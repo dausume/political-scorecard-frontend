@@ -53,7 +53,7 @@ export class ViewTermComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Get term ID from route
+    // Load term from route
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {

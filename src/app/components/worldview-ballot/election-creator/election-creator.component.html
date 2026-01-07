@@ -15,8 +15,8 @@
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Election Name</mat-label>
           <input matInput formControlName="name"
-                 placeholder="e.g., Healthcare System Accountability 2024" required>
-          <mat-hint>A clear, descriptive name for this worldview election</mat-hint>
+                 placeholder="e.g., Healthcare System Accountability" required>
+          <mat-hint>A generic name (exclude location/time specifics - those will be defined by contexts)</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
@@ -73,6 +73,127 @@
             <mat-datepicker #endPicker></mat-datepicker>
             <mat-hint>When voting ends</mat-hint>
           </mat-form-field>
+        </div>
+
+        <!-- Abstract Context Specifications Section -->
+        <div class="context-specifications-section full-width">
+          <h3>Abstract Context Specifications *</h3>
+          <p class="section-description">
+            Define which context types and granularities voters must use when filling out their ballots.
+            This ensures all ballots for this election are comparable.
+          </p>
+
+          <!-- Location Contexts -->
+          <div class="context-type-section">
+            <h4>Location Contexts * <span class="required-badge">(At least 1 required)</span></h4>
+            <div class="granularity-checkboxes">
+              <mat-checkbox *ngFor="let gran of availableLocationGranularities"
+                            [checked]="isLocationGranularitySelected(gran)"
+                            (change)="toggleLocationGranularity(gran)">
+                {{ gran | titlecase }}
+              </mat-checkbox>
+            </div>
+          </div>
+
+          <!-- Time Contexts -->
+          <div class="context-type-section">
+            <h4>Time Contexts * <span class="required-badge">(At least 1 required)</span></h4>
+            <div class="granularity-checkboxes">
+              <mat-checkbox *ngFor="let gran of availableTimeGranularities"
+                            [checked]="isTimeGranularitySelected(gran)"
+                            (change)="toggleTimeGranularity(gran)">
+                {{ gran | titlecase }}
+              </mat-checkbox>
+            </div>
+          </div>
+
+          <!-- Demographic Contexts (Optional) -->
+          <div class="context-type-section">
+            <h4>Demographic Contexts <span class="optional-badge">(Optional)</span></h4>
+            <div class="granularity-checkboxes">
+              <mat-checkbox *ngFor="let gran of availableDemographicGranularities"
+                            [checked]="isDemographicGranularitySelected(gran)"
+                            (change)="toggleDemographicGranularity(gran)">
+                {{ gran | titlecase }}
+              </mat-checkbox>
+            </div>
+          </div>
+
+          <!-- Economic Contexts (Optional) -->
+          <div class="context-type-section">
+            <h4>Economic Contexts <span class="optional-badge">(Optional)</span></h4>
+            <div class="granularity-checkboxes">
+              <mat-checkbox *ngFor="let gran of availableEconomicGranularities"
+                            [checked]="isEconomicGranularitySelected(gran)"
+                            (change)="toggleEconomicGranularity(gran)">
+                {{ gran | titlecase }}
+              </mat-checkbox>
+            </div>
+          </div>
+        </div>
+
+        <!-- Valid Terms Section -->
+        <div class="valid-terms-section full-width">
+          <h3>Valid Terms</h3>
+          <p class="section-description">
+            Select terms that make coherent sense to consider as measurements for this worldview election.
+            These terms will be available for voters to weight when filling out their ballots.
+          </p>
+
+          <!-- Selected Terms Summary -->
+          <div class="selected-terms-summary">
+            <strong>Selected: {{ selectedValidTerms.length }} term(s)</strong>
+            <div class="selected-terms" *ngIf="selectedValidTerms.length > 0">
+              <mat-chip-set>
+                <mat-chip *ngFor="let term of selectedValidTerms"
+                          (removed)="removeValidTerm(term.id)">
+                  {{ term.name }}
+                  <button matChipRemove>
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+          </div>
+
+          <!-- Create New Term Button -->
+          <div class="term-actions">
+            <button mat-raised-button color="accent" type="button" (click)="openTermCreatorDialog()">
+              <mat-icon>add</mat-icon>
+              Create New Term
+            </button>
+          </div>
+
+          <!-- Terms by Category (Expansion Panels) -->
+          <div class="terms-by-category">
+            <h4>Select from Existing Terms</h4>
+            <mat-accordion>
+              <mat-expansion-panel *ngFor="let category of getCategoryKeys()">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{ category }}
+                    <span class="category-count">({{ termsByCategory[category].length }})</span>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="category-terms">
+                  <div *ngIf="termsByCategory[category].length === 0" class="no-terms-in-category">
+                    No terms in this category yet. Create one using the button above!
+                  </div>
+                  <div *ngFor="let term of termsByCategory[category]" class="term-checkbox-item">
+                    <mat-checkbox
+                      [checked]="isTermSelected(term)"
+                      (change)="toggleTermSelection(term)">
+                      <div class="term-info">
+                        <strong>{{ term.name }}</strong>
+                        <p class="term-description">{{ term.description }}</p>
+                      </div>
+                    </mat-checkbox>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
         </div>
       </form>
     </mat-card-content>

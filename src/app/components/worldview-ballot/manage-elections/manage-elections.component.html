@@ -80,6 +80,9 @@
         <button mat-button color="primary" (click)="viewBallots(election.id!)">
           View Ballots
         </button>
+        <button mat-button (click)="joinDiscussion(election.id!)">
+          Join Discussion
+        </button>
         <button mat-button color="accent" (click)="createBallot(election.id!)"
                 [disabled]="election.status !== 'ACTIVE'">
           Create Ballot

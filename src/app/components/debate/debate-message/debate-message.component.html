@@ -1,0 +1,38 @@
+<mat-card class="message-card" [class.own-message]="isOwnMessage">
+  <mat-card-header>
+    <div class="message-header">
+      <div class="user-info">
+        <span class="username">{{ message.username }}</span>
+        <span class="timestamp">{{ formatTimestamp(message.timestamp) }}</span>
+        <span class="edited-indicator" *ngIf="message.edited" matTooltip="Edited {{ formatTimestamp(message.editedAt) }}">
+          (edited)
+        </span>
+      </div>
+
+      <div class="message-actions" *ngIf="isOwnMessage && !message.deleted">
+        <button
+          mat-icon-button
+          (click)="onEdit()"
+          matTooltip="Edit message"
+          class="action-button"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          (click)="onDelete()"
+          matTooltip="Delete message"
+          class="action-button delete-button"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p class="message-text" [class.deleted-message]="message.deleted">
+      {{ message.deleted ? '[Message deleted]' : message.message }}
+    </p>
+  </mat-card-content>
+</mat-card>

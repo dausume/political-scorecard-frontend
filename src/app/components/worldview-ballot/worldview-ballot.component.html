@@ -37,10 +37,16 @@
           <h2>Review Your Auto-Selected Worldview Ballot</h2>
           <p class="ballot-subtitle">A worldview ballot has been selected for your review based on current activity</p>
         </div>
-        <button class="toggle-btn minimize-btn" (click)="toggleMinimized()" title="Minimize ballot">
-          <span class="toggle-icon">▲</span>
-          Minimize
-        </button>
+        <div class="header-actions">
+          <button class="toggle-btn debate-btn" (click)="toggleDebate()" [class.active]="showDebate" title="Toggle discussion panel">
+            <mat-icon>{{ showDebate ? 'chat' : 'chat_bubble_outline' }}</mat-icon>
+            {{ showDebate ? 'Hide' : 'Show' }} Discussion
+          </button>
+          <button class="toggle-btn minimize-btn" (click)="toggleMinimized()" title="Minimize ballot">
+            <span class="toggle-icon">▲</span>
+            Minimize
+          </button>
+        </div>
       </div>
       <button class="browse-ballots-btn" (click)="navigateToBrowseBallots()">Browse Other Active Ballots</button>
     </div>
@@ -132,5 +138,13 @@
       (addPositive)="handleAddPositive($event)"
       (addNegative)="handleAddNegative($event)">
     </app-term-sorting-row>
+
+    <!-- Debate Sidepanel -->
+    <div class="debate-sidepanel" *ngIf="showDebate && currentBallot?.electionId">
+      <app-election-debate
+        [electionId]="currentBallot!.electionId"
+        [mode]="'sidepanel'">
+      </app-election-debate>
+    </div>
   </div>
 </div>

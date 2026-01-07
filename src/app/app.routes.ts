@@ -23,6 +23,7 @@ import { TermsPageComponent } from './components/terms/terms-page.component';
 import { ViewTermComponent } from './components/terms/view-term/view-term.component';
 import { TermCreatorComponent } from './components/terms/term-creator/term-creator.component';
 import { ContextualizedTermCreatorComponent } from './components/terms/contextualized-term-creator/contextualized-term-creator.component';
+import { ElectionDebateComponent } from './components/debate/election-debate/election-debate.component';
 
 export const routes: Routes = [
     { path: '', component: HomePageComponent },
@@ -44,6 +45,7 @@ export const routes: Routes = [
     // Worldview Election & Ballot Components
     { path: 'worldview-elections', component: ManageElectionsComponent },
     { path: 'worldview-elections/create', component: ElectionCreatorComponent },
+    { path: 'worldview-elections/:electionId/debate', component: ElectionDebateComponent },
     { path: 'worldview-ballots/create', component: WorldviewBallotCreatorComponent },
     { path: 'worldview-ballot', component: WorldviewBallotComponent },
     { path: 'browse-worldview-ballots', component: BrowseWorldviewBallotsComponent },

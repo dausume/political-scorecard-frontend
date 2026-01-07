@@ -1,0 +1,45 @@
+<div class="edit-term-container">
+  <mat-card class="term-info-card">
+    <h2>Edit Term</h2>
+    <mat-divider></mat-divider>
+
+    <form [formGroup]="termForm" class="term-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Term Name</mat-label>
+        <input matInput formControlName="name" placeholder="e.g., Unemployment Rate" required>
+        <mat-hint>A clear, specific name for this measurement term</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"
+                  placeholder="Describe what this term measures and why it matters" required></textarea>
+        <mat-hint>Explain what this term represents and how it's measured</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category" placeholder="Select a category">
+          <mat-option *ngFor="let cat of availableCategories" [value]="cat">
+            {{ cat }}
+          </mat-option>
+        </mat-select>
+        <mat-hint>Group this term belongs to (e.g., Labor Quality, Economic Policy)</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Source</mat-label>
+        <input matInput formControlName="source" placeholder="e.g., Bureau of Labor Statistics, https://...">
+        <mat-hint>Where this data comes from (URL, citation, or organization)</mat-hint>
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button mat-button (click)="cancel()" type="button">Cancel</button>
+        <button mat-raised-button color="primary" (click)="updateTerm()"
+                [disabled]="!termForm.valid" type="button">
+          Update Term
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</div>

@@ -14,6 +14,7 @@ import { NegativeTermsRowComponent } from './negative-terms-row/negative-terms-r
 import { TermsRowComponent } from './terms-row/terms-row.component';
 import { ContextSectionComponent } from './context-section/context-section.component';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from './confirmation-dialog/confirmation-dialog.component';
+import { ElectionDebateComponent } from '../debate/election-debate/election-debate.component';
 import { ContextualizedWorldviewBallot } from '../../classes/contextualized-worldview-ballot';
 import { TermContext, ContextualizedTerm } from '../../classes/terms/contextualized-term';
 import { WeightedWorldviewTerm } from '../../classes/terms/weighted-worldview-term';
@@ -47,7 +48,8 @@ export interface TermWeight {
     PositiveTermsRowComponent,
     NegativeTermsRowComponent,
     TermsRowComponent,
-    ContextSectionComponent
+    ContextSectionComponent,
+    ElectionDebateComponent
   ],
   templateUrl: './worldview-ballot.component.html',
   styleUrl: './worldview-ballot.component.scss'
@@ -81,6 +83,7 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
   isSubmitting = false;
   isUnsubmitting = false;
   submittedBallot: SubmittedBallot | null = null;
+  showDebate = false;
 
   // Auto-selected ballot information
   get ballotName(): string {
@@ -286,6 +289,11 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
   // Toggle minimized state
   toggleMinimized() {
     this.isMinimized = !this.isMinimized;
+  }
+
+  // Toggle debate panel
+  toggleDebate() {
+    this.showDebate = !this.showDebate;
   }
 
   // Submit ballot with confirmation

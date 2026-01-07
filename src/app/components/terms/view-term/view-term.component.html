@@ -27,35 +27,37 @@
 
     <!-- Term Information Card -->
     <mat-card class="term-info-card">
-      <div class="term-header">
-        <div class="term-title-section">
-          <h1>{{ term.name }}</h1>
-          <span class="category-badge">{{ getCategoryDisplay(term.category) }}</span>
-        </div>
-      </div>
-
-      <mat-divider></mat-divider>
-
-      <div class="term-details-section">
-        <div class="detail-row">
-          <h3>Description</h3>
-          <p>{{ term.description }}</p>
-        </div>
-
-        <div class="detail-row">
-          <h3>Source</h3>
-          <div class="source-info">
-            <p>{{ term.source }}</p>
-            <button mat-stroked-button color="primary" (click)="openSource()" *ngIf="term.source.startsWith('http')">
-              <mat-icon>open_in_new</mat-icon>
-              View Source
-            </button>
+      <div>
+        <div class="term-header">
+          <div class="term-title-section">
+            <h1>{{ term.name }}</h1>
+            <span class="category-badge">{{ getCategoryDisplay(term.category) }}</span>
           </div>
         </div>
 
-        <div class="detail-row">
-          <h3>Term ID</h3>
-          <p class="term-id">{{ term.id }}</p>
+        <mat-divider></mat-divider>
+
+        <div class="term-details-section">
+          <div class="detail-row">
+            <h3>Description</h3>
+            <p>{{ term.description }}</p>
+          </div>
+
+          <div class="detail-row">
+            <h3>Source</h3>
+            <div class="source-info">
+              <p>{{ term.source }}</p>
+              <button mat-stroked-button color="primary" (click)="openSource()" *ngIf="term.source?.startsWith('http')">
+                <mat-icon>open_in_new</mat-icon>
+                View Source
+              </button>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <h3>Term ID</h3>
+            <p class="term-id">{{ term.id }}</p>
+          </div>
         </div>
       </div>
     </mat-card>

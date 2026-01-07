@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -11,8 +11,13 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { WorldviewElectionsApiService, WorldviewElectionDTO } from '../../../services/api/worldview-elections-api.service';
-import { WorldviewBallotsApiService } from '../../../services/api/worldview-ballots-api.service';
+import { WorldviewElectionDTO } from '../../../services/api/worldview-elections-api.service';
+import { Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { AppState } from '../../../state/app.state';
+import { ElectionsActions } from '../../../state/actions/elections.actions';
+import { selectAllElections, selectElectionsLoading, selectElectionsError } from '../../../state/selectors/elections.selectors';
 
 /**
  * Worldview Elections Management Component
@@ -41,36 +46,55 @@ import { WorldviewBallotsApiService } from '../../../services/api/worldview-ball
   templateUrl: './manage-elections.component.html',
   styleUrls: ['./manage-elections.component.scss']
 })
-export class ManageElectionsComponent implements OnInit {
+export class ManageElectionsComponent implements OnInit, OnDestroy {
+  elections$: Observable<WorldviewElectionDTO[]>;
+  loading$: Observable<boolean>;
+  statusFilter: 'all' | 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ARCHIVED' = 'all';
+
+  // For template usage (async pipe alternative)
   elections: WorldviewElectionDTO[] = [];
   loading = true;
-  statusFilter: 'all' | 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ARCHIVED' = 'all';
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
-    private electionsApi: WorldviewElectionsApiService,
-    private ballotsApi: WorldviewBallotsApiService,
+    private store: Store<AppState>,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.elections$ = this.store.select(selectAllElections);
+    this.loading$ = this.store.select(selectElectionsLoading);
+  }
 
   ngOnInit(): void {
+    // Subscribe to state
+    this.elections$.pipe(takeUntil(this.destroy$)).subscribe(elections => {
+      this.elections = elections;
+    });
+
+    this.loading$.pipe(takeUntil(this.destroy$)).subscribe(loading => {
+      this.loading = loading;
+    });
+
+    // Subscribe to errors
+    this.store.select(selectElectionsError).pipe(takeUntil(this.destroy$)).subscribe(error => {
+      if (error) {
+        this.snackBar.open(`Error: ${error}`, 'Close', { duration: 3000 });
+      }
+    });
+
+    // Load elections
     this.loadElections();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   loadElections(): void {
-    this.loading = true;
-    this.electionsApi.getAllElections().subscribe({
-      next: (elections) => {
-        this.elections = elections;
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error loading elections:', error);
-        this.snackBar.open('Error loading elections', 'Close', { duration: 3000 });
-        this.loading = false;
-      }
-    });
+    this.store.dispatch(ElectionsActions.loadAllElections());
   }
 
   get filteredElections(): WorldviewElectionDTO[] {
@@ -110,36 +134,27 @@ export class ManageElectionsComponent implements OnInit {
     this.router.navigate(['/worldview-elections', electionId, 'ballots']);
   }
 
+  joinDiscussion(electionId: string): void {
+    this.router.navigate(['/worldview-elections', electionId, 'debate']);
+  }
+
   reviewElection(electionId: string): void {
     this.router.navigate(['/worldview-elections', electionId, 'review']);
   }
 
   changeStatus(election: WorldviewElectionDTO, newStatus: 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ARCHIVED'): void {
     const updatedElection = { ...election, status: newStatus };
-    this.electionsApi.updateElection(election.id!, updatedElection).subscribe({
-      next: (result) => {
-        this.snackBar.open(`Election status changed to ${newStatus}`, 'Close', { duration: 2000 });
-        this.loadElections();
-      },
-      error: (error) => {
-        console.error('Error updating election:', error);
-        this.snackBar.open('Error updating election status', 'Close', { duration: 3000 });
-      }
-    });
+    this.store.dispatch(ElectionsActions.updateElection({
+      electionId: election.id!,
+      election: updatedElection
+    }));
+    this.snackBar.open(`Updating election status to ${newStatus}`, 'Close', { duration: 2000 });
   }
 
   deleteElection(electionId: string): void {
     if (confirm('Are you sure you want to delete this election? This action cannot be undone.')) {
-      this.electionsApi.deleteElection(electionId).subscribe({
-        next: () => {
-          this.snackBar.open('Election deleted successfully', 'Close', { duration: 2000 });
-          this.loadElections();
-        },
-        error: (error) => {
-          console.error('Error deleting election:', error);
-          this.snackBar.open('Error deleting election', 'Close', { duration: 3000 });
-        }
-      });
+      this.store.dispatch(ElectionsActions.deleteElection({ electionId }));
+      this.snackBar.open('Deleting election...', 'Close', { duration: 2000 });
     }
   }
 

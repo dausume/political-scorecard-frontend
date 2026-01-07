@@ -1,0 +1,30 @@
+.edit-term-container {
+  padding: 0;
+}
+
+.term-info-card {
+  padding: 24px;
+
+  h2 {
+    margin: 0 0 16px 0;
+    color: #333;
+  }
+}
+
+.term-form {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .full-width {
+    width: 100%;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+  }
+}

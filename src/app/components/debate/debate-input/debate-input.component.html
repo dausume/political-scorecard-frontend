@@ -1,0 +1,28 @@
+<div class="debate-input-container">
+  <mat-form-field appearance="outline" class="message-field">
+    <mat-label>Type your message</mat-label>
+    <textarea
+      matInput
+      [(ngModel)]="messageText"
+      [disabled]="disabled || sending"
+      (keydown)="onKeyDown($event)"
+      placeholder="Enter your message (Shift+Enter for new line)"
+      rows="3"
+      cdkTextareaAutosize
+      #autosize="cdkTextareaAutosize"
+      cdkAutosizeMinRows="2"
+      cdkAutosizeMaxRows="6"
+    ></textarea>
+  </mat-form-field>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSend()"
+    [disabled]="!messageText.trim() || disabled || sending"
+    class="send-button"
+  >
+    <mat-icon>send</mat-icon>
+    {{ sending ? 'Sending...' : 'Send' }}
+  </button>
+</div>

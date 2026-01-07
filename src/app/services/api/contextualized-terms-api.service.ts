@@ -80,6 +80,15 @@ export class ContextualizedTermsApiService {
   }
 
   /**
+   * Get contextualized terms by context IDs
+   * Used to filter terms based on selected primary, comparative, or critical contexts
+   */
+  getContextualizedTermsByContextIds(contextIds: string[]): Observable<ContextualizedTermDTO[]> {
+    return this.http.post<ApiResponse<ContextualizedTermDTO[]>>(`${this.API_URL}/by-contexts`, contextIds)
+      .pipe(map(response => response.data));
+  }
+
+  /**
    * Update a contextualized term
    */
   updateContextualizedTerm(id: string, contextualizedTerm: ContextualizedTermDTO): Observable<ContextualizedTermDTO> {
