@@ -78,7 +78,7 @@ export class WorldviewBallotComponent implements OnInit, OnDestroy {
   categorizedTermIds: string[] = [];
   positiveContextualizedTermsMap: Map<string, ContextualizedTerm | undefined> = new Map();
   negativeContextualizedTermsMap: Map<string, ContextualizedTerm | undefined> = new Map();
-  isMinimized = false;
+  isMinimized = true;
   isAuthenticated = false;
   isSubmitting = false;
   isUnsubmitting = false;

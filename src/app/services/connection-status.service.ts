@@ -127,6 +127,7 @@ export class ConnectionStatusService {
 
   /**
    * Check if backend is reachable by hitting the health endpoint
+   * Note: 401/403 responses still mean the backend is reachable - just requires auth
    */
   private checkBackendHealth(): Observable<boolean> {
     return this.http.get(this.HEALTH_CHECK_URL, {
@@ -137,6 +138,12 @@ export class ConnectionStatusService {
       timeout(this.REQUEST_TIMEOUT),
       switchMap(() => of(true)),
       catchError((error) => {
+        // 401/403 means backend is reachable but requires authentication
+        // This is still a successful "is the backend running" check
+        if (error.status === 401 || error.status === 403) {
+          console.log('Backend reachable (requires auth):', error.status);
+          return of(true);
+        }
         console.warn('Backend health check failed:', error);
         return of(false);
       })

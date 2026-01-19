@@ -24,11 +24,12 @@ import { ViewTermComponent } from './components/terms/view-term/view-term.compon
 import { TermCreatorComponent } from './components/terms/term-creator/term-creator.component';
 import { ContextualizedTermCreatorComponent } from './components/terms/contextualized-term-creator/contextualized-term-creator.component';
 import { ElectionDebateComponent } from './components/debate/election-debate/election-debate.component';
+import { PolicyScoringConceptsComponent } from './components/home-page/informational/policy-scoring-concepts/policy-scoring-concepts.component';
 
 export const routes: Routes = [
     { path: '', component: HomePageComponent },
     // Scoring Components
-    { path: 'policy-scoring', component: PolicyScoringComponent },
+    { path: 'policy-scoring', component: PolicyScoringConceptsComponent },
     { path: 'competitive-scoring', component: CompetitiveScoringComponent },
     { path: 'solution-scoring', component: SolutionScoringComponent },
     // Competitor Components

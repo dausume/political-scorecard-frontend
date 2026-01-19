@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { AuthSessionService } from './services/auth/auth-session.service'
 import { HeaderBarComponent } from './components/header-bar/header-bar.component';
+import { CertificateTrustPromptComponent } from './components/certificate-trust-prompt/certificate-trust-prompt.component';
+import { CertificateTrustService } from './services/certificate-trust.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderBarComponent],
+  imports: [RouterOutlet, HeaderBarComponent, CertificateTrustPromptComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -15,10 +17,15 @@ export class AppComponent implements OnInit {
 
   constructor(
     private authSession: AuthSessionService,
-    private router: Router
+    private router: Router,
+    private certTrustService: CertificateTrustService
   ) {}
 
   async ngOnInit() {
+    // First, check if certificates are trusted (for HTTPS dev mode)
+    // This runs in parallel and shows a prompt if certs need to be trusted
+    this.certTrustService.checkAllEndpoints();
+
     // Check if this is an OAuth callback (has 'code' or 'state' in URL)
     const urlParams = new URLSearchParams(window.location.search);
     const hasCode = urlParams.has('code');

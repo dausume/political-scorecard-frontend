@@ -1,7 +1,6 @@
-// This environment.ts file is meant to be replaced at build time according to how it is you want to
-// configure the angular app environment, it will typically be replaced using either auto-templating
-// via something like jinja-2, or through direct overwrite by a Dockerfile from a pre-existing template
-// replacement file.
+// This environment.ts file auto-detects the deployment mode based on the current URL.
+// - Suite mode (Docker): Accessed via proxy at ports 2053, 2083, 8443
+// - Bare metal mode: Accessed directly at ports 4200, 8580, 8443
 
 export interface Environment {
   production: boolean;
@@ -19,13 +18,33 @@ export interface Environment {
   };
 }
 
-export const environment: Environment = {
+// Auto-detect mode based on current URL
+// Suite mode uses proxy port 2053 for frontend
+const isSuiteMode = typeof window !== 'undefined' && window.location.port === '2053';
+
+// Suite mode configuration (Docker with proxy)
+const suiteConfig: Environment = {
   production: false,
-  // Frontend runs in browser, so use localhost with exposed Docker ports
+  backendHttpsUri: 'https://localhost:2083/',
+  backendUri: 'https://localhost:2083/',
+  keycloak: {
+    authority: 'https://localhost:8443/realms/Political-Scorecard',
+    clientId: 'political-scorecard-frontend',
+    realm: 'Political-Scorecard',
+    redirectUri: 'https://localhost:2053',
+    postLogoutRedirectUri: 'https://localhost:2053',
+    responseType: 'code',
+    scope: 'openid profile email roles',
+    silentRedirectUri: 'https://localhost:2053/silent-refresh.html'
+  }
+};
+
+// Bare metal configuration (direct access)
+const bareMetalConfig: Environment = {
+  production: false,
   backendHttpsUri: 'https://localhost:8580/',
   backendUri: 'http://localhost:8580/',
   keycloak: {
-    // Browser needs to access Keycloak via localhost, not Docker hostname
     authority: 'https://localhost:8443/realms/Political-Scorecard',
     clientId: 'political-scorecard-frontend',
     realm: 'Political-Scorecard',
@@ -36,3 +55,11 @@ export const environment: Environment = {
     silentRedirectUri: 'http://localhost:4200/silent-refresh.html'
   }
 };
+
+// Export the appropriate config based on detected mode
+export const environment: Environment = isSuiteMode ? suiteConfig : bareMetalConfig;
+
+// Log the detected mode for debugging
+if (typeof window !== 'undefined') {
+  console.log(`Environment: ${isSuiteMode ? 'Suite (Docker proxy)' : 'Bare metal'} mode detected`);
+}
