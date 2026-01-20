@@ -1,7 +1,130 @@
-<p>solution-scoring works!</p>
-<p>
-    Solution Scoring is about Process Analysis, using flow-chart like interfaces to plot out how exactly 
-    we intend to implement actions for a particular policy.  And/Or what is known and what is not known
-    about how exactly the policy is meant to be implemented (segments may be left abstract and be filled in
-    along the way).
-</p>
+<div class="solution-scoring-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/">
+      <mat-icon>home</mat-icon> Home
+    </button>
+  </nav>
+
+  <h1>Solution Scoring</h1>
+  <p class="subtitle">Develop, refine, and democratically choose the best solutions through expert analysis and community input</p>
+
+  <section class="scoring-flow">
+    <div class="flow-note">
+      <mat-icon>info</mat-icon>
+      <em>Solutions are created and managed in the <strong>Polari Research Framework</strong>.
+      Democratic processes for refining and choosing the best solutions occur by pulling solutions
+      from Polari into static versions that are voted on here in Solution Scoring.</em>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <section class="expert-section">
+      <h2>Expert-Level Phases</h2>
+      <p class="section-intro">
+        These phases are performed by domain experts in business, economics, technology, and policy.
+      </p>
+
+      <!-- Phase 1: Requirements Development -->
+      <mat-card class="phase-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>engineering</mat-icon>
+          <mat-card-title>Phase 1: Requirements Development</mat-card-title>
+          <mat-card-subtitle>Foundation Layer</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Experts develop the foundational requirements that solutions must address.
+          </p>
+          <ul>
+            <li><strong>Business Processes</strong> - Define operational workflows and organizational needs</li>
+            <li><strong>Economic Requirements & Dependencies</strong> - Identify costs, resources, and economic interdependencies</li>
+            <li><strong>Technological Requirements & Dependencies</strong> - Specify technical capabilities and system integrations needed</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Phase 2: Logical Equivalence -->
+      <mat-card class="phase-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>account_tree</mat-icon>
+          <mat-card-title>Phase 2: Logical Equivalence Assertions</mat-card-title>
+          <mat-card-subtitle>Abstraction Layer</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Experts assert that specific <strong>Solutions</strong> are logically equivalent to
+            abstract processes defined in Phase 1.
+          </p>
+          <ul>
+            <li>Map concrete solutions to abstract process requirements</li>
+            <li>Establish formal equivalence relationships</li>
+            <li>Enable comparison across different solution implementations</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Phase 3: Implications & Viability -->
+      <mat-card class="phase-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>fact_check</mat-icon>
+          <mat-card-title>Phase 3: Implications & Viability</mat-card-title>
+          <mat-card-subtitle>Analysis Layer</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Experts, communities, and stakeholders assert implications and viability factors for Solutions.
+          </p>
+          <ul>
+            <li>Assess real-world implications of implementing solutions</li>
+            <li>Identify viability factors (feasibility, scalability, sustainability)</li>
+            <li>Gather input from affected communities and domain experts</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Phase 4: WorldView Score Assertions -->
+      <mat-card class="phase-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>analytics</mat-icon>
+          <mat-card-title>Phase 4: WorldView Score Assertions</mat-card-title>
+          <mat-card-subtitle>Measurement Layer</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Assert which <strong>WorldView Scores</strong> should be impacted by each Solution.
+          </p>
+          <ul>
+            <li>Assertions at the <strong>state level</strong> - overall impact measurements</li>
+            <li>Assertions at <strong>logic decision branches</strong> - determining applicable measures for different process paths</li>
+            <li>Define success metrics tied to worldview dimensions</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Phase 5: Solution Composition -->
+      <mat-card class="phase-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>merge_type</mat-icon>
+          <mat-card-title>Phase 5: Solution Composition</mat-card-title>
+          <mat-card-subtitle>Integration Layer</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Combine solutions with custom logic decision chains to create a <strong>"Solution of Solutions"</strong>
+            that becomes a policy process.
+          </p>
+          <ul>
+            <li>Combine multiple solutions with custom logic decision chains</li>
+            <li>Create composite solutions that address complex policy needs</li>
+            <li>Apply directly to policy as a specific solution implementation</li>
+            <li>Generate rough draft processes for implementing policy segments</li>
+            <li>Tie success measurements from the beginning of policy implementation</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+    </section>
+
+  </section>
+
+</div>

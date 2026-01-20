@@ -1,1 +1,406 @@
-<p>about-the-scorecard works!</p>
+<div class="about-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/">
+      <mat-icon>home</mat-icon> Home
+    </button>
+    <button mat-stroked-button routerLink="/about-polari">
+      <mat-icon>info</mat-icon> About Polari
+    </button>
+  </nav>
+
+  <header class="page-header">
+    <h1>About the Political Scorecard</h1>
+    <p class="subtitle">
+      A transparent, democratic framework for evaluating policies and solutions based on measurable outcomes and diverse worldviews.
+    </p>
+  </header>
+
+  <!-- Introduction Section -->
+  <section class="intro-section">
+    <mat-card class="intro-card">
+      <mat-card-content>
+        <h2>What is the Political Scorecard?</h2>
+        <p>
+          The Political Scorecard is a platform designed to bring transparency, measurability, and democratic participation
+          to policy evaluation. Rather than relying on partisan rhetoric or simplistic left-right classifications,
+          the scorecard enables communities to define what matters to them and measure how well policies and solutions
+          address those concerns.
+        </p>
+        <p>
+          At its core, the scorecard transforms abstract political debates into concrete, comparable metrics.
+          It bridges the gap between expert analysis and public participation, ensuring that both domain expertise
+          and democratic voice shape how we understand and evaluate policy.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <!-- Core Concepts Section -->
+  <section class="concepts-section">
+    <h2>Core Concepts</h2>
+    <p class="section-description">
+      The scorecard is built on four foundational elements that work together to create a comprehensive evaluation system.
+    </p>
+
+    <div class="concepts-grid">
+      <mat-card class="concept-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="terms-icon">description</mat-icon>
+          <mat-card-title>Terms</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            <strong>Terms</strong> are the fundamental building blocks of the scoring system. Each term represents
+            a measurable concept like "Labor Quality," "Environmental Impact," or "Economic Growth."
+          </p>
+          <p>
+            Terms can be <strong>contextualized</strong> with specific data sources, time periods, and geographic scope,
+            allowing the same abstract concept to be grounded in real-world measurements.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="primary" routerLink="/terms">
+            <mat-icon>arrow_forward</mat-icon> Explore Terms
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="concept-card">
+        <mat-icon mat-card-avatar class="ballot-icon">how_to_vote</mat-icon>
+        <mat-card-header>
+          <mat-card-title>Worldview Ballots</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            <strong>Worldview Ballots</strong> allow individuals and groups to express how much they value different terms.
+            By assigning weights to terms, participants create a personalized scoring equation that reflects their priorities.
+          </p>
+          <p>
+            These ballots become the lens through which policies and solutions are evaluated—the same policy
+            can score differently depending on whose worldview is applied.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="primary" routerLink="/worldview-ballot">
+            <mat-icon>arrow_forward</mat-icon> Cast Your Ballot
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="concept-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="category-icon">category</mat-icon>
+          <mat-card-title>Political Categories</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            <strong>Political Categories</strong> organize terms, policies, and solutions into thematic areas
+            like Healthcare, Economic Policy, Environmental, or Technology.
+          </p>
+          <p>
+            Users can prioritize categories important to them, helping filter and surface relevant content
+            while enabling cross-cutting analysis of how policies affect multiple domains.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="primary" routerLink="/political-categories">
+            <mat-icon>arrow_forward</mat-icon> View Categories
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="concept-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="groups-icon">groups</mat-icon>
+          <mat-card-title>Groups</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            <strong>Political Groups</strong> bring together people with shared political perspectives to
+            collaborate on worldview ballots and participate in elections together.
+          </p>
+          <p>
+            <strong>Professional Groups</strong> organize domain experts (economists, healthcare professionals,
+            engineers) who contribute specialized knowledge to policy and solution evaluation.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="primary" routerLink="/political-groups">
+            <mat-icon>arrow_forward</mat-icon> Explore Groups
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <!-- Three Scoring Methods Section -->
+  <section class="scoring-methods-section">
+    <h2>Three Approaches to Scoring</h2>
+    <p class="section-description">
+      The scorecard supports three distinct but interconnected approaches to evaluation, each serving different purposes and audiences.
+    </p>
+
+    <div class="methods-grid">
+      <!-- Policy Scoring -->
+      <mat-card class="method-card policy-method">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>gavel</mat-icon>
+          <mat-card-title>Policy Scoring</mat-card-title>
+          <mat-card-subtitle>Evaluating Legislation & Policy</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Policy Scoring analyzes drafted legislation and formal policy proposals. Legal professionals and policy
+            specialists annotate text segments, asserting which terms and processes apply to each part.
+          </p>
+          <h4>Key Features:</h4>
+          <ul>
+            <li>Expert annotation of policy text segments</li>
+            <li>Mapping assertions to worldview scores</li>
+            <li>Layperson validation through simple swipe interactions</li>
+            <li>Comparison of competing policy interpretations</li>
+          </ul>
+          <p class="method-purpose">
+            <strong>Purpose:</strong> Create accountability by establishing what a policy intends to achieve
+            and measuring it against those stated goals.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" routerLink="/policy-scoring">
+            Learn More
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Solution Scoring -->
+      <mat-card class="method-card solution-method">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>engineering</mat-icon>
+          <mat-card-title>Solution Scoring</mat-card-title>
+          <mat-card-subtitle>Analyzing Implementation Approaches</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Solution Scoring focuses on the "how" of policy implementation. Domain experts in business, economics,
+            and technology develop requirements and evaluate concrete solutions against abstract process needs.
+          </p>
+          <h4>Five Expert Phases:</h4>
+          <ul>
+            <li><strong>Requirements Development</strong> - Define what solutions must address</li>
+            <li><strong>Logical Equivalence</strong> - Map solutions to abstract requirements</li>
+            <li><strong>Implications & Viability</strong> - Assess real-world feasibility</li>
+            <li><strong>WorldView Score Assertions</strong> - Define success metrics</li>
+            <li><strong>Solution Composition</strong> - Combine solutions into policy processes</li>
+          </ul>
+          <p class="method-purpose">
+            <strong>Purpose:</strong> Bridge the gap between policy intent and practical implementation
+            through rigorous process analysis.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" routerLink="/solution-scoring">
+            Learn More
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Worldview Elections -->
+      <mat-card class="method-card election-method">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>ballot</mat-icon>
+          <mat-card-title>Worldview Elections</mat-card-title>
+          <mat-card-subtitle>Democratic Definition of Values</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Worldview Elections allow communities to democratically define how terms should be weighted
+            and measured. Through debate and voting, groups establish shared scoring equations.
+          </p>
+          <h4>Election Process:</h4>
+          <ul>
+            <li>Propose term weightings and measurement approaches</li>
+            <li>Debate interpretations with other participants</li>
+            <li>Vote on competing worldview definitions</li>
+            <li>Generate group consensus ballots</li>
+          </ul>
+          <p class="method-purpose">
+            <strong>Purpose:</strong> Ensure that scoring reflects democratic input, not just expert opinion,
+            while surfacing where worldviews genuinely diverge.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" routerLink="/worldview-elections">
+            View Elections
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <!-- How It Works Together Section -->
+  <section class="integration-section">
+    <h2>How It All Connects</h2>
+
+    <mat-card class="flow-card">
+      <mat-card-content>
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <mat-icon>description</mat-icon>
+            <span class="step-label">Terms</span>
+            <span class="step-desc">Define measurable concepts</span>
+          </div>
+          <mat-icon class="flow-arrow">arrow_forward</mat-icon>
+          <div class="flow-step">
+            <mat-icon>how_to_vote</mat-icon>
+            <span class="step-label">Worldview Ballots</span>
+            <span class="step-desc">Weight terms by priority</span>
+          </div>
+          <mat-icon class="flow-arrow">arrow_forward</mat-icon>
+          <div class="flow-step">
+            <mat-icon>calculate</mat-icon>
+            <span class="step-label">Scoring Equations</span>
+            <span class="step-desc">Generate personalized metrics</span>
+          </div>
+          <mat-icon class="flow-arrow">arrow_forward</mat-icon>
+          <div class="flow-step">
+            <mat-icon>assessment</mat-icon>
+            <span class="step-label">Policy & Solution Scores</span>
+            <span class="step-desc">Evaluate against your values</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="integration-points">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>link</mat-icon>
+            Terms feed into Worldview Ballots
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>
+          The terms defined in the system become the options that participants weight in their worldview ballots.
+          As new terms are added and contextualized, they become available for inclusion in future ballots and elections.
+        </p>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>link</mat-icon>
+            Worldview Elections produce Group Ballots
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>
+          When political or professional groups conduct worldview elections, the results become official group ballots.
+          These aggregated worldviews can then be used to score policies, showing how different communities
+          would evaluate the same proposal.
+        </p>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>link</mat-icon>
+            Solutions compose into Policy Processes
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>
+          Individual solutions evaluated in Solution Scoring can be combined with custom logic chains to form
+          complete policy implementation processes. These composed solutions provide the "how" that accompanies
+          the "what" of policy text.
+        </p>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>link</mat-icon>
+            Categories enable cross-cutting analysis
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>
+          Political categories tag terms, policies, and solutions, enabling analysis across domains.
+          A healthcare policy might also impact economic and environmental categories—the scorecard
+          surfaces these connections rather than forcing single-issue thinking.
+        </p>
+      </mat-expansion-panel>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <!-- Why This Matters Section -->
+  <section class="why-section">
+    <h2>Why This Approach Matters</h2>
+
+    <div class="benefits-grid">
+      <mat-card class="benefit-card">
+        <mat-icon>visibility</mat-icon>
+        <h3>Transparency</h3>
+        <p>
+          Every score can be traced back to its component terms, weights, and data sources.
+          No black boxes—understand exactly why a policy scores the way it does.
+        </p>
+      </mat-card>
+
+      <mat-card class="benefit-card">
+        <mat-icon>diversity_3</mat-icon>
+        <h3>Pluralism</h3>
+        <p>
+          Different worldviews produce different scores, and that's the point.
+          The scorecard doesn't impose a single "correct" evaluation—it reveals how values shape conclusions.
+        </p>
+      </mat-card>
+
+      <mat-card class="benefit-card">
+        <mat-icon>track_changes</mat-icon>
+        <h3>Accountability</h3>
+        <p>
+          By establishing success metrics upfront, policies can be measured against their stated intentions.
+          This creates a feedback loop for learning what actually works.
+        </p>
+      </mat-card>
+
+      <mat-card class="benefit-card">
+        <mat-icon>people</mat-icon>
+        <h3>Participation</h3>
+        <p>
+          Expert analysis is essential, but so is democratic voice.
+          The scorecard creates pathways for both specialists and the general public to contribute meaningfully.
+        </p>
+      </mat-card>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-section">
+    <mat-card class="cta-card">
+      <mat-card-content>
+        <h2>Get Started</h2>
+        <p>
+          Ready to explore the Political Scorecard? Cast your first worldview ballot,
+          browse existing terms, or join a group to participate in elections.
+        </p>
+        <div class="cta-buttons">
+          <button mat-raised-button color="primary" routerLink="/worldview-ballot">
+            <mat-icon>how_to_vote</mat-icon> Cast Your Ballot
+          </button>
+          <button mat-raised-button color="accent" routerLink="/terms">
+            <mat-icon>description</mat-icon> Explore Terms
+          </button>
+          <button mat-stroked-button routerLink="/political-groups">
+            <mat-icon>groups</mat-icon> Join a Group
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

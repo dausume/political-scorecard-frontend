@@ -1,1 +1,138 @@
-<p>professional-groups works!</p>
+<div class="groups-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/">
+      <mat-icon>home</mat-icon> Home
+    </button>
+    <button mat-stroked-button routerLink="/political-groups">
+      <mat-icon>groups</mat-icon> Political Groups
+    </button>
+  </nav>
+
+  <header class="page-header">
+    <h1>
+      <mat-icon>work</mat-icon>
+      Professional Groups
+    </h1>
+    <p class="subtitle">
+      Join professional groups to contribute domain expertise to policy analysis, solution evaluation, and worldview elections.
+    </p>
+  </header>
+
+  <!-- Auth Status Check -->
+  @if ((authStatus$ | async) === 'checking') {
+    <div class="auth-checking">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Checking authentication...</p>
+    </div>
+  } @else if (!(isAuthenticated$ | async)) {
+    <!-- Not Authenticated - Show Login Prompt -->
+    <div class="auth-required-overlay">
+      <mat-card class="login-prompt-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>lock</mat-icon>
+          <mat-card-title>Authentication Required</mat-card-title>
+          <mat-card-subtitle>Please log in to access Professional Groups</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            You need to be logged in to view and join professional groups.
+            Professional groups bring together domain experts to provide specialized
+            analysis and insights on policies within their areas of expertise.
+          </p>
+          <div class="features-preview">
+            <div class="feature">
+              <mat-icon>psychology</mat-icon>
+              <span>Contribute expert domain knowledge</span>
+            </div>
+            <div class="feature">
+              <mat-icon>rate_review</mat-icon>
+              <span>Review and score policy proposals</span>
+            </div>
+            <div class="feature">
+              <mat-icon>verified</mat-icon>
+              <span>Validate solutions in your field</span>
+            </div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="login()">
+            <mat-icon>login</mat-icon>
+            Log In to Continue
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Grayed out preview of groups -->
+      <div class="groups-preview-disabled">
+        <h3>Available Groups Preview</h3>
+        <div class="groups-grid disabled">
+          @for (group of groups.slice(0, 3); track group.id) {
+            <mat-card class="group-card preview">
+              <mat-card-header>
+                <mat-icon mat-card-avatar>{{ group.icon }}</mat-icon>
+                <mat-card-title>{{ group.name }}</mat-card-title>
+                <mat-card-subtitle>{{ group.memberCount }} members</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <p>{{ group.description }}</p>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+        <p class="preview-note">Log in to see all groups and join them</p>
+      </div>
+    </div>
+  } @else {
+    <!-- Authenticated - Show Full Content -->
+    <section class="controls-section">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search groups</mat-label>
+        <input matInput [(ngModel)]="searchQuery" placeholder="Search by name, description, or category...">
+        <mat-icon matPrefix>search</mat-icon>
+        @if (searchQuery) {
+          <button matSuffix mat-icon-button (click)="searchQuery = ''">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+    </section>
+
+    <section class="groups-grid">
+      @for (group of filteredGroups; track group.id) {
+        <mat-card class="group-card" [style.border-left-color]="group.color">
+          <mat-card-header>
+            <mat-icon mat-card-avatar [style.color]="group.color">{{ group.icon }}</mat-icon>
+            <mat-card-title>{{ group.name }}</mat-card-title>
+            <mat-card-subtitle>
+              <mat-icon>people</mat-icon> {{ group.memberCount }} members
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ group.description }}</p>
+            @if (group.categories && group.categories.length > 0) {
+              <div class="category-chips">
+                @for (category of group.categories; track category) {
+                  <mat-chip>{{ category }}</mat-chip>
+                }
+              </div>
+            }
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-button [style.color]="group.color" (click)="viewGroup(group)">
+              <mat-icon>visibility</mat-icon> View
+            </button>
+            <button mat-raised-button [style.background-color]="group.color" style="color: white" (click)="joinGroup(group)">
+              <mat-icon>group_add</mat-icon> Join Group
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      } @empty {
+        <div class="empty-state">
+          <mat-icon>search_off</mat-icon>
+          <p>No groups found matching "{{ searchQuery }}"</p>
+          <button mat-stroked-button (click)="searchQuery = ''">Clear Search</button>
+        </div>
+      }
+    </section>
+  }
+</div>

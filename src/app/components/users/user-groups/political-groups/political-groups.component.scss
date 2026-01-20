@@ -1,0 +1,264 @@
+.groups-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+
+  .page-nav {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+
+    button {
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  .page-header {
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      mat-icon {
+        font-size: 2rem;
+        width: 2rem;
+        height: 2rem;
+      }
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 1.1rem;
+      max-width: 800px;
+    }
+  }
+}
+
+// Auth checking state
+.auth-checking {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: #666;
+
+  p {
+    margin-top: 1rem;
+  }
+}
+
+// Not authenticated state
+.auth-required-overlay {
+  .login-prompt-card {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    border-left: 4px solid #1976d2;
+
+    mat-card-header {
+      mat-icon[mat-card-avatar] {
+        font-size: 32px;
+        width: 40px;
+        height: 40px;
+        color: #1976d2;
+      }
+    }
+
+    mat-card-content {
+      p {
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+      }
+
+      .features-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+
+        .feature {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          color: #333;
+
+          mat-icon {
+            color: #1976d2;
+          }
+        }
+      }
+    }
+
+    mat-card-actions {
+      padding: 1rem 1.5rem;
+      justify-content: center;
+
+      button {
+        mat-icon {
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+
+  .groups-preview-disabled {
+    margin-top: 2rem;
+
+    h3 {
+      text-align: center;
+      color: #999;
+      margin-bottom: 1rem;
+    }
+
+    .preview-note {
+      text-align: center;
+      color: #999;
+      font-style: italic;
+      margin-top: 1rem;
+    }
+  }
+}
+
+// Groups grid
+.groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    filter: grayscale(70%);
+  }
+}
+
+.group-card {
+  border-left: 4px solid #ccc;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover:not(.preview) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &.preview {
+    cursor: not-allowed;
+  }
+
+  mat-card-header {
+    mat-icon[mat-card-avatar] {
+      font-size: 32px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    mat-card-subtitle {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  mat-card-content {
+    p {
+      color: #555;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .category-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+
+      mat-chip {
+        font-size: 0.75rem;
+      }
+    }
+  }
+
+  mat-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 8px 16px;
+
+    button mat-icon {
+      margin-right: 0.25rem;
+    }
+  }
+}
+
+// Controls section
+.controls-section {
+  margin-bottom: 1.5rem;
+
+  .search-field {
+    width: 100%;
+    max-width: 400px;
+  }
+}
+
+// Empty state
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: #757575;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .groups-container {
+    padding: 1rem;
+  }
+
+  .groups-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-nav {
+    flex-wrap: wrap;
+  }
+
+  .auth-required-overlay .login-prompt-card {
+    margin: 0 0 2rem;
+
+    .features-preview {
+      .feature {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}

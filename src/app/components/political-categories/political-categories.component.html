@@ -1,4 +1,169 @@
-<p>political-categories works!</p>
-<p>
-    Political Categories are a means by which we choose to categorize topics for debate, policy development, solutioning, etc.
-</p>
+<div class="categories-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/">
+      <mat-icon>home</mat-icon> Home
+    </button>
+  </nav>
+
+  <header class="page-header">
+    <h1>Political Categories</h1>
+    <p class="subtitle">
+      Categories help you organize and filter terms, policies, solutions, and worldview elections.
+      Prioritize categories important to you to see relevant content first.
+    </p>
+  </header>
+
+  <!-- Search and Filter Controls -->
+  <section class="controls-section">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search categories</mat-label>
+      <input matInput [(ngModel)]="searchQuery" placeholder="Type to search...">
+      <mat-icon matPrefix>search</mat-icon>
+      @if (searchQuery) {
+        <button matSuffix mat-icon-button (click)="searchQuery = ''">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    <div class="filter-tabs">
+      <button mat-stroked-button
+              [class.active]="activeFilter === 'all'"
+              (click)="setFilter('all')">
+        All ({{ categories.length }})
+      </button>
+      <button mat-stroked-button
+              [class.active]="activeFilter === 'high'"
+              (click)="setFilter('high')">
+        <mat-icon>star</mat-icon>
+        Prioritized ({{ prioritizedCount }})
+      </button>
+      <button mat-stroked-button
+              [class.active]="activeFilter === 'normal'"
+              (click)="setFilter('normal')">
+        Normal
+      </button>
+      <button mat-stroked-button
+              [class.active]="activeFilter === 'low'"
+              (click)="setFilter('low')">
+        <mat-icon>star_border</mat-icon>
+        De-prioritized ({{ deprioritizedCount }})
+      </button>
+    </div>
+  </section>
+
+  <!-- Instructions -->
+  <section class="instructions">
+    <mat-icon>info</mat-icon>
+    <span>
+      Click the star icon to cycle through priority levels:
+      <strong>Normal</strong> → <strong>Prioritized</strong> → <strong>De-prioritized</strong> → Normal
+    </span>
+    @if (preferences.size > 0) {
+      <button mat-button color="warn" (click)="resetAllPreferences()">
+        Reset All
+      </button>
+    }
+  </section>
+
+  <!-- Categories Grid -->
+  <section class="categories-grid">
+    @for (category of filteredCategories; track category.id) {
+      <mat-card class="category-card"
+                [class.prioritized]="getPriority(category.id) === 'high'"
+                [class.deprioritized]="getPriority(category.id) === 'low'"
+                [style.border-left-color]="category.color">
+        <mat-card-header>
+          <mat-icon mat-card-avatar [style.color]="category.color">{{ category.icon }}</mat-icon>
+          <mat-card-title>{{ category.name }}</mat-card-title>
+          <mat-card-subtitle>
+            <mat-chip-set>
+              <mat-chip [class]="'priority-chip ' + getPriority(category.id)">
+                {{ getPriorityLabel(getPriority(category.id)) }}
+              </mat-chip>
+            </mat-chip-set>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ category.description }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-icon-button
+                  [matTooltip]="'Click to change priority (Current: ' + getPriorityLabel(getPriority(category.id)) + ')'"
+                  (click)="cyclePriority(category.id)"
+                  [class]="'priority-button ' + getPriority(category.id)">
+            <mat-icon>{{ getPriorityIcon(getPriority(category.id)) }}</mat-icon>
+          </button>
+          <span class="spacer"></span>
+          <button mat-button
+                  [style.color]="category.color"
+                  matTooltip="Set as prioritized"
+                  [disabled]="getPriority(category.id) === 'high'"
+                  (click)="setPriority(category.id, 'high')">
+            <mat-icon>arrow_upward</mat-icon> Prioritize
+          </button>
+          <button mat-button
+                  color="warn"
+                  matTooltip="Set as de-prioritized"
+                  [disabled]="getPriority(category.id) === 'low'"
+                  (click)="setPriority(category.id, 'low')">
+            <mat-icon>arrow_downward</mat-icon> De-prioritize
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    } @empty {
+      <div class="empty-state">
+        <mat-icon>category</mat-icon>
+        <p>No categories found matching your criteria.</p>
+        @if (searchQuery || activeFilter !== 'all') {
+          <button mat-stroked-button (click)="searchQuery = ''; activeFilter = 'all'">
+            Clear Filters
+          </button>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- Summary Section -->
+  @if (preferences.size > 0) {
+    <section class="summary-section">
+      <h3>Your Category Preferences</h3>
+      <div class="summary-chips">
+        <div class="chip-group">
+          <span class="chip-label">Prioritized:</span>
+          @for (category of categories; track category.id) {
+            @if (getPriority(category.id) === 'high') {
+              <mat-chip class="priority-chip high" (removed)="setPriority(category.id, 'normal')">
+                <mat-icon [style.color]="category.color">{{ category.icon }}</mat-icon>
+                {{ category.name }}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            }
+          }
+          @if (prioritizedCount === 0) {
+            <span class="no-items">None selected</span>
+          }
+        </div>
+        <div class="chip-group">
+          <span class="chip-label">De-prioritized:</span>
+          @for (category of categories; track category.id) {
+            @if (getPriority(category.id) === 'low') {
+              <mat-chip class="priority-chip low" (removed)="setPriority(category.id, 'normal')">
+                <mat-icon [style.color]="category.color">{{ category.icon }}</mat-icon>
+                {{ category.name }}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            }
+          }
+          @if (deprioritizedCount === 0) {
+            <span class="no-items">None selected</span>
+          }
+        </div>
+      </div>
+    </section>
+  }
+</div>

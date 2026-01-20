@@ -1,5 +1,6 @@
 // This environment.ts file auto-detects the deployment mode based on the current URL.
-// - Suite mode (Docker): Accessed via proxy at ports 2053, 2083, 8443
+// - Production mode: Accessed via psc.polari-systems.org domain
+// - Suite dev mode (Docker): Accessed via proxy at ports 2053, 2083, 8443
 // - Bare metal mode: Accessed directly at ports 4200, 8580, 8443
 
 export interface Environment {
@@ -19,10 +20,34 @@ export interface Environment {
 }
 
 // Auto-detect mode based on current URL
-// Suite mode uses proxy port 2053 for frontend
-const isSuiteMode = typeof window !== 'undefined' && window.location.port === '2053';
+const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+const port = typeof window !== 'undefined' ? window.location.port : '';
+const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:';
 
-// Suite mode configuration (Docker with proxy)
+// Production mode: Running on polari-systems.org domain
+const isProductionMode = hostname.includes('polari-systems.org');
+
+// Suite dev mode: Uses proxy port 2053 for frontend
+const isSuiteMode = !isProductionMode && port === '2053';
+
+// Production configuration (polari-systems.org domains)
+const productionConfig: Environment = {
+  production: true,
+  backendHttpsUri: 'https://api.psc.polari-systems.org/',
+  backendUri: 'https://api.psc.polari-systems.org/',
+  keycloak: {
+    authority: 'https://auth.polari-systems.org/realms/Political-Scorecard',
+    clientId: 'political-scorecard-frontend',
+    realm: 'Political-Scorecard',
+    redirectUri: 'https://psc.polari-systems.org',
+    postLogoutRedirectUri: 'https://psc.polari-systems.org',
+    responseType: 'code',
+    scope: 'openid profile email roles',
+    silentRedirectUri: 'https://psc.polari-systems.org/silent-refresh.html'
+  }
+};
+
+// Suite dev mode configuration (Docker with proxy)
 const suiteConfig: Environment = {
   production: false,
   backendHttpsUri: 'https://localhost:2083/',
@@ -57,9 +82,18 @@ const bareMetalConfig: Environment = {
 };
 
 // Export the appropriate config based on detected mode
-export const environment: Environment = isSuiteMode ? suiteConfig : bareMetalConfig;
+function getEnvironment(): Environment {
+  if (isProductionMode) return productionConfig;
+  if (isSuiteMode) return suiteConfig;
+  return bareMetalConfig;
+}
+
+export const environment: Environment = getEnvironment();
 
 // Log the detected mode for debugging
 if (typeof window !== 'undefined') {
-  console.log(`Environment: ${isSuiteMode ? 'Suite (Docker proxy)' : 'Bare metal'} mode detected`);
+  const mode = isProductionMode ? 'Production' : (isSuiteMode ? 'Suite (Docker proxy)' : 'Bare metal');
+  console.log(`Environment: ${mode} mode detected`);
+  console.log(`  Hostname: ${hostname}, Port: ${port}`);
+  console.log(`  Backend: ${environment.backendUri}`);
 }
