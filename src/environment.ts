@@ -1,7 +1,13 @@
-// This environment.ts file auto-detects the deployment mode based on the current URL.
-// - Production mode: Accessed via psc.polari-systems.org domain
-// - Suite dev mode (Docker): Accessed via proxy at ports 2053, 2083, 8443
-// - Bare metal mode: Accessed directly at ports 4200, 8580, 8443
+// ==============================================================================
+// ENVIRONMENT CONFIGURATION
+// ==============================================================================
+// This file provides environment configuration with support for:
+// - Tier 1 (Build-time): Default configurations baked into the build
+// - Tier 2 (Startup-time): Runtime override via /assets/runtime-config.json
+// - Tier 3 (Runtime): URL-based auto-detection as fallback
+//
+// Priority: runtime-config.json > URL detection > build-time defaults
+// ==============================================================================
 
 export interface Environment {
   production: boolean;
@@ -19,18 +25,7 @@ export interface Environment {
   };
 }
 
-// Auto-detect mode based on current URL
-const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-const port = typeof window !== 'undefined' ? window.location.port : '';
-const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:';
-
-// Production mode: Running on polari-systems.org domain
-const isProductionMode = hostname.includes('polari-systems.org');
-
-// Suite dev mode: Uses proxy port 2053 for frontend
-const isSuiteMode = !isProductionMode && port === '2053';
-
-// Production configuration (polari-systems.org domains)
+// Build-time default configurations
 const productionConfig: Environment = {
   production: true,
   backendHttpsUri: 'https://api.psc.polari-systems.org/',
@@ -47,7 +42,6 @@ const productionConfig: Environment = {
   }
 };
 
-// Suite dev mode configuration (Docker with proxy)
 const suiteConfig: Environment = {
   production: false,
   backendHttpsUri: 'https://localhost:2083/',
@@ -64,7 +58,6 @@ const suiteConfig: Environment = {
   }
 };
 
-// Bare metal configuration (direct access)
 const bareMetalConfig: Environment = {
   production: false,
   backendHttpsUri: 'https://localhost:8580/',
@@ -81,19 +74,122 @@ const bareMetalConfig: Environment = {
   }
 };
 
-// Export the appropriate config based on detected mode
+// Runtime configuration state
+let runtimeConfig: Partial<Environment> | null = null;
+let configLoaded = false;
+let configLoadPromise: Promise<void> | null = null;
+
+/**
+ * Load runtime configuration from /assets/runtime-config.json
+ * This is called during app initialization
+ */
+export async function loadRuntimeConfig(): Promise<void> {
+  if (configLoaded) return;
+  if (configLoadPromise) return configLoadPromise;
+
+  configLoadPromise = (async () => {
+    try {
+      const response = await fetch('/assets/runtime-config.json');
+      if (response.ok) {
+        runtimeConfig = await response.json();
+        console.log('[Environment] Loaded runtime-config.json:', runtimeConfig);
+      }
+    } catch (error) {
+      console.log('[Environment] No runtime-config.json found, using URL detection');
+    }
+    configLoaded = true;
+  })();
+
+  return configLoadPromise;
+}
+
+/**
+ * Get environment based on runtime config, URL detection, or defaults
+ */
 function getEnvironment(): Environment {
-  if (isProductionMode) return productionConfig;
-  if (isSuiteMode) return suiteConfig;
+  // If runtime config is loaded, use it
+  if (runtimeConfig && runtimeConfig.backendUri) {
+    return {
+      production: runtimeConfig.production ?? false,
+      backendHttpsUri: runtimeConfig.backendHttpsUri || runtimeConfig.backendUri || '',
+      backendUri: runtimeConfig.backendUri || '',
+      keycloak: {
+        authority: runtimeConfig.keycloak?.authority || '',
+        clientId: runtimeConfig.keycloak?.clientId || 'political-scorecard-frontend',
+        realm: runtimeConfig.keycloak?.realm || 'Political-Scorecard',
+        redirectUri: runtimeConfig.keycloak?.redirectUri || '',
+        postLogoutRedirectUri: runtimeConfig.keycloak?.postLogoutRedirectUri || '',
+        responseType: runtimeConfig.keycloak?.responseType || 'code',
+        scope: runtimeConfig.keycloak?.scope || 'openid profile email roles',
+        silentRedirectUri: runtimeConfig.keycloak?.silentRedirectUri
+      }
+    };
+  }
+
+  // URL-based detection (runtime in browser)
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+
+    // Production mode: polari-systems.org domain
+    if (hostname.includes('polari-systems.org')) {
+      return productionConfig;
+    }
+
+    // Nip.io mode: *.nip.io domain (prod-local testing)
+    if (hostname.includes('.nip.io')) {
+      const nipIoBase = hostname.replace(/^[^.]+\./, '');
+      const frontendBase = `https://psc.${nipIoBase}`;
+      return {
+        production: false,
+        backendHttpsUri: `https://api.psc.${nipIoBase}/`,
+        backendUri: `https://api.psc.${nipIoBase}/`,
+        keycloak: {
+          authority: `https://auth.${nipIoBase}/realms/Political-Scorecard`,
+          clientId: 'political-scorecard-frontend',
+          realm: 'Political-Scorecard',
+          redirectUri: frontendBase,
+          postLogoutRedirectUri: frontendBase,
+          responseType: 'code',
+          scope: 'openid profile email roles',
+          silentRedirectUri: `${frontendBase}/silent-refresh.html`
+        }
+      };
+    }
+
+    // Suite dev mode: port 2053
+    if (port === '2053') {
+      return suiteConfig;
+    }
+  }
+
+  // Default: bare metal
   return bareMetalConfig;
 }
 
-export const environment: Environment = getEnvironment();
+// Create a proxy that always returns the current environment
+// This ensures runtime config is used once loaded
+const environmentProxy = new Proxy({} as Environment, {
+  get(target, prop) {
+    const env = getEnvironment();
+    return (env as any)[prop];
+  }
+});
 
-// Log the detected mode for debugging
+export const environment: Environment = environmentProxy;
+
+// Log detected mode
 if (typeof window !== 'undefined') {
-  const mode = isProductionMode ? 'Production' : (isSuiteMode ? 'Suite (Docker proxy)' : 'Bare metal');
-  console.log(`Environment: ${mode} mode detected`);
-  console.log(`  Hostname: ${hostname}, Port: ${port}`);
-  console.log(`  Backend: ${environment.backendUri}`);
+  // Defer logging until after potential runtime config load
+  setTimeout(() => {
+    const env = getEnvironment();
+    const hostname = window.location.hostname;
+    const mode = runtimeConfig ? 'Runtime Config' :
+      (hostname.includes('polari-systems.org') ? 'Production' :
+      (hostname.includes('.nip.io') ? 'Nip.io (Prod-Local)' :
+      (window.location.port === '2053' ? 'Suite (Docker)' : 'Bare Metal')));
+    console.log(`[Environment] Mode: ${mode}`);
+    console.log(`[Environment] Backend: ${env.backendUri}`);
+    console.log(`[Environment] Keycloak: ${env.keycloak.authority}`);
+  }, 100);
 }
