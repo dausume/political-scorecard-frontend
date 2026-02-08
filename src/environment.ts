@@ -13,6 +13,7 @@ export interface Environment {
   production: boolean;
   backendHttpsUri: string;
   backendUri: string;
+  polariResearchFrameworkUrl: string;
   keycloak: {
     authority: string;
     clientId: string;
@@ -30,6 +31,7 @@ const productionConfig: Environment = {
   production: true,
   backendHttpsUri: 'https://api.psc.polari-systems.org/',
   backendUri: 'https://api.psc.polari-systems.org/',
+  polariResearchFrameworkUrl: 'https://prf.polari-systems.org',
   keycloak: {
     authority: 'https://auth.polari-systems.org/realms/Political-Scorecard',
     clientId: 'political-scorecard-frontend',
@@ -46,6 +48,7 @@ const suiteConfig: Environment = {
   production: false,
   backendHttpsUri: 'https://localhost:2083/',
   backendUri: 'https://localhost:2083/',
+  polariResearchFrameworkUrl: 'https://localhost:2087',
   keycloak: {
     authority: 'https://localhost:8443/realms/Political-Scorecard',
     clientId: 'political-scorecard-frontend',
@@ -62,6 +65,7 @@ const bareMetalConfig: Environment = {
   production: false,
   backendHttpsUri: 'https://localhost:8580/',
   backendUri: 'http://localhost:8580/',
+  polariResearchFrameworkUrl: 'http://localhost:4201',
   keycloak: {
     authority: 'https://localhost:8443/realms/Political-Scorecard',
     clientId: 'political-scorecard-frontend',
@@ -113,6 +117,7 @@ function getEnvironment(): Environment {
       production: runtimeConfig.production ?? false,
       backendHttpsUri: runtimeConfig.backendHttpsUri || runtimeConfig.backendUri || '',
       backendUri: runtimeConfig.backendUri || '',
+      polariResearchFrameworkUrl: runtimeConfig.polariResearchFrameworkUrl || '',
       keycloak: {
         authority: runtimeConfig.keycloak?.authority || '',
         clientId: runtimeConfig.keycloak?.clientId || 'political-scorecard-frontend',
@@ -144,6 +149,7 @@ function getEnvironment(): Environment {
         production: false,
         backendHttpsUri: `https://api.psc.${nipIoBase}/`,
         backendUri: `https://api.psc.${nipIoBase}/`,
+        polariResearchFrameworkUrl: `https://prf.${nipIoBase}`,
         keycloak: {
           authority: `https://auth.${nipIoBase}/realms/Political-Scorecard`,
           clientId: 'political-scorecard-frontend',

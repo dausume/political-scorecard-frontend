@@ -1,5 +1,5 @@
 .worldview-ballot-container {
-  max-width: 1400px;
+  max-width: 1800px;
   margin: 0 auto;
   padding: 2rem;
   transition: all 0.3s ease;
@@ -398,9 +398,75 @@
   }
 }
 
-// Debate Sidepanel
+// Content wrapper for side-by-side layout with debate panel
+.ballot-content-wrapper {
+  display: flex;
+  gap: 1.5rem;
+
+  .ballot-main-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
+}
+
+// Debate Sidepanel - right side panel
 .debate-sidepanel {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 2px solid #e9ecef;
+  width: 380px;
+  flex-shrink: 0;
+  border-left: 2px solid #e9ecef;
+  padding-left: 1.5rem;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  position: sticky;
+  top: 1rem;
+
+  .sidepanel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    color: #007bff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+
+    &:hover {
+      background: #aaa;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    width: 100%;
+    border-left: none;
+    padding-left: 0;
+    border-top: 2px solid #e9ecef;
+    padding-top: 1.5rem;
+    max-height: 500px;
+    position: static;
+  }
 }

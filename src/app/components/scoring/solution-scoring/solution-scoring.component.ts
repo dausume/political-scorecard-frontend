@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { environment } from '../../../../environment';
 
 @Component({
   selector: 'app-solution-scoring',
@@ -14,5 +15,5 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './solution-scoring.component.scss'
 })
 export class SolutionScoringComponent {
-
+  polariResearchFrameworkUrl = environment.polariResearchFrameworkUrl;
 }
