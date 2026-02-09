@@ -2,6 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { from, switchMap } from 'rxjs';
 import { OidcService } from '../services/auth/oidc.service';
+import { environment } from '../../environment';
 
 /**
  * HTTP Interceptor to add Authorization header with Bearer token
@@ -19,11 +20,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   // Only add token to requests to the backend
-  // Check if request is to backend (you can customize this logic)
+  const backendUri = environment.backendUri;
+  const backendHttpsUri = environment.backendHttpsUri;
   const isBackendRequest = req.url.includes('/api/') ||
-                          req.url.startsWith('http://localhost:8080/') ||
-                          req.url.startsWith('http://localhost:8580/') ||
-                          req.url.startsWith('https://localhost:8443/');
+                          req.url.startsWith(backendUri) ||
+                          (backendHttpsUri && req.url.startsWith(backendHttpsUri));
 
   if (!isBackendRequest) {
     return next(req);

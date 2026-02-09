@@ -136,7 +136,12 @@ function getEnvironment(): Environment {
     const hostname = window.location.hostname;
     const port = window.location.port;
 
-    // Production mode: polari-systems.org domain
+    // Suite dev mode: port 2053 (checked first — dev port takes priority)
+    if (port === '2053') {
+      return suiteConfig;
+    }
+
+    // Production mode: polari-systems.org domain (standard ports only)
     if (hostname.includes('polari-systems.org')) {
       return productionConfig;
     }
@@ -162,11 +167,6 @@ function getEnvironment(): Environment {
         }
       };
     }
-
-    // Suite dev mode: port 2053
-    if (port === '2053') {
-      return suiteConfig;
-    }
   }
 
   // Default: bare metal
@@ -191,9 +191,9 @@ if (typeof window !== 'undefined') {
     const env = getEnvironment();
     const hostname = window.location.hostname;
     const mode = runtimeConfig ? 'Runtime Config' :
+      (window.location.port === '2053' ? 'Suite (Docker)' :
       (hostname.includes('polari-systems.org') ? 'Production' :
-      (hostname.includes('.nip.io') ? 'Nip.io (Prod-Local)' :
-      (window.location.port === '2053' ? 'Suite (Docker)' : 'Bare Metal')));
+      (hostname.includes('.nip.io') ? 'Nip.io (Prod-Local)' : 'Bare Metal')));
     console.log(`[Environment] Mode: ${mode}`);
     console.log(`[Environment] Backend: ${env.backendUri}`);
     console.log(`[Environment] Keycloak: ${env.keycloak.authority}`);
