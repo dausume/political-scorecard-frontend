@@ -1,10 +1,10 @@
 # Use Node.js base image
-FROM node:18
+FROM node:20
 
 WORKDIR /app
 
 # Install dependencies
-COPY package.json package-lock.json ./
+COPY package*.json ./
 RUN npm install
 
 # Copy Angular project files
