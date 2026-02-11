@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Client, StompSubscription } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../environment';
 
@@ -54,8 +53,10 @@ export class DebateWebSocketService {
 
     console.log('[WebSocket] Connecting to debate WebSocket...');
 
+    const wsUrl = `${environment.backendUri.replace(/^http/, 'ws')}ws-debate/websocket`;
+
     this.client = new Client({
-      webSocketFactory: () => new SockJS(`${environment.backendUri}ws-debate`),
+      brokerURL: wsUrl,
       debug: (str: string) => {
         console.log('[WebSocket Debug]', str);
       },

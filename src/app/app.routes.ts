@@ -1,63 +1,38 @@
 import { Routes } from '@angular/router';
 import { HomePageComponent } from './components/home-page/home-page.component';
-// Add imports for all components
-import { AboutPolariComponent } from './components/home-page/informational/about-polari/about-polari.component';
-import { PolicyScoringComponent } from './components/scoring/policy-scoring/policy-scoring.component';
-import { CompetitiveScoringComponent } from './components/scoring/competitive-scoring/competitive-scoring.component';
-import { PoliticalCompetitorsComponent } from './components/competitors/political-competitors/political-competitors.component';
-import { SolutionScoringComponent } from './components/scoring/solution-scoring/solution-scoring.component';
-import { AboutTheScorecardComponent } from './components/home-page/informational/about-the-scorecard/about-the-scorecard.component';
-import { UserInfoBarComponent } from './components/users/user-info-bar/user-info-bar.component';
-import { RegistrationComponent } from './components/users/registration/registration.component';
-import { ProfessionalGroupsComponent } from './components/users/user-groups/professional-groups/professional-groups.component';
-import { PoliticalGroupsComponent } from './components/users/user-groups/political-groups/political-groups.component';
-import { ProfessionalCompetitorsComponent } from './components/competitors/professional-competitors/professional-competitors.component';
-import { PolicyCompetitorsComponent } from './components/competitors/policy-competitors/policy-competitors.component';
-import { PoliticalCategoriesComponent } from './components/political-categories/political-categories.component';
-import { WorldviewBallotComponent } from './components/worldview-ballot/worldview-ballot.component';
-import { BrowseWorldviewBallotsComponent } from './components/worldview-ballot/browse-worldview-ballots/browse-worldview-ballots.component';
-import { ManageElectionsComponent } from './components/worldview-ballot/manage-elections/manage-elections.component';
-import { ElectionCreatorComponent } from './components/worldview-ballot/election-creator/election-creator.component';
-import { WorldviewBallotCreatorComponent } from './components/worldview-ballot/worldview-ballot-creator/worldview-ballot-creator.component';
-import { TermsPageComponent } from './components/terms/terms-page.component';
-import { ViewTermComponent } from './components/terms/view-term/view-term.component';
-import { TermCreatorComponent } from './components/terms/term-creator/term-creator.component';
-import { ContextualizedTermCreatorComponent } from './components/terms/contextualized-term-creator/contextualized-term-creator.component';
-import { ElectionDebateComponent } from './components/debate/election-debate/election-debate.component';
-import { PolicyScoringConceptsComponent } from './components/home-page/informational/policy-scoring-concepts/policy-scoring-concepts.component';
 
 export const routes: Routes = [
     { path: '', component: HomePageComponent },
     // Scoring Components
-    { path: 'policy-scoring', component: PolicyScoringConceptsComponent },
-    { path: 'competitive-scoring', component: CompetitiveScoringComponent },
-    { path: 'solution-scoring', component: SolutionScoringComponent },
+    { path: 'policy-scoring', loadComponent: () => import('./components/home-page/informational/policy-scoring-concepts/policy-scoring-concepts.component').then(m => m.PolicyScoringConceptsComponent) },
+    { path: 'competitive-scoring', loadComponent: () => import('./components/scoring/competitive-scoring/competitive-scoring.component').then(m => m.CompetitiveScoringComponent) },
+    { path: 'solution-scoring', loadComponent: () => import('./components/scoring/solution-scoring/solution-scoring.component').then(m => m.SolutionScoringComponent) },
     // Competitor Components
-    { path: 'political-competitors', component: PoliticalCompetitorsComponent },
-    { path: 'professional-competitors', component: ProfessionalCompetitorsComponent },
-    { path: 'policy-competitors', component: PolicyCompetitorsComponent },
+    { path: 'political-competitors', loadComponent: () => import('./components/competitors/political-competitors/political-competitors.component').then(m => m.PoliticalCompetitorsComponent) },
+    { path: 'professional-competitors', loadComponent: () => import('./components/competitors/professional-competitors/professional-competitors.component').then(m => m.ProfessionalCompetitorsComponent) },
+    { path: 'policy-competitors', loadComponent: () => import('./components/competitors/policy-competitors/policy-competitors.component').then(m => m.PolicyCompetitorsComponent) },
     // Categories
-    { path: 'political-categories', component: PoliticalCategoriesComponent },
+    { path: 'political-categories', loadComponent: () => import('./components/political-categories/political-categories.component').then(m => m.PoliticalCategoriesComponent) },
     // Terms Components
-    { path: 'terms', component: TermsPageComponent },
-    { path: 'terms/create', component: TermCreatorComponent },
-    { path: 'terms/:id', component: ViewTermComponent },
-    { path: 'contextualized-terms/create', component: ContextualizedTermCreatorComponent },
+    { path: 'terms', loadComponent: () => import('./components/terms/terms-page.component').then(m => m.TermsPageComponent) },
+    { path: 'terms/create', loadComponent: () => import('./components/terms/term-creator/term-creator.component').then(m => m.TermCreatorComponent) },
+    { path: 'terms/:id', loadComponent: () => import('./components/terms/view-term/view-term.component').then(m => m.ViewTermComponent) },
+    { path: 'contextualized-terms/create', loadComponent: () => import('./components/terms/contextualized-term-creator/contextualized-term-creator.component').then(m => m.ContextualizedTermCreatorComponent) },
     // Worldview Election & Ballot Components
-    { path: 'worldview-elections', component: ManageElectionsComponent },
-    { path: 'worldview-elections/create', component: ElectionCreatorComponent },
-    { path: 'worldview-elections/:electionId/debate', component: ElectionDebateComponent },
-    { path: 'worldview-ballots/create', component: WorldviewBallotCreatorComponent },
-    { path: 'worldview-ballot', component: WorldviewBallotComponent },
-    { path: 'browse-worldview-ballots', component: BrowseWorldviewBallotsComponent },
+    { path: 'worldview-elections', loadComponent: () => import('./components/worldview-ballot/manage-elections/manage-elections.component').then(m => m.ManageElectionsComponent) },
+    { path: 'worldview-elections/create', loadComponent: () => import('./components/worldview-ballot/election-creator/election-creator.component').then(m => m.ElectionCreatorComponent) },
+    { path: 'worldview-elections/:electionId/debate', loadComponent: () => import('./components/debate/election-debate/election-debate.component').then(m => m.ElectionDebateComponent) },
+    { path: 'worldview-ballots/create', loadComponent: () => import('./components/worldview-ballot/worldview-ballot-creator/worldview-ballot-creator.component').then(m => m.WorldviewBallotCreatorComponent) },
+    { path: 'worldview-ballot', loadComponent: () => import('./components/worldview-ballot/worldview-ballot.component').then(m => m.WorldviewBallotComponent) },
+    { path: 'browse-worldview-ballots', loadComponent: () => import('./components/worldview-ballot/browse-worldview-ballots/browse-worldview-ballots.component').then(m => m.BrowseWorldviewBallotsComponent) },
     // Informational Components
-    { path: 'about-polari', component: AboutPolariComponent },
-    { path: 'about-scorecard', component: AboutTheScorecardComponent },
+    { path: 'about-polari', loadComponent: () => import('./components/home-page/informational/about-polari/about-polari.component').then(m => m.AboutPolariComponent) },
+    { path: 'about-scorecard', loadComponent: () => import('./components/home-page/informational/about-the-scorecard/about-the-scorecard.component').then(m => m.AboutTheScorecardComponent) },
     // User Group Components
-    { path: 'professional-groups', component: ProfessionalGroupsComponent },
-    { path: 'political-groups', component: PoliticalGroupsComponent },
+    { path: 'professional-groups', loadComponent: () => import('./components/users/user-groups/professional-groups/professional-groups.component').then(m => m.ProfessionalGroupsComponent) },
+    { path: 'political-groups', loadComponent: () => import('./components/users/user-groups/political-groups/political-groups.component').then(m => m.PoliticalGroupsComponent) },
     // User Components
-    { path: 'user-info-bar', component: UserInfoBarComponent },
-    { path: 'registration', component: RegistrationComponent }
+    { path: 'user-info-bar', loadComponent: () => import('./components/users/user-info-bar/user-info-bar.component').then(m => m.UserInfoBarComponent) },
+    { path: 'registration', loadComponent: () => import('./components/users/registration/registration.component').then(m => m.RegistrationComponent) }
 
 ];
