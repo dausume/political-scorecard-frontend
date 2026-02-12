@@ -19,6 +19,7 @@ import { TermsEffects } from './state/effects/terms.effects';
 import { WorldviewBallotEffects } from './state/effects/worldview-ballot.effects';
 import { ElectionsEffects } from './state/effects/elections.effects';
 import { DebateEffects } from './state/effects/debate.effects';
+import { LegislationEffects } from './state/effects/legislation.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,7 +29,7 @@ export const appConfig: ApplicationConfig = {
 
     // NgRx (base)
     provideStore(rootReducers),
-    provideEffects([TermsEffects, WorldviewBallotEffects, ElectionsEffects, DebateEffects]),
+    provideEffects([TermsEffects, WorldviewBallotEffects, ElectionsEffects, DebateEffects, LegislationEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
 
     provideHttpClient(

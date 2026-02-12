@@ -23,7 +23,15 @@
     "@ngrx/effects": "^19.0.0",
     "@ngrx/store": "^19.0.0",
     "@ngrx/store-devtools": "^19.0.0",
+    "@recogito/recogito-js": "^1.8.4",
     "@stomp/stompjs": "^7.2.1",
+    "@tiptap/core": "^3.19.0",
+    "@tiptap/extension-highlight": "^3.19.0",
+    "@tiptap/extension-placeholder": "^3.19.0",
+    "@tiptap/extension-text-align": "^3.19.0",
+    "@tiptap/extension-underline": "^3.19.0",
+    "@tiptap/pm": "^3.19.0",
+    "@tiptap/starter-kit": "^3.19.0",
     "material-icons": "^1.13.14",
     "oidc-client-ts": "^3.4.1",
     "rxjs": "~7.8.0",
@@ -32,8 +40,9 @@
     "zone.js": "~0.15.0"
   },
   "overrides": {
-    "htmlparser2": { "entities": "4.5.0" },
-    "parse5": { "entities": "4.5.0" }
+    "parse5": {
+      "entities": "4.5.0"
+    }
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.2.0",

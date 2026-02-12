@@ -6,6 +6,7 @@ import { CompetitiveScoringState, competitiveScoringReducer } from './reducers/c
 import { WorldviewBallotState, worldviewBallotReducer } from './reducers/worldview-ballot.reducer';
 import { ElectionsState, electionsReducer } from './reducers/elections.reducer';
 import { DebateState, debateReducer } from './reducers/debate.reducer';
+import { LegislationState, legislationReducer } from './reducers/legislation.reducer';
 // later: import { UsersState, usersReducer } from './users/users.reducer';
 
 export interface AppState {
@@ -15,6 +16,7 @@ export interface AppState {
   worldviewBallot: WorldviewBallotState;
   elections: ElectionsState;
   debate: DebateState;
+  legislation: LegislationState;
   // users: UsersState;
 }
 
@@ -25,5 +27,6 @@ export const rootReducers: ActionReducerMap<AppState> = {
   worldviewBallot: worldviewBallotReducer,
   elections: electionsReducer,
   debate: debateReducer,
+  legislation: legislationReducer,
   // users: usersReducer,
 };

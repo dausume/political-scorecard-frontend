@@ -17,3 +17,33 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-weight: 600;
   }
 }
+
+/* Annotation highlight styles (rendered via innerHTML, must be global) */
+.annotation-highlight {
+  border-radius: 2px;
+  padding: 1px 0;
+  cursor: default;
+  transition: background-color 0.2s ease;
+}
+
+.annotation-highlight.type-scoring {
+  background-color: #e3f2fd;
+}
+
+.annotation-highlight.type-solution {
+  background-color: #f3e5f5;
+}
+
+.annotation-highlight.type-intent {
+  background-color: #e8f5e9;
+}
+
+.annotation-highlight.flash {
+  animation: highlight-flash 1.5s ease;
+}
+
+@keyframes highlight-flash {
+  0% { background-color: #ffeb3b; }
+  50% { background-color: #ffeb3b; }
+  100% { background-color: inherit; }
+}
