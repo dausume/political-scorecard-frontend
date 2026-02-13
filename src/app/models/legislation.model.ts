@@ -48,3 +48,11 @@ export interface IntentAnnotationBody {
 }
 
 export type AnnotationBody = ScoringAnnotationBody | SolutionAnnotationBody | IntentAnnotationBody;
+
+export interface AnnotationSelection {
+  key: string;
+  exact: string;
+  prefix: string;
+  suffix: string;
+  annotations: LegislationAnnotationDTO[];
+}

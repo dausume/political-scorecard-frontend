@@ -224,24 +224,29 @@ export class LegislationDetailComponent implements OnInit, OnDestroy {
 
   exportPdf(): void {
     this.legislationApi.exportAsPdf(this.legislationId).subscribe(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `legislation-${this.legislationId}.pdf`;
-      a.click();
-      window.URL.revokeObjectURL(url);
+      this.downloadBlob(blob, `legislation-${this.legislationId}.pdf`);
+    });
+    this.legislationApi.exportAnnotationsAsPdf(this.legislationId).subscribe(blob => {
+      this.downloadBlob(blob, `annotations-${this.legislationId}.pdf`);
     });
   }
 
   exportDocx(): void {
     this.legislationApi.exportAsDocx(this.legislationId).subscribe(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `legislation-${this.legislationId}.docx`;
-      a.click();
-      window.URL.revokeObjectURL(url);
+      this.downloadBlob(blob, `legislation-${this.legislationId}.docx`);
     });
+    this.legislationApi.exportAnnotationsAsDocx(this.legislationId).subscribe(blob => {
+      this.downloadBlob(blob, `annotations-${this.legislationId}.docx`);
+    });
+  }
+
+  private downloadBlob(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 
   // --- Read-only highlight rendering ---
@@ -257,20 +262,25 @@ export class LegislationDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Use DOM-based approach to inject highlights while preserving original HTML
-    const container = document.createElement('div');
-    container.innerHTML = this.legislation.legislationText;
-
+    // Deduplicate annotations by exact text so each selection is highlighted once
+    const selectionMap = new Map<string, string>();
     for (const annotation of this.annotations) {
       try {
         const target = JSON.parse(annotation.targetJson);
         const exact: string = target.selector?.exact;
-        if (!exact) continue;
-
-        this.wrapTextInDom(container, exact, annotation.annotationType.toLowerCase());
+        if (!exact || selectionMap.has(exact)) continue;
+        selectionMap.set(exact, annotation.annotationType.toLowerCase());
       } catch {
         // skip malformed annotations
       }
+    }
+
+    // Use DOM-based approach to inject highlights while preserving original HTML
+    const container = document.createElement('div');
+    container.innerHTML = this.legislation.legislationText;
+
+    for (const [exact, type] of selectionMap) {
+      this.wrapTextInDom(container, exact, type);
     }
 
     this.highlightedHtml = container.innerHTML;

@@ -70,6 +70,14 @@ export class LegislationApiService {
     return this.http.get(`${this.API_URL}/${id}/export/docx`, { responseType: 'blob' });
   }
 
+  exportAnnotationsAsPdf(id: string): Observable<Blob> {
+    return this.http.get(`${this.API_URL}/${id}/export/annotations/pdf`, { responseType: 'blob' });
+  }
+
+  exportAnnotationsAsDocx(id: string): Observable<Blob> {
+    return this.http.get(`${this.API_URL}/${id}/export/annotations/docx`, { responseType: 'blob' });
+  }
+
   // Annotations
   createAnnotation(legislationId: string, annotation: Partial<LegislationAnnotationDTO>): Observable<LegislationAnnotationDTO> {
     return this.http.post<ApiResponse<LegislationAnnotationDTO>>(

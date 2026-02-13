@@ -15,6 +15,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { Store, ActionsSubject } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil, filter, take } from 'rxjs/operators';
@@ -23,7 +24,7 @@ import { LegislationActions } from '../../../state/actions/legislation.actions';
 import { selectLegislationById, selectLegislationAnnotations } from '../../../state/selectors/legislation.selectors';
 import { selectAuthUser } from '../../../state/selectors/auth.selectors';
 import { AuthUser } from '../../../classes/auth-user';
-import { LegislationDTO, LegislationAnnotationDTO, AnnotationBody } from '../../../models/legislation.model';
+import { LegislationDTO, LegislationAnnotationDTO, AnnotationBody, AnnotationSelection } from '../../../models/legislation.model';
 import { WorldviewElectionsApiService, WorldviewElectionDTO } from '../../../services/api/worldview-elections-api.service';
 import { AuthSessionService } from '../../../services/auth/auth-session.service';
 import { MOCK_POLITICAL_CATEGORIES } from '../../../state/mock-data/political-categories.mock';
@@ -49,7 +50,8 @@ import { Group } from '../../../classes/group/group';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatDividerModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatExpansionModule
   ],
   template: `
     <mat-sidenav-container class="annotator-container">
@@ -72,14 +74,14 @@ import { Group } from '../../../classes/group/group';
           </mat-card>
         </div>
 
-        <!-- New annotation form (only when authenticated and text selected) -->
-        <div class="new-annotation" *ngIf="isAuthenticated && selectedText">
+        <!-- New annotation form -->
+        <div class="new-annotation" *ngIf="isAuthenticated && showAnnotationForm">
           <mat-card class="new-annotation-card">
             <mat-card-header>
-              <mat-card-title>New Annotation</mat-card-title>
+              <mat-card-title>{{ addingToSelectionKey ? 'Add Annotation' : 'New Annotation' }}</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <p class="selected-text-preview">"{{ selectedText }}"</p>
+              <p class="selected-text-preview">"{{ formSelectedText }}"</p>
 
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Type</mat-label>
@@ -147,7 +149,7 @@ import { Group } from '../../../classes/group/group';
               </ng-container>
             </mat-card-content>
             <mat-card-actions>
-              <button mat-button (click)="clearSelection()">Cancel</button>
+              <button mat-button (click)="cancelForm()">Cancel</button>
               <button mat-raised-button color="primary" (click)="saveAnnotation()">Save</button>
             </mat-card-actions>
           </mat-card>
@@ -155,29 +157,50 @@ import { Group } from '../../../classes/group/group';
 
         <mat-divider></mat-divider>
 
-        <mat-list>
-          <mat-list-item *ngFor="let annotation of annotations"
-                         class="annotation-item"
-                         [class.active]="activeAnnotationId === annotation.id"
-                         [attr.data-sidebar-annotation-id]="annotation.id"
-                         (click)="onSidebarAnnotationClick(annotation.id)">
-            <div class="annotation-content">
-              <div class="annotation-header">
-                <span class="annotation-type-chip" [class]="'type-' + annotation.annotationType.toLowerCase()">
-                  {{ annotation.annotationType }}
-                </span>
-                <button mat-icon-button *ngIf="isAuthenticated" (click)="deleteAnnotation(annotation.id); $event.stopPropagation()">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-              <p class="annotation-summary">{{ getAnnotationSummary(annotation) }}</p>
-              <p class="annotation-quote">"{{ getAnnotationQuote(annotation) }}"</p>
-              <span class="annotation-date">{{ annotation.createdAt }}</span>
-            </div>
-          </mat-list-item>
-        </mat-list>
+        <!-- Selections list -->
+        <mat-accordion multi class="selections-list">
+          <mat-expansion-panel *ngFor="let selection of selections"
+                               [expanded]="activeSelectionKey === selection.key"
+                               [attr.data-sidebar-selection-key]="selection.key"
+                               (opened)="onSelectionPanelOpened(selection.key)"
+                               [class.active]="activeSelectionKey === selection.key">
+            <mat-expansion-panel-header>
+              <mat-panel-title class="selection-title">
+                <span class="selection-quote">"{{ truncate(selection.exact, 40) }}"</span>
+              </mat-panel-title>
+              <mat-panel-description>
+                {{ selection.annotations.length }} annotation{{ selection.annotations.length !== 1 ? 's' : '' }}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
 
-        <div *ngIf="annotations.length === 0" class="empty-annotations">
+            <div class="selection-annotations">
+              <div *ngFor="let annotation of selection.annotations" class="annotation-entry">
+                <div class="annotation-header">
+                  <span class="annotation-type-chip" [class]="'type-' + annotation.annotationType.toLowerCase()">
+                    {{ annotation.annotationType }}
+                  </span>
+                  <button mat-icon-button *ngIf="isAuthenticated"
+                          (click)="deleteAnnotation(annotation.id); $event.stopPropagation()"
+                          matTooltip="Delete annotation">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+                <p class="annotation-summary">{{ getAnnotationSummary(annotation) }}</p>
+              </div>
+            </div>
+
+            <mat-action-row *ngIf="isAuthenticated">
+              <button mat-button color="primary" (click)="addAnnotationToSelection(selection)">
+                <mat-icon>add</mat-icon> Add annotation
+              </button>
+              <button mat-button color="warn" (click)="deleteSelection(selection)">
+                <mat-icon>delete</mat-icon> Delete selection
+              </button>
+            </mat-action-row>
+          </mat-expansion-panel>
+        </mat-accordion>
+
+        <div *ngIf="selections.length === 0" class="empty-annotations">
           <p *ngIf="isAuthenticated">No annotations yet. Select text in the document to create one.</p>
           <p *ngIf="!isAuthenticated">No annotations yet.</p>
         </div>
@@ -208,7 +231,7 @@ import { Group } from '../../../classes/group/group';
   `,
   styles: [`
     .annotator-container { height: calc(100vh - 64px); }
-    .annotation-sidebar { width: 360px; padding: 16px; }
+    .annotation-sidebar { width: 380px; padding: 16px; overflow-y: auto; }
     .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .sidebar-header h3 { margin: 0; }
     .annotation-count { background: #e0e0e0; border-radius: 12px; padding: 2px 8px; font-size: 12px; }
@@ -224,26 +247,28 @@ import { Group } from '../../../classes/group/group';
     .legislation-content { padding: 16px; min-height: 400px; line-height: 1.6; cursor: text; user-select: text; }
     .full-width { width: 100%; }
     .new-annotation-card { margin-bottom: 16px; }
-    .selected-text-preview { font-style: italic; color: #666; font-size: 13px; border-left: 3px solid #1976d2; padding-left: 8px; }
+    .selected-text-preview { font-style: italic; color: #666; font-size: 13px; border-left: 3px solid #1976d2; padding-left: 8px; margin-bottom: 12px; }
     .sentiment-toggle { margin-bottom: 16px; }
     .sentiment-label { display: block; font-size: 12px; color: #666; margin-bottom: 8px; }
-    .annotation-item { height: auto !important; margin-bottom: 8px; cursor: pointer; }
-    .annotation-item.active { background: #f5f5f5; }
-    .annotation-content { width: 100%; padding: 8px 0; }
+    .selections-list { margin-top: 8px; }
+    .selection-title { font-size: 13px; }
+    .selection-quote { font-style: italic; color: #555; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .selection-annotations { padding: 4px 0; }
+    .annotation-entry { padding: 6px 0; border-bottom: 1px solid #f0f0f0; }
+    .annotation-entry:last-child { border-bottom: none; }
     .annotation-header { display: flex; justify-content: space-between; align-items: center; }
     .annotation-type-chip { padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 500; text-transform: uppercase; }
     .type-scoring { background: #e3f2fd; color: #1565c0; }
     .type-solution { background: #f3e5f5; color: #7b1fa2; }
     .type-intent { background: #e8f5e9; color: #2e7d32; }
-    .annotation-summary { margin: 4px 0; font-size: 13px; font-weight: 500; }
-    .annotation-quote { margin: 2px 0; font-size: 12px; font-style: italic; color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 300px; }
-    .annotation-date { font-size: 11px; color: #999; }
+    .annotation-summary { margin: 2px 0 0; font-size: 13px; }
     .empty-annotations { padding: 24px; text-align: center; color: #999; }
     .auth-prompt { margin-bottom: 16px; }
     .auth-prompt-card { text-align: center; }
     .auth-prompt-card mat-card-content { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px; }
     .auth-icon { font-size: 36px; height: 36px; width: 36px; color: #9e9e9e; }
     .auth-prompt-card p { margin: 0; color: #666; font-size: 14px; }
+    mat-expansion-panel.active { border-left: 3px solid #1976d2; }
   `]
 })
 export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterViewChecked {
@@ -251,23 +276,29 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
 
   legislation: LegislationDTO | null = null;
   annotations: LegislationAnnotationDTO[] = [];
+  selections: AnnotationSelection[] = [];
   isAuthenticated = false;
   currentUser: AuthUser | null = null;
-  selectedText = '';
-  newAnnotationType: 'SCORING' | 'SOLUTION' | 'INTENT' = 'SCORING';
-  activeAnnotationId: string | null = null;
   highlightedHtml = '<p>No content.</p>';
 
-  // SCORING form fields
+  // Selection / form state
+  activeSelectionKey: string | null = null;
+  showAnnotationForm = false;
+  addingToSelectionKey: string | null = null;  // non-null when adding to existing selection
+  formSelectedText = '';
+  private formPrefix = '';
+  private formSuffix = '';
+
+  // Annotation form fields
+  newAnnotationType: 'SCORING' | 'SOLUTION' | 'INTENT' = 'SCORING';
+
   elections: WorldviewElectionDTO[] = [];
   scoringElectionId = '';
   scoringBallotId = '';
 
-  // SOLUTION form fields
   solutionTitle = '';
   solutionDescription = '';
 
-  // INTENT form fields
   categories: PoliticalCategory[] = MOCK_POLITICAL_CATEGORIES;
   groups: Group[] = MOCK_ALL_GROUPS;
   intentCategoryId = '';
@@ -275,8 +306,6 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
   intentSentiment: 'GOOD' | 'BAD' | 'NEUTRAL' = 'NEUTRAL';
 
   private legislationId = '';
-  private selectionPrefix = '';
-  private selectionSuffix = '';
   private destroy$ = new Subject<void>();
   private highlightListeners: (() => void)[] = [];
   private needsHighlightListenerSetup = false;
@@ -295,14 +324,12 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
   ngOnInit(): void {
     this.legislationId = this.route.snapshot.paramMap.get('id') || '';
 
-    // Track auth state and user
     this.store.select(selectAuthUser)
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
         const wasAuthenticated = this.isAuthenticated;
         this.currentUser = user;
         this.isAuthenticated = !!user;
-        // Load annotations and elections once we know we're authenticated
         if (this.isAuthenticated && !wasAuthenticated) {
           this.store.dispatch(LegislationActions.loadAnnotations({ legislationId: this.legislationId }));
           this.electionsApi.getAllElections()
@@ -327,6 +354,7 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
       .pipe(takeUntil(this.destroy$))
       .subscribe(annotations => {
         this.annotations = annotations;
+        this.buildSelections();
         this.renderHighlights();
       });
 
@@ -354,23 +382,71 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
     this.authSession.login();
   }
 
+  truncate(text: string, maxLen: number): string {
+    return text.length > maxLen ? text.substring(0, maxLen) + '...' : text;
+  }
+
+  // --- Text selection (new highlight) ---
+
   onTextSelected(): void {
     if (!this.isAuthenticated) return;
     const selection = window.getSelection();
-    if (selection && selection.toString().trim().length > 0) {
-      this.selectedText = selection.toString().trim();
+    if (!selection || selection.toString().trim().length === 0) return;
 
-      const range = selection.getRangeAt(0);
-      const container = range.commonAncestorContainer.textContent || '';
-      const startOffset = range.startOffset;
-      const endOffset = range.endOffset;
-      this.selectionPrefix = container.substring(Math.max(0, startOffset - 32), startOffset);
-      this.selectionSuffix = container.substring(endOffset, Math.min(container.length, endOffset + 32));
+    const selectedText = selection.toString().trim();
+
+    // Check if user selected text that matches an existing selection exactly
+    const existingSelection = this.selections.find(s => s.exact === selectedText);
+    if (existingSelection) {
+      this.addAnnotationToSelection(existingSelection);
+      window.getSelection()?.removeAllRanges();
+      return;
     }
+
+    // Check for overlap with existing selections
+    if (this.checkOverlap(selectedText)) {
+      this.snackBar.open('Selections cannot overlap. Click an existing highlight to add annotations to it.', 'Close', { duration: 4000 });
+      return;
+    }
+
+    // Capture prefix/suffix context
+    const range = selection.getRangeAt(0);
+    const container = range.commonAncestorContainer.textContent || '';
+    const startOffset = range.startOffset;
+    const endOffset = range.endOffset;
+
+    this.formSelectedText = selectedText;
+    this.formPrefix = container.substring(Math.max(0, startOffset - 32), startOffset);
+    this.formSuffix = container.substring(endOffset, Math.min(container.length, endOffset + 32));
+    this.addingToSelectionKey = null;
+    this.showAnnotationForm = true;
+    window.getSelection()?.removeAllRanges();
   }
 
-  clearSelection(): void {
-    this.selectedText = '';
+  // --- Add annotation to existing selection ---
+
+  addAnnotationToSelection(selection: AnnotationSelection): void {
+    this.formSelectedText = selection.exact;
+    this.formPrefix = selection.prefix;
+    this.formSuffix = selection.suffix;
+    this.addingToSelectionKey = selection.key;
+    this.activeSelectionKey = selection.key;
+    this.showAnnotationForm = true;
+    this.resetFormFields();
+  }
+
+  // --- Form actions ---
+
+  cancelForm(): void {
+    this.showAnnotationForm = false;
+    this.addingToSelectionKey = null;
+    this.formSelectedText = '';
+    this.formPrefix = '';
+    this.formSuffix = '';
+    this.resetFormFields();
+  }
+
+  private resetFormFields(): void {
     this.newAnnotationType = 'SCORING';
     this.scoringElectionId = '';
     this.scoringBallotId = '';
@@ -379,16 +455,10 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
     this.intentCategoryId = '';
     this.intentGroupId = '';
     this.intentSentiment = 'NEUTRAL';
-    window.getSelection()?.removeAllRanges();
   }
 
   saveAnnotation(): void {
-    if (!this.selectedText) return;
-
-    if (this.checkOverlap(this.selectedText)) {
-      this.snackBar.open('Annotations cannot overlap. Please select non-annotated text.', 'Close', { duration: 4000 });
-      return;
-    }
+    if (!this.formSelectedText) return;
 
     const body = this.buildAnnotationBody();
     if (!body) return;
@@ -396,13 +466,12 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
     const target = {
       selector: {
         type: 'TextQuoteSelector',
-        exact: this.selectedText,
-        prefix: this.selectionPrefix,
-        suffix: this.selectionSuffix,
+        exact: this.formSelectedText,
+        prefix: this.formPrefix,
+        suffix: this.formSuffix,
       }
     };
 
-    // Listen for success or failure before showing feedback
     this.actionsSubject.pipe(
       filter((action: any) =>
         action.type === LegislationActions.createAnnotationSuccess.type ||
@@ -429,18 +498,69 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
       }
     }));
 
-    this.clearSelection();
+    this.cancelForm();
   }
+
+  // --- Delete ---
 
   deleteAnnotation(annotationId: string): void {
     this.store.dispatch(LegislationActions.deleteAnnotation({
       legislationId: this.legislationId,
       annotationId
     }));
-    if (this.activeAnnotationId === annotationId) {
-      this.activeAnnotationId = null;
-    }
     this.snackBar.open('Annotation deleted', 'Close', { duration: 2000 });
+  }
+
+  deleteSelection(selection: AnnotationSelection): void {
+    const count = selection.annotations.length;
+    const msg = count === 1
+      ? 'Delete this selection and its annotation?'
+      : `Delete this selection and all ${count} annotations?`;
+
+    if (!confirm(msg)) return;
+
+    for (const annotation of selection.annotations) {
+      this.store.dispatch(LegislationActions.deleteAnnotation({
+        legislationId: this.legislationId,
+        annotationId: annotation.id
+      }));
+    }
+    this.activeSelectionKey = null;
+    this.snackBar.open('Selection deleted', 'Close', { duration: 2000 });
+  }
+
+  // --- Selection grouping ---
+
+  private buildSelections(): void {
+    const map = new Map<string, AnnotationSelection>();
+    for (const a of this.annotations) {
+      try {
+        const target = JSON.parse(a.targetJson);
+        const exact: string = target.selector?.exact || '';
+        if (!exact) continue;
+
+        if (!map.has(exact)) {
+          map.set(exact, {
+            key: exact,
+            exact,
+            prefix: target.selector?.prefix || '',
+            suffix: target.selector?.suffix || '',
+            annotations: []
+          });
+        }
+        map.get(exact)!.annotations.push(a);
+      } catch {
+        // skip malformed
+      }
+    }
+    this.selections = Array.from(map.values());
+  }
+
+  // --- Sidebar interaction ---
+
+  onSelectionPanelOpened(key: string): void {
+    this.activeSelectionKey = key;
+    this.scrollToInlineHighlight(key);
   }
 
   getAnnotationSummary(annotation: LegislationAnnotationDTO): string {
@@ -451,9 +571,8 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
           return body.electionName || body.electionId || 'Scoring annotation';
         case 'SOLUTION':
           return body.title;
-        case 'INTENT': {
+        case 'INTENT':
           return `${body.categoryName} \u00d7 ${body.groupName}: ${body.sentiment}`;
-        }
         default:
           return annotation.annotationType;
       }
@@ -462,21 +581,7 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
     }
   }
 
-  getAnnotationQuote(annotation: LegislationAnnotationDTO): string {
-    try {
-      const target = JSON.parse(annotation.targetJson);
-      return target.selector?.exact || '';
-    } catch {
-      return '';
-    }
-  }
-
-  onSidebarAnnotationClick(annotationId: string): void {
-    this.activeAnnotationId = annotationId;
-    this.scrollToInlineHighlight(annotationId);
-  }
-
-  // --- Highlight rendering ---
+  // --- Highlight rendering (one per selection) ---
 
   renderHighlights(): void {
     if (!this.legislation?.legislationText) {
@@ -484,32 +589,25 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
       return;
     }
 
-    if (this.annotations.length === 0) {
+    if (this.selections.length === 0) {
       this.highlightedHtml = this.legislation.legislationText;
       return;
     }
 
-    // Use DOM-based approach to inject highlights while preserving original HTML
     const container = document.createElement('div');
     container.innerHTML = this.legislation.legislationText;
 
-    for (const annotation of this.annotations) {
-      try {
-        const target = JSON.parse(annotation.targetJson);
-        const exact: string = target.selector?.exact;
-        if (!exact) continue;
-
-        this.wrapTextInDom(container, exact, annotation.annotationType.toLowerCase(), annotation.id);
-      } catch {
-        // skip malformed annotations
-      }
+    for (const selection of this.selections) {
+      // Determine highlight color from the first annotation's type
+      const primaryType = selection.annotations[0]?.annotationType?.toLowerCase() || 'scoring';
+      this.wrapTextInDom(container, selection.exact, primaryType, selection.key);
     }
 
     this.highlightedHtml = container.innerHTML;
     this.needsHighlightListenerSetup = true;
   }
 
-  private wrapTextInDom(root: HTMLElement, searchText: string, type: string, id: string): void {
+  private wrapTextInDom(root: HTMLElement, searchText: string, type: string, selectionKey: string): void {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
     const textNodes: Text[] = [];
     let node: Text | null;
@@ -517,7 +615,6 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
       textNodes.push(node);
     }
 
-    // Build a concatenated plain text and track which text node owns each character
     let fullText = '';
     const nodeMap: { node: Text; startOffset: number }[] = [];
     for (const tn of textNodes) {
@@ -530,20 +627,17 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
 
     const matchEnd = matchIndex + searchText.length;
 
-    // Find which text nodes the match spans
     for (let i = nodeMap.length - 1; i >= 0; i--) {
       const entry = nodeMap[i];
       const nodeText = entry.node.textContent || '';
       const nodeStart = entry.startOffset;
       const nodeEnd = nodeStart + nodeText.length;
 
-      // Skip nodes that don't overlap the match
       if (nodeEnd <= matchIndex || nodeStart >= matchEnd) continue;
 
       const overlapStart = Math.max(matchIndex, nodeStart) - nodeStart;
       const overlapEnd = Math.min(matchEnd, nodeEnd) - nodeStart;
 
-      // Split the text node and wrap the matching portion
       const textNode = entry.node;
       if (overlapEnd < nodeText.length) {
         textNode.splitText(overlapEnd);
@@ -552,7 +646,7 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
 
       const span = document.createElement('span');
       span.className = `annotation-highlight type-${type}`;
-      span.setAttribute('data-annotation-id', id);
+      span.setAttribute('data-selection-key', selectionKey);
       matchNode.parentNode!.insertBefore(span, matchNode);
       span.appendChild(matchNode);
     }
@@ -573,21 +667,13 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
     if (selectedStart < 0) return false;
     const selectedEnd = selectedStart + selectedText.length;
 
-    for (const annotation of this.annotations) {
-      try {
-        const target = JSON.parse(annotation.targetJson);
-        const exact: string = target.selector?.exact;
-        if (!exact) continue;
+    for (const selection of this.selections) {
+      const existingStart = plainText.indexOf(selection.exact);
+      if (existingStart < 0) continue;
+      const existingEnd = existingStart + selection.exact.length;
 
-        const existingStart = plainText.indexOf(exact);
-        if (existingStart < 0) continue;
-        const existingEnd = existingStart + exact.length;
-
-        if (selectedStart < existingEnd && selectedEnd > existingStart) {
-          return true;
-        }
-      } catch {
-        // skip
+      if (selectedStart < existingEnd && selectedEnd > existingStart) {
+        return true;
       }
     }
     return false;
@@ -602,22 +688,22 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
 
     const highlights = this.documentContent.nativeElement.querySelectorAll('.annotation-highlight');
     highlights.forEach((el: HTMLElement) => {
-      const annotationId = el.getAttribute('data-annotation-id');
-      if (!annotationId) return;
+      const selectionKey = el.getAttribute('data-selection-key');
+      if (!selectionKey) return;
 
       const mouseenterUnsub = this.renderer.listen(el, 'mouseenter', () => {
-        this.activeAnnotationId = annotationId;
-        this.scrollSidebarToAnnotation(annotationId);
+        this.activeSelectionKey = selectionKey;
+        this.scrollSidebarToSelection(selectionKey);
       });
       const mouseleaveUnsub = this.renderer.listen(el, 'mouseleave', () => {
-        if (this.activeAnnotationId === annotationId) {
-          this.activeAnnotationId = null;
+        if (this.activeSelectionKey === selectionKey) {
+          this.activeSelectionKey = null;
         }
       });
       const clickUnsub = this.renderer.listen(el, 'click', (event: Event) => {
         event.stopPropagation();
-        this.activeAnnotationId = annotationId;
-        this.scrollSidebarToAnnotation(annotationId);
+        this.activeSelectionKey = selectionKey;
+        this.scrollSidebarToSelection(selectionKey);
       });
 
       this.highlightListeners.push(mouseenterUnsub, mouseleaveUnsub, clickUnsub);
@@ -629,19 +715,18 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
     this.highlightListeners = [];
   }
 
-  private scrollSidebarToAnnotation(annotationId: string): void {
+  private scrollSidebarToSelection(key: string): void {
     setTimeout(() => {
-      const sidebarItem = document.querySelector(`[data-sidebar-annotation-id="${annotationId}"]`);
-      sidebarItem?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      const panel = document.querySelector(`[data-sidebar-selection-key="${key}"]`);
+      panel?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
   }
 
-  private scrollToInlineHighlight(annotationId: string): void {
+  private scrollToInlineHighlight(key: string): void {
     if (!this.documentContent?.nativeElement) return;
-    const highlight = this.documentContent.nativeElement.querySelector(`[data-annotation-id="${annotationId}"]`);
+    const highlight = this.documentContent.nativeElement.querySelector(`[data-selection-key="${key}"]`);
     if (highlight) {
       highlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // Flash effect
       highlight.classList.add('flash');
       setTimeout(() => highlight.classList.remove('flash'), 1500);
     }
