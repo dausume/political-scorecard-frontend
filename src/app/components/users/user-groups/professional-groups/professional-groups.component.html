@@ -84,6 +84,15 @@
     </div>
   } @else {
     <!-- Authenticated - Show Full Content -->
+    @if (!(hasProfessionalGroup$ | async)) {
+      <div class="join-group-banner">
+        <mat-icon>info</mat-icon>
+        <span>
+          You haven't joined a professional group yet. Join one below so your vote is tallied towards a group's score!
+        </span>
+      </div>
+    }
+
     <section class="controls-section">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label>Search groups</mat-label>
@@ -121,9 +130,15 @@
             <button mat-button [style.color]="group.color" (click)="viewGroup(group)">
               <mat-icon>visibility</mat-icon> View
             </button>
-            <button mat-raised-button [style.background-color]="group.color" style="color: white" (click)="joinGroup(group)">
-              <mat-icon>group_add</mat-icon> Join Group
-            </button>
+            @if (isJoined(group)) {
+              <button mat-raised-button disabled style="background-color: #4caf50; color: white">
+                <mat-icon>check_circle</mat-icon> Joined
+              </button>
+            } @else {
+              <button mat-raised-button [style.background-color]="group.color" style="color: white" (click)="joinGroup(group)">
+                <mat-icon>group_add</mat-icon> Join Group
+              </button>
+            }
           </mat-card-actions>
         </mat-card>
       } @empty {

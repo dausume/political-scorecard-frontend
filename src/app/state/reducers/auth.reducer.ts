@@ -55,4 +55,12 @@ export const authReducer = createReducer(
     // console.log('[AUTH REDUCER] authCheckStarted - AFTER:', newState);
     return newState;
   }),
+
+  on(AuthActions.updateAuthUserRoles, (state, { roles }) => {
+    if (!state.user) return state;
+    return {
+      ...state,
+      user: { ...state.user, roles },
+    };
+  }),
 );

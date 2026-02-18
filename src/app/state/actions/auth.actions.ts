@@ -7,5 +7,6 @@ export const AuthActions = createActionGroup({
     'setAuthUser': props<{ user: AuthUser }>(),
     'authCheckStarted': emptyProps(),
     'clearAuthUser': emptyProps(),
+    'updateAuthUserRoles': props<{ roles: string[] }>(),
   },
 });

@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-import { Subscription, take } from 'rxjs';
+import { Subscription, take, firstValueFrom } from 'rxjs';
 
 import { AuthActions } from '../../state/actions/auth.actions';
 import { AuthUser } from '../../classes/auth-user';
 import { selectAuthStatus, selectAuthUser } from '../../state/selectors/auth.selectors';
 import { AuthStatus } from '../../state/reducers/auth.reducer';
 import { OidcService } from './oidc.service';
+import { environment } from '../../../environment';
 
 /**
  * AuthSessionService
@@ -24,7 +26,8 @@ export class AuthSessionService {
 
   constructor(
     private store: Store,
-    private oidcService: OidcService
+    private oidcService: OidcService,
+    private http: HttpClient
   ) {}
 
   /**
@@ -126,9 +129,10 @@ export class AuthSessionService {
         oidcUser = await this.oidcService.signinSilent();
       }
 
-      // If we have a valid user, convert and store it
+      // If we have a valid user, convert and enrich with backend roles
       if (oidcUser && !oidcUser.expired) {
         const authUser = this.oidcService.convertToAuthUser(oidcUser);
+        await this.enrichWithBackendRoles(authUser);
         this.store.dispatch(AuthActions.setAuthUser({ user: authUser }));
         console.log('Session restored successfully');
       } else {
@@ -155,6 +159,7 @@ export class AuthSessionService {
 
       if (oidcUser) {
         const authUser = this.oidcService.convertToAuthUser(oidcUser);
+        await this.enrichWithBackendRoles(authUser);
         this.store.dispatch(AuthActions.setAuthUser({ user: authUser }));
         console.log('OAuth callback handled successfully');
 
@@ -170,6 +175,40 @@ export class AuthSessionService {
     } catch (error) {
       console.error('OAuth callback handling failed:', error);
       this.store.dispatch(AuthActions.clearAuthUser());
+    }
+  }
+
+  /**
+   * Fetch user info (including roles) from the backend via /auth/me.
+   * Merges backend-provided roles into the AuthUser, preferring the backend
+   * as the source of truth over client-side token parsing.
+   */
+  private async enrichWithBackendRoles(authUser: AuthUser): Promise<void> {
+    try {
+      const backendUrl = environment.backendUri.replace(/\/$/, '');
+      const response = await firstValueFrom(
+        this.http.get<{ success: boolean; data: { roles?: string[] } }>(`${backendUrl}/auth/me`)
+      );
+      if (response?.success && response.data?.roles) {
+        authUser.roles = response.data.roles;
+        console.log('Roles enriched from backend:', authUser.roles);
+      }
+    } catch (error) {
+      console.warn('Could not fetch roles from backend, using token roles:', error);
+      // Keep the roles extracted from the OIDC token as fallback
+    }
+  }
+
+  /**
+   * Re-fetch the user's roles from the backend and update the store.
+   * Useful after actions that change the user's roles (e.g., joining a group).
+   */
+  async refreshRoles(): Promise<void> {
+    const oidcUser = await this.oidcService.getUser();
+    if (oidcUser && !oidcUser.expired) {
+      const authUser = this.oidcService.convertToAuthUser(oidcUser);
+      await this.enrichWithBackendRoles(authUser);
+      this.store.dispatch(AuthActions.setAuthUser({ user: authUser }));
     }
   }
 
