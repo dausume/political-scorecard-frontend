@@ -25,13 +25,13 @@
   }
 
   .subtitle {
-    color: #666;
+    color: var(--text-tertiary);
     font-size: 1.1rem;
     margin-bottom: 1.5rem;
   }
 
   .section-intro {
-    color: #555;
+    color: var(--text-secondary);
     margin-bottom: 1.5rem;
   }
 
@@ -39,7 +39,7 @@
     font-size: 1.25rem;
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
-    color: #333;
+    color: var(--text-primary);
   }
 
   mat-divider {
@@ -63,7 +63,7 @@
   }
 
   .flow-description {
-    color: #555;
+    color: var(--text-secondary);
     font-size: 1.05rem;
     margin-bottom: 1rem;
   }
@@ -73,42 +73,42 @@
     align-items: flex-start;
     gap: 0.5rem;
     padding: 1rem;
-    background-color: #e3f2fd;
-    border-radius: 4px;
-    border-left: 4px solid #2196f3;
+    background-color: var(--brand-sky-light);
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--brand-sky);
     margin-bottom: 1rem;
 
     mat-icon {
-      color: #2196f3;
+      color: var(--brand-sky);
       flex-shrink: 0;
     }
 
     em {
       font-size: 0.95rem;
-      color: #333;
+      color: var(--text-primary);
     }
   }
 }
 
 .solution-flow {
   .expert-section .phase-card {
-    border-left: 4px solid #9c27b0;
+    border-left: 4px solid var(--brand-purple);
   }
 }
 
 .expert-section {
   .phase-card {
-    border-left: 4px solid #ff9800;
+    border-left: 4px solid var(--brand-orange);
   }
 }
 
 .layperson-section {
   .segment-card {
-    border-left: 4px solid #4caf50;
+    border-left: 4px solid var(--brand-green);
   }
 
   .segment-number {
-    background-color: #4caf50;
+    background-color: var(--brand-green);
   }
 }
 
@@ -133,7 +133,7 @@
 
 .segment-card {
   margin-bottom: 1rem;
-  border-left: 4px solid #3f51b5;
+  border-left: 4px solid var(--brand-indigo);
 
   .segment-number {
     display: flex;
@@ -142,7 +142,7 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background-color: #3f51b5;
+    background-color: var(--brand-indigo);
     color: white;
     font-weight: bold;
     margin-right: 1rem;
@@ -151,7 +151,7 @@
   .purpose {
     margin-top: 1rem;
     padding: 0.75rem;
-    background-color: #f5f5f5;
-    border-radius: 4px;
+    background-color: var(--surface-secondary);
+    border-radius: var(--radius-sm);
   }
 }

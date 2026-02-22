@@ -1,0 +1,53 @@
+/* =============================================
+   Typography Patterns
+   ============================================= */
+
+/* Section Title - Bold with Bottom Border */
+.section-title-bold-with-bottom-border {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--border-light);
+}
+
+/* Page Title - Large Bold */
+.page-title-large-bold {
+  font-size: var(--font-size-xxl);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Subtitle - Muted */
+.text-subtitle-muted {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  margin: 4px 0 0 0;
+}
+
+/* Label - Small Muted Uppercase */
+.label-small-muted-uppercase {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Label - Property Name Muted */
+.label-property-name-muted {
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-right: 12px;
+}
+
+/* Text - Monospace Code */
+.text-monospace-code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: var(--surface-secondary);
+  padding: 2px 6px;
+  border-radius: 3px;
+}

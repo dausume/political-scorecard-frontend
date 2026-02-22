@@ -4,12 +4,12 @@
   h3 {
     margin: 0 0 0.5rem 0;
     font-size: 1.5rem;
-    color: #333;
+    color: var(--text-primary);
   }
 
   .table-description {
     margin: 0 0 1rem 0;
-    color: #666;
+    color: var(--text-tertiary);
     font-size: 0.95rem;
   }
 
@@ -19,7 +19,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
     th {
-      background-color: #f5f5f5;
+      background-color: var(--surface-secondary);
       font-weight: 600;
       padding: 1rem;
     }
@@ -28,8 +28,8 @@
       padding: 1rem;
 
       &.missing-row {
-        background-color: #fff3cd;
-        color: #856404;
+        background-color: var(--brand-amber-light);
+        color: var(--brand-amber-dark);
         font-style: italic;
       }
     }
@@ -37,8 +37,8 @@
     .value-type-badge {
       display: inline-block;
       padding: 0.25rem 0.75rem;
-      background-color: #e8f5e9;
-      color: #2e7d32;
+      background-color: var(--brand-green-light);
+      color: var(--brand-green-dark);
       border-radius: 12px;
       font-size: 0.85rem;
       font-weight: 500;
@@ -52,13 +52,13 @@
       font-weight: 600;
 
       &.status-available {
-        background-color: #e8f5e9;
-        color: #2e7d32;
+        background-color: var(--brand-green-light);
+        color: var(--brand-green-dark);
       }
 
       &.status-missing {
-        background-color: #fff3cd;
-        color: #856404;
+        background-color: var(--brand-amber-light);
+        color: var(--brand-amber-dark);
       }
     }
 
@@ -73,17 +73,17 @@
     }
 
     tr:hover:not(.mat-header-row) {
-      background-color: #fafafa;
+      background-color: var(--surface-tertiary);
     }
   }
 
   .empty-state {
     padding: 4rem;
     text-align: center;
-    color: #999;
+    color: var(--text-muted);
     font-size: 1.1rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
+    background-color: var(--surface-tertiary);
+    border-radius: var(--radius-lg);
     margin-top: 1rem;
   }
 }

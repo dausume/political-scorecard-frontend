@@ -34,6 +34,15 @@
             "styles": [
               "@angular/material/prebuilt-themes/deeppurple-amber.css",
               "node_modules/material-icons/iconfont/material-icons.css",
+              "src/styles/_variables.scss",
+              "src/styles/_theme-light.scss",
+              "src/styles/_theme-dark.scss",
+              "src/styles/_layout-patterns.scss",
+              "src/styles/_state-patterns.scss",
+              "src/styles/_card-patterns.scss",
+              "src/styles/_button-patterns.scss",
+              "src/styles/_typography-patterns.scss",
+              "src/styles/_form-patterns.scss",
               "src/styles.scss"
             ],
             "scripts": []
@@ -95,6 +104,15 @@
             "styles": [
               "@angular/material/prebuilt-themes/magenta-violet.css",
               "node_modules/material-icons/iconfont/material-icons.css",
+              "src/styles/_variables.scss",
+              "src/styles/_theme-light.scss",
+              "src/styles/_theme-dark.scss",
+              "src/styles/_layout-patterns.scss",
+              "src/styles/_state-patterns.scss",
+              "src/styles/_card-patterns.scss",
+              "src/styles/_button-patterns.scss",
+              "src/styles/_typography-patterns.scss",
+              "src/styles/_form-patterns.scss",
               "src/styles.scss"
             ],
             "scripts": []

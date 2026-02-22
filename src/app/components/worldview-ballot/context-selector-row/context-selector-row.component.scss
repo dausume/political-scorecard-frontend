@@ -1,9 +1,9 @@
 .context-selector-row {
   padding: 1.5rem;
-  background: #f8f9fa;
-  border-radius: 8px;
+  background: var(--surface-app-background);
+  border-radius: var(--radius-lg);
   margin-bottom: 1.5rem;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--border-medium);
   display: flex;
   gap: 2rem;
   align-items: stretch;
@@ -23,8 +23,8 @@
     flex-direction: column;
     gap: 0.25rem;
     padding: 0.75rem 1rem;
-    background: white;
-    border-radius: 6px;
+    background: var(--surface-primary);
+    border-radius: var(--radius-md);
     border: 1px solid #ced4da;
     min-width: 150px;
 
@@ -45,16 +45,16 @@
     .context-dropdown {
       padding: 0.5rem;
       border: 1px solid #ced4da;
-      border-radius: 4px;
+      border-radius: var(--radius-sm);
       font-size: 0.9rem;
-      background: white;
+      background: var(--surface-primary);
       color: #495057;
       cursor: pointer;
       transition: border-color 0.2s;
 
       &:focus {
         outline: none;
-        border-color: #007bff;
+        border-color: var(--brand-blue-action);
         box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
       }
     }
@@ -69,9 +69,9 @@
   .context-score {
     flex-shrink: 0;
     width: 250px;
-    background: white;
-    border: 2px solid #007bff;
-    border-radius: 8px;
+    background: var(--surface-primary);
+    border: 2px solid var(--brand-blue-action);
+    border-radius: var(--radius-lg);
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
@@ -79,7 +79,7 @@
     box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
 
     &.no-data {
-      border-color: #dee2e6;
+      border-color: var(--border-medium);
       box-shadow: none;
     }
 
@@ -102,7 +102,7 @@
 
     .score-details {
       padding-top: 1rem;
-      border-top: 1px solid #dee2e6;
+      border-top: 1px solid var(--border-medium);
       width: 100%;
 
       .detail-item {
@@ -144,9 +144,9 @@
   .context-score-compact {
     flex-shrink: 0;
     width: 120px;
-    background: white;
+    background: var(--surface-primary);
     border: 2px solid #6c757d;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -154,7 +154,7 @@
     box-shadow: 0 2px 4px rgba(108, 117, 125, 0.15);
 
     &.no-data {
-      border-color: #dee2e6;
+      border-color: var(--border-medium);
       box-shadow: none;
     }
 
@@ -175,4 +175,3 @@
     }
   }
 }
-

@@ -7,8 +7,8 @@
   }
 
   &.own-message {
-    background-color: #e3f2fd;
-    border-left: 4px solid #1976d2;
+    background-color: var(--brand-sky-light);
+    border-left: 4px solid var(--brand-blue);
   }
 
   .message-header {
@@ -25,17 +25,17 @@
 
       .username {
         font-weight: 600;
-        color: #1976d2;
+        color: var(--brand-blue);
       }
 
       .timestamp {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-tertiary);
       }
 
       .edited-indicator {
         font-size: 0.8rem;
-        color: #999;
+        color: var(--text-muted);
         font-style: italic;
       }
     }
@@ -56,7 +56,7 @@
         }
 
         &.delete-button {
-          color: #d32f2f;
+          color: var(--color-error);
 
           &:hover {
             background-color: rgba(211, 47, 47, 0.1);
@@ -78,7 +78,7 @@
       line-height: 1.5;
 
       &.deleted-message {
-        color: #999;
+        color: var(--text-muted);
         font-style: italic;
       }
     }

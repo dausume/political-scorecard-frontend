@@ -1,0 +1,73 @@
+/* =============================================
+   PSC Dark Theme
+   Applied when body has .dark-theme class.
+   Overrides ALL tokens that need dark equivalents.
+   ============================================= */
+
+body.dark-theme {
+  /* === Surface Colors === */
+  --surface-primary: #1e1e1e;
+  --surface-secondary: #2d2d2d;
+  --surface-tertiary: #333333;
+  --surface-hover: #3a3a3a;
+  --surface-app-background: #121212;
+
+  /* === Text Colors === */
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-tertiary: #909090;
+  --text-muted: #707070;
+  --text-disabled: rgba(255, 255, 255, 0.3);
+
+  /* === Navigation === */
+  --nav-background: #1a1a1a;
+
+  /* === Brand Accent Colors (adjusted for dark readability) === */
+  --brand-indigo-dark: #7986cb;
+
+  /* === Brand Light Colors (card/section backgrounds) === */
+  --brand-blue-light: #1a2744;
+  --brand-green-light: #1a2e1a;
+  --brand-orange-light: #2e2416;
+  --brand-amber-light: #2e2a16;
+  --brand-purple-light: #2a1a2e;
+  --brand-sky-light: #1a2744;
+  --brand-lime-light: #1e2e16;
+
+  /* === Semantic Background Colors === */
+  --color-error-bg: #2e1a1a;
+  --color-error-border: #6e3b3b;
+  --color-success-bg: #1a2e1a;
+  --color-success-border: #3b6e3b;
+  --color-success-text: #81c784;
+  --color-success-text-bg: #1a2e1f;
+  --color-info-bg: #1a2744;
+  --color-info-border: #3b5a8a;
+  --color-info-text: #80cbc4;
+  --color-info-text-bg: #1a2a33;
+  --color-warn-bg: #2e2416;
+  --color-warn-border: #6e5a2a;
+  --color-warn-text: #ffca28;
+  --color-warn-text-bg: #2e2a16;
+
+  /* === Positive / Negative / Neutral Indicators === */
+  --positive-bg: #1a2e1f;
+  --positive-text: #81c784;
+  --positive-border: #2e5a35;
+  --negative-bg: #2e1a1c;
+  --negative-text: #ef9a9a;
+  --negative-border: #6e3b3e;
+  --neutral-bg: #1a2a33;
+  --neutral-text: #80cbc4;
+  --neutral-border: #2e5a5a;
+
+  /* === Borders & Shadows === */
+  --border-light: #444444;
+  --border-medium: #555555;
+  --border-dark: #666666;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
+}

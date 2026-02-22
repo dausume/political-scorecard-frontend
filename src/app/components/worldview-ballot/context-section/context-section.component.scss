@@ -29,8 +29,8 @@
     align-items: center;
     margin-bottom: 0.75rem;
     padding: 0.5rem 0.75rem;
-    background: #e9ecef;
-    border-radius: 6px;
+    background: var(--border-light);
+    border-radius: var(--radius-md);
 
     .context-label {
       font-size: 0.85rem;
@@ -46,17 +46,17 @@
       font-size: 0.8rem;
       font-weight: 600;
       border: none;
-      border-radius: 4px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .add-comparison-btn {
-      background: #007bff;
-      color: white;
+      background: var(--brand-blue-action);
+      color: var(--text-on-primary);
 
       &:hover {
-        background: #0056b3;
+        background: var(--brand-blue-action-dark);
         transform: translateY(-1px);
         box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
       }
@@ -67,8 +67,8 @@
     }
 
     .remove-btn {
-      background: #dc3545;
-      color: white;
+      background: var(--color-error-bootstrap);
+      color: var(--text-on-primary);
 
       &:hover {
         background: #c82333;
@@ -85,7 +85,7 @@
   .comparative-contexts-container {
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 2px solid #dee2e6;
+    border-top: 2px solid var(--border-medium);
 
     .comparative-header {
       margin-bottom: 1rem;
@@ -100,9 +100,9 @@
 
     .comparative-context-row {
       padding: 1rem;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border: 1px solid #dee2e6;
+      background: var(--surface-app-background);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-medium);
     }
   }
 }

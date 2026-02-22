@@ -31,20 +31,20 @@
 
       p {
         margin: 0;
-        color: #666;
+        color: var(--text-tertiary);
       }
     }
 
     .error-container {
       padding: 16px;
-      background-color: #ffebee;
-      border-left: 4px solid #d32f2f;
-      border-radius: 4px;
+      background-color: var(--color-error-bg);
+      border-left: 4px solid var(--color-error);
+      border-radius: var(--radius-sm);
       margin: 16px 0;
 
       .error-message {
         margin: 0;
-        color: #d32f2f;
+        color: var(--color-error);
         font-weight: 500;
       }
     }
@@ -55,7 +55,7 @@
       .no-messages {
         text-align: center;
         padding: 48px 24px;
-        color: #666;
+        color: var(--text-tertiary);
 
         p {
           margin: 0;
@@ -75,12 +75,12 @@
 
         &::-webkit-scrollbar-track {
           background: #f1f1f1;
-          border-radius: 4px;
+          border-radius: var(--radius-sm);
         }
 
         &::-webkit-scrollbar-thumb {
           background: #888;
-          border-radius: 4px;
+          border-radius: var(--radius-sm);
 
           &:hover {
             background: #555;
@@ -91,14 +91,14 @@
       .auth-required {
         text-align: center;
         padding: 16px;
-        background-color: #fff3cd;
-        border-left: 4px solid #ffc107;
-        border-radius: 4px;
+        background-color: var(--brand-amber-light);
+        border-left: 4px solid var(--brand-amber);
+        border-radius: var(--radius-sm);
         margin-top: 16px;
 
         p {
           margin: 0;
-          color: #856404;
+          color: var(--brand-amber-dark);
           font-weight: 500;
         }
       }

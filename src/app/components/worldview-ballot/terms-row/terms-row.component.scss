@@ -1,17 +1,17 @@
 .sorting-section {
-  background: #f8f9fa;
-  border-radius: 8px;
+  background: var(--surface-app-background);
+  border-radius: var(--radius-lg);
   padding: 2rem;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--border-light);
 
   .sorting-header {
     margin: 0 0 0.5rem 0;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.4rem;
   }
 
   .sorting-instructions {
-    color: #666;
+    color: var(--text-tertiary);
     margin: 0 0 1.5rem 0;
     font-size: 0.95rem;
   }
@@ -28,9 +28,9 @@
 }
 
 .sorting-term-card {
-  background: white;
-  border: 2px solid #dee2e6;
-  border-radius: 8px;
+  background: var(--surface-primary);
+  border: 2px solid var(--border-medium);
+  border-radius: var(--radius-lg);
   padding: 1rem;
   display: flex;
   justify-content: space-between;
@@ -44,7 +44,7 @@
 
   &.categorized {
     border-color: #6c757d;
-    background: #f8f9fa;
+    background: var(--surface-app-background);
     opacity: 0.7;
   }
 
@@ -54,14 +54,14 @@
     h4 {
       margin: 0 0 0.5rem 0;
       font-size: 1rem;
-      color: #333;
+      color: var(--text-primary);
       font-weight: 600;
     }
 
     p {
       margin: 0;
       font-size: 0.85rem;
-      color: #666;
+      color: var(--text-tertiary);
       line-height: 1.4;
     }
   }
@@ -76,7 +76,7 @@
     width: 40px;
     height: 40px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 1.5rem;
     font-weight: 600;
     cursor: pointer;
@@ -96,8 +96,8 @@
   }
 
   .positive-btn {
-    background: #28a745;
-    color: white;
+    background: var(--brand-green-bootstrap);
+    color: var(--text-on-primary);
 
     &:not(:disabled):hover {
       background: #218838;
@@ -105,8 +105,8 @@
   }
 
   .negative-btn {
-    background: #dc3545;
-    color: white;
+    background: var(--color-error-bootstrap);
+    color: var(--text-on-primary);
 
     &:not(:disabled):hover {
       background: #c82333;

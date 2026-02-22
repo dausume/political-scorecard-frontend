@@ -1,0 +1,22 @@
+/* =============================================
+   Form Patterns — Config panels, filters
+   ============================================= */
+
+/* Filter Row - Horizontal Flex with Gap */
+.filter-row-horizontal-flex {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Config Section - Grouped Fields */
+.config-section-grouped-fields {
+  margin: var(--spacing-md) 0;
+
+  h4 {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+    color: var(--text-primary);
+  }
+}

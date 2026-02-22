@@ -16,11 +16,11 @@
     h1 {
       font-size: 2.5rem;
       margin-bottom: 0.75rem;
-      color: #1a237e;
+      color: var(--brand-indigo-dark);
     }
 
     .subtitle {
-      color: #555;
+      color: var(--text-secondary);
       font-size: 1.2rem;
       max-width: 700px;
       margin: 0 auto;
@@ -30,12 +30,12 @@
 
   h2 {
     font-size: 1.75rem;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
   }
 
   .section-description {
-    color: #666;
+    color: var(--text-tertiary);
     font-size: 1.05rem;
     margin-bottom: 1.5rem;
   }
@@ -56,7 +56,7 @@
     }
 
     p {
-      color: #444;
+      color: var(--text-primary);
       line-height: 1.7;
       font-size: 1.05rem;
 
@@ -76,7 +76,7 @@
   }
 
   .project-card {
-    border-top: 4px solid #ccc;
+    border-top: 4px solid var(--border-dark);
     transition: transform 0.2s, box-shadow 0.2s;
 
     &:hover {
@@ -85,7 +85,7 @@
     }
 
     &.research-framework {
-      border-top-color: #1976d2;
+      border-top-color: var(--brand-blue);
     }
 
     &.scorecard {
@@ -97,12 +97,12 @@
     }
 
     &.economic-baseline {
-      border-top-color: #ff9800;
+      border-top-color: var(--brand-orange);
     }
 
     mat-card-content {
       p {
-        color: #555;
+        color: var(--text-secondary);
         line-height: 1.6;
         font-size: 0.95rem;
       }
@@ -114,7 +114,7 @@
         li {
           margin-bottom: 0.35rem;
           font-size: 0.9rem;
-          color: #555;
+          color: var(--text-secondary);
         }
       }
     }
@@ -134,12 +134,12 @@
 
     h3 {
       margin: 0 0 0.75rem;
-      color: #333;
+      color: var(--text-primary);
       font-size: 1rem;
     }
 
     p {
-      color: #555;
+      color: var(--text-secondary);
       font-size: 0.9rem;
       line-height: 1.5;
       margin: 0;
@@ -151,7 +151,7 @@
 .integration-section {
   .flow-card {
     margin-bottom: 1.5rem;
-    background-color: #fafafa;
+    background-color: var(--surface-tertiary);
   }
 
   .flow-diagram {
@@ -168,20 +168,20 @@
       align-items: center;
       text-align: center;
       padding: 1rem;
-      background: white;
-      border-radius: 8px;
+      background: var(--surface-primary);
+      border-radius: var(--radius-lg);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       min-width: 140px;
 
       .step-label {
         font-weight: 500;
-        color: #333;
+        color: var(--text-primary);
         font-size: 0.85rem;
       }
 
       .step-desc {
         font-size: 0.75rem;
-        color: #666;
+        color: var(--text-tertiary);
         margin-top: 0.25rem;
       }
     }
@@ -197,7 +197,7 @@
       margin-bottom: 0.5rem;
 
       p {
-        color: #555;
+        color: var(--text-secondary);
         line-height: 1.6;
       }
     }

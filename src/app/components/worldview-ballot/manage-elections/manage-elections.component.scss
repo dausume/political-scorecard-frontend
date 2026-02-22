@@ -22,12 +22,12 @@
         margin: 0;
         font-size: 2rem;
         font-weight: 500;
-        color: #1976d2;
+        color: var(--brand-blue);
       }
 
       .subtitle {
         margin: 0.25rem 0 0 0;
-        color: #666;
+        color: var(--text-tertiary);
         font-size: 1rem;
       }
     }
@@ -86,7 +86,7 @@
         }
 
         mat-card-subtitle {
-          color: #666;
+          color: var(--text-tertiary);
           text-transform: capitalize;
         }
       }
@@ -96,7 +96,7 @@
 
         .description {
           margin-bottom: 1rem;
-          color: #444;
+          color: var(--text-primary);
           line-height: 1.5;
         }
 
@@ -109,14 +109,14 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #666;
+            color: var(--text-tertiary);
             font-size: 0.9rem;
 
             mat-icon {
               font-size: 1.1rem;
               width: 1.1rem;
               height: 1.1rem;
-              color: #999;
+              color: var(--text-muted);
             }
           }
         }
@@ -127,7 +127,7 @@
         flex-wrap: wrap;
         gap: 0.5rem;
         padding: 1rem;
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--surface-hover);
 
         button {
           mat-icon {
@@ -154,28 +154,28 @@
         font-size: 4rem;
         width: 4rem;
         height: 4rem;
-        color: #ccc;
+        color: var(--border-dark);
         margin-bottom: 1rem;
       }
 
       h3 {
         margin: 0 0 0.5rem 0;
-        color: #666;
+        color: var(--text-tertiary);
         font-weight: 500;
       }
 
       p {
         margin: 0 0 2rem 0;
-        color: #999;
+        color: var(--text-muted);
       }
     }
   }
 
   .delete-action {
-    color: #f44336;
+    color: var(--color-error);
 
     mat-icon {
-      color: #f44336;
+      color: var(--color-error);
     }
   }
 

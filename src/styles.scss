@@ -1,15 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles — variables and patterns are in src/styles/ */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--surface-app-background);
+  color: var(--text-primary);
+}
+
+/* Global Material card styling */
+mat-card,
+.mat-mdc-card {
+  background-color: var(--surface-primary) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+}
 
 /* Error Snackbar Styling */
 .error-snackbar {
-  background-color: #d32f2f !important;
-  color: white !important;
+  background-color: var(--color-error) !important;
+  color: var(--text-on-primary) !important;
 
   .mat-mdc-snack-bar-label {
-    color: white !important;
+    color: var(--text-on-primary) !important;
   }
 
   .mat-mdc-button {
@@ -27,15 +41,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .annotation-highlight.type-scoring {
-  background-color: #e3f2fd;
+  background-color: var(--brand-sky-light);
 }
 
 .annotation-highlight.type-solution {
-  background-color: #f3e5f5;
+  background-color: var(--brand-purple-light);
 }
 
 .annotation-highlight.type-intent {
-  background-color: #e8f5e9;
+  background-color: var(--brand-green-light);
 }
 
 .annotation-highlight.flash {
@@ -46,4 +60,243 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   0% { background-color: #ffeb3b; }
   50% { background-color: #ffeb3b; }
   100% { background-color: inherit; }
+}
+
+/* =============================================
+   Angular Material Dark Mode Overrides
+   Forces Material components to respect our
+   CSS variable theme tokens.
+   ============================================= */
+body.dark-theme {
+
+  /* --- Mat Card --- */
+  .mat-mdc-card {
+    background-color: var(--surface-primary) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-card-subtitle {
+    color: var(--text-secondary) !important;
+  }
+
+  /* --- Mat Expansion Panel --- */
+  .mat-expansion-panel,
+  .mat-expansion-panel-header {
+    background-color: var(--surface-primary) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-expansion-panel-header-title {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-expansion-panel-header-description,
+  .mat-expansion-indicator::after {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-expansion-panel-body {
+    color: var(--text-primary);
+  }
+
+  /* --- Mat Form Field --- */
+  .mat-mdc-form-field {
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+      background-color: var(--surface-secondary) !important;
+    }
+
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+      border-color: var(--border-medium) !important;
+    }
+
+    .mat-mdc-input-element,
+    .mat-mdc-select-value {
+      color: var(--text-primary) !important;
+    }
+
+    .mat-mdc-floating-label {
+      color: var(--text-secondary) !important;
+    }
+  }
+
+  /* --- Mat Select Panel (dropdown overlay) --- */
+  .mat-mdc-select-panel {
+    background-color: var(--surface-secondary) !important;
+
+    .mat-mdc-option {
+      color: var(--text-primary) !important;
+
+      &:hover:not(.mdc-list-item--disabled),
+      &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+        background-color: var(--surface-hover) !important;
+      }
+    }
+  }
+
+  /* --- Mat Menu --- */
+  .mat-mdc-menu-panel {
+    background-color: var(--surface-secondary) !important;
+
+    .mat-mdc-menu-item {
+      color: var(--text-primary) !important;
+
+      &:hover:not([disabled]) {
+        background-color: var(--surface-hover) !important;
+      }
+    }
+  }
+
+  /* --- Mat Dialog --- */
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    background-color: var(--surface-primary) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-dialog-title {
+    color: var(--text-primary) !important;
+  }
+
+  /* --- Mat Chip --- */
+  .mat-mdc-chip:not(.mat-mdc-chip-disabled) {
+    background-color: var(--surface-tertiary) !important;
+    color: var(--text-primary) !important;
+
+    .mat-mdc-chip-action-label {
+      color: var(--text-primary) !important;
+    }
+  }
+
+  /* --- Mat Tab --- */
+  .mat-mdc-tab-header {
+    background-color: var(--surface-primary);
+  }
+
+  .mat-mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-mdc-tab-body-content {
+    background-color: var(--surface-primary);
+    color: var(--text-primary);
+  }
+
+  /* --- Mat Table --- */
+  .mat-mdc-table {
+    background-color: var(--surface-primary) !important;
+
+    .mat-mdc-header-row {
+      background-color: var(--surface-secondary) !important;
+    }
+
+    .mat-mdc-header-cell {
+      color: var(--text-primary) !important;
+      border-bottom-color: var(--border-medium) !important;
+    }
+
+    .mat-mdc-row {
+      &:hover {
+        background-color: var(--surface-hover) !important;
+      }
+    }
+
+    .mat-mdc-cell {
+      color: var(--text-primary) !important;
+      border-bottom-color: var(--border-light) !important;
+    }
+  }
+
+  .mat-mdc-paginator {
+    background-color: var(--surface-primary) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* --- Mat List --- */
+  .mat-mdc-list-item {
+    color: var(--text-primary) !important;
+  }
+
+  /* --- Mat Slide Toggle --- */
+  .mat-mdc-slide-toggle .mdc-switch:not(.mdc-switch--disabled) .mdc-switch__track {
+    background-color: var(--border-medium);
+  }
+
+  /* --- Mat Divider --- */
+  .mat-divider {
+    border-top-color: var(--border-light) !important;
+  }
+
+  /* --- Mat Checkbox --- */
+  .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__background {
+    border-color: var(--border-medium) !important;
+  }
+
+  /* --- Mat Tooltip --- */
+  .mat-mdc-tooltip .mdc-tooltip__surface {
+    background-color: var(--surface-tertiary) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* --- Mat Snackbar --- */
+  .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+    background-color: var(--surface-tertiary) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* --- Mat Raised Button (accent - darker gold in dark mode) --- */
+  .mat-mdc-raised-button.mat-accent,
+  .mat-mdc-unelevated-button.mat-accent {
+    background-color: #d48a0c !important;
+    color: #fff !important;
+  }
+
+  .mat-mdc-raised-button.mat-accent:hover,
+  .mat-mdc-unelevated-button.mat-accent:hover {
+    background-color: #b07208 !important;
+  }
+
+  /* --- Mat Button (stroked / flat / basic) --- */
+  .mat-mdc-button:not(.mdc-button--unelevated),
+  .mat-mdc-outlined-button,
+  .mdc-button {
+    color: var(--text-primary) !important;
+
+    .mdc-button__label {
+      color: var(--text-primary) !important;
+    }
+  }
+
+  .mat-mdc-outlined-button:not(:disabled) {
+    border-color: var(--border-medium) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-icon-button {
+    color: var(--text-secondary) !important;
+  }
+
+  /* --- Mat Button Toggle --- */
+  .mat-button-toggle-appearance-standard {
+    background-color: var(--surface-primary) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-button-toggle-checked {
+    background-color: var(--surface-hover) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* --- Scrollbars --- */
+  ::-webkit-scrollbar-track {
+    background: var(--surface-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-dark);
+
+    &:hover {
+      background: var(--text-muted);
+    }
+  }
 }

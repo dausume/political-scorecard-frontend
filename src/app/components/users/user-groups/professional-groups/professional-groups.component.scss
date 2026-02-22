@@ -33,7 +33,7 @@
     }
 
     .subtitle {
-      color: #666;
+      color: var(--text-tertiary);
       font-size: 1.1rem;
       max-width: 800px;
     }
@@ -47,7 +47,7 @@
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
-  color: #666;
+  color: var(--text-tertiary);
 
   p {
     margin-top: 1rem;
@@ -59,20 +59,20 @@
   .login-prompt-card {
     max-width: 600px;
     margin: 0 auto 2rem;
-    border-left: 4px solid #ff9800;
+    border-left: 4px solid var(--brand-orange);
 
     mat-card-header {
       mat-icon[mat-card-avatar] {
         font-size: 32px;
         width: 40px;
         height: 40px;
-        color: #ff9800;
+        color: var(--brand-orange);
       }
     }
 
     mat-card-content {
       p {
-        color: #555;
+        color: var(--text-secondary);
         line-height: 1.6;
         margin-bottom: 1.5rem;
       }
@@ -86,10 +86,10 @@
           display: flex;
           align-items: center;
           gap: 0.75rem;
-          color: #333;
+          color: var(--text-primary);
 
           mat-icon {
-            color: #ff9800;
+            color: var(--brand-orange);
           }
         }
       }
@@ -112,13 +112,13 @@
 
     h3 {
       text-align: center;
-      color: #999;
+      color: var(--text-muted);
       margin-bottom: 1rem;
     }
 
     .preview-note {
       text-align: center;
-      color: #999;
+      color: var(--text-muted);
       font-style: italic;
       margin-top: 1rem;
     }
@@ -132,15 +132,15 @@
   gap: 0.75rem;
   padding: 0.875rem 1.25rem;
   margin-bottom: 1.5rem;
-  background: #fff3e0;
-  border-left: 4px solid #ff9800;
-  border-radius: 4px;
-  color: #e65100;
+  background: var(--brand-orange-light);
+  border-left: 4px solid var(--brand-orange);
+  border-radius: var(--radius-sm);
+  color: var(--brand-orange-dark);
   font-size: 0.95rem;
   line-height: 1.4;
 
   mat-icon {
-    color: #ff9800;
+    color: var(--brand-orange);
     flex-shrink: 0;
   }
 }
@@ -159,7 +159,7 @@
 }
 
 .group-card {
-  border-left: 4px solid #ccc;
+  border-left: 4px solid var(--border-dark);
   transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover:not(.preview) {
@@ -196,7 +196,7 @@
 
   mat-card-content {
     p {
-      color: #555;
+      color: var(--text-secondary);
       font-size: 0.95rem;
       line-height: 1.5;
       margin-bottom: 1rem;

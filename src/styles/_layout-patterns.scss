@@ -1,0 +1,63 @@
+/* =============================================
+   Layout Patterns — Page containers, grids
+   ============================================= */
+
+/* Page Container - Centered Content with Side Padding */
+.page-container-centered-with-padding {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-container-centered-narrow {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-container-centered-wide {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-container-full-width {
+  padding: 20px;
+  width: 100%;
+}
+
+/* Grid - Two Column Auto-Fill Cards */
+.grid-two-column-auto-fill {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.grid-two-column-equal {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.grid-three-column-equal {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Grid - Property List Auto-Fit */
+.grid-property-list-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+}
+
+/* Responsive: collapse grids to single column on mobile */
+@media (max-width: 768px) {
+  .grid-two-column-auto-fill,
+  .grid-two-column-equal,
+  .grid-three-column-equal,
+  .grid-property-list-auto-fit {
+    grid-template-columns: 1fr;
+  }
+}

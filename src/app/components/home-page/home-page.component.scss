@@ -22,7 +22,7 @@
 
 .worldview-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  color: var(--text-on-dark);
 
   .section-header {
     text-align: center;
@@ -36,15 +36,15 @@
 
   .worldview-description {
     font-size: 1.1rem;
-    color: white;
+    color: var(--text-on-dark);
     text-align: center;
   }
 
   .worldview-ballot-preview {
-    background: white;
-    border-radius: 8px;
+    background: var(--surface-primary);
+    border-radius: var(--radius-lg);
     padding: 20px;
-    color: #333;
+    color: var(--text-primary);
   }
 }
 
@@ -61,7 +61,7 @@
 
   .section-description {
     font-size: 1rem;
-    color: #666;
+    color: var(--text-tertiary);
     max-width: 800px;
     margin: 0 auto;
   }
@@ -88,7 +88,7 @@
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-lg);
   }
 
   h3 {
@@ -98,7 +98,7 @@
 
   p {
     margin-bottom: 20px;
-    color: #555;
+    color: var(--text-secondary);
     line-height: 1.6;
   }
 
@@ -109,8 +109,8 @@
 
 // Competitor Cards
 .competitor-card {
-  background-color: #e8f5e9;
-  border-left: 4px solid #4caf50;
+  background-color: var(--brand-green-light);
+  border-left: 4px solid var(--brand-green);
 }
 
 // Scoring Cards
@@ -118,25 +118,25 @@
   padding: 25px;
 
   &.competitive-scoring {
-    background-color: #e3f2fd;
-    border-left: 4px solid #2196f3;
+    background-color: var(--brand-sky-light);
+    border-left: 4px solid var(--brand-sky);
   }
 
   &.policy-scoring {
-    background-color: #f1f8e9;
-    border-left: 4px solid #8bc34a;
+    background-color: var(--brand-lime-light);
+    border-left: 4px solid var(--brand-lime);
   }
 
   &.solution-scoring {
-    background-color: #fff3e0;
-    border-left: 4px solid #ff9800;
+    background-color: var(--brand-orange-light);
+    border-left: 4px solid var(--brand-orange);
   }
 }
 
 // Terms Cards
 .terms-card {
-  background-color: #f3e5f5;
-  border-left: 4px solid #9c27b0;
+  background-color: var(--brand-purple-light);
+  border-left: 4px solid var(--brand-purple);
 }
 
 .group-buttons {
@@ -154,7 +154,7 @@
 }
 
 .info-card {
-  background-color: #fafafa;
+  background-color: var(--surface-tertiary);
   padding: 25px;
   text-align: center;
 
@@ -164,7 +164,7 @@
 
   p {
     margin-bottom: 15px;
-    color: #666;
+    color: var(--text-tertiary);
   }
 }
 

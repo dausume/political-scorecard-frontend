@@ -13,7 +13,7 @@
     mat-card-title {
       font-size: 1.75rem;
       font-weight: 500;
-      color: #1976d2;
+      color: var(--brand-blue);
     }
 
     mat-card-subtitle {
@@ -33,7 +33,7 @@
     }
 
     .help-text {
-      color: #666;
+      color: var(--text-tertiary);
       margin-bottom: 1.5rem;
       font-size: 0.95rem;
     }
@@ -60,8 +60,8 @@
   .new-term-form {
     margin-top: 1rem;
     padding: 1rem;
-    background-color: #f9f9f9;
-    border-radius: 4px;
+    background-color: var(--surface-tertiary);
+    border-radius: var(--radius-sm);
   }
 
   // Context cards
@@ -77,7 +77,7 @@
         justify-content: space-between;
         align-items: center;
         font-size: 1.1rem;
-        color: #333;
+        color: var(--text-primary);
       }
     }
 
@@ -126,14 +126,14 @@
   .polarity-section {
     margin-top: 1rem;
     padding: 1rem;
-    background-color: #f5f5f5;
-    border-radius: 4px;
+    background-color: var(--surface-secondary);
+    border-radius: var(--radius-sm);
 
     label {
       display: block;
       font-weight: 500;
       margin-bottom: 0.5rem;
-      color: #333;
+      color: var(--text-primary);
     }
 
     mat-radio-group {
@@ -145,7 +145,7 @@
 
     mat-hint {
       font-size: 0.85rem;
-      color: #666;
+      color: var(--text-tertiary);
     }
   }
 
