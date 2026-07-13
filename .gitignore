@@ -1,3 +1,6 @@
 node_modules
 .angular
 dist/*
+# Claude Code local files (settings, memory) — keep private
+.claude/
+CLAUDE.local.md
