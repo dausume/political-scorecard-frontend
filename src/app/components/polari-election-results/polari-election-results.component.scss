@@ -1,0 +1,128 @@
+.results-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.page-nav {
+  margin-bottom: 1.5rem;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.error-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-error-bg);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--color-error);
+  margin-bottom: 1.5rem;
+}
+
+.results-header {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .meta-chips {
+    margin-bottom: 0.5rem;
+  }
+
+  .status-chip.closed {
+    background-color: var(--color-error-bg);
+  }
+
+  .note {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+}
+
+.results-card,
+.pairwise-card,
+.refused-card {
+  margin-bottom: 1.5rem;
+}
+
+.results-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.result-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 2fr auto auto;
+  align-items: center;
+  gap: 0.75rem;
+
+  &.winner {
+    font-weight: 600;
+  }
+
+  .winner-icon {
+    color: #f5a623;
+    vertical-align: middle;
+    margin-right: 0.25rem;
+  }
+
+  .share-bar-track {
+    display: block;
+    height: 10px;
+    border-radius: 5px;
+    background-color: var(--border-light, #e0e0e0);
+    overflow: hidden;
+  }
+
+  .share-bar-fill {
+    display: block;
+    height: 100%;
+    background-color: var(--brand-sky);
+    border-radius: 5px;
+  }
+
+  .share-value {
+    text-align: right;
+    min-width: 3.5rem;
+  }
+
+  .detail {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+}
+
+.pairwise-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+
+  .vs {
+    color: var(--text-secondary);
+  }
+
+  .beats {
+    font-weight: 600;
+    text-align: right;
+  }
+}
+
+.refused-row {
+  padding: 0.35rem 0;
+  font-size: 0.9rem;
+  color: var(--color-error);
+}

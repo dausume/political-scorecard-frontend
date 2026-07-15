@@ -1,0 +1,140 @@
+<div class="detail-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/polari-votes">
+      <mat-icon>arrow_back</mat-icon> Back to Public Votes
+    </button>
+  </nav>
+
+  @if (loading) {
+    <section class="loading-state">
+      <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      <span>Loading&hellip;</span>
+    </section>
+  }
+
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
+  @if (topic && !loading) {
+    <header class="topic-header">
+      <h1>{{ topic.title }}</h1>
+      <div class="meta-chips">
+        <mat-chip-set>
+          <mat-chip [class]="'status-chip ' + topic.status.toLowerCase()">{{ topic.status }}</mat-chip>
+          <mat-chip>{{ topic.mode }}</mat-chip>
+          <mat-chip>{{ topic.totalBallots }} ballots cast</mat-chip>
+        </mat-chip-set>
+      </div>
+      <p class="description">{{ topic.description }}</p>
+      @if (results) {
+        <p class="results-note">{{ results.note }}</p>
+      }
+    </header>
+
+    @if (topic.status === 'SYNCED') {
+      <mat-card class="elected-card">
+        <mat-card-content>
+          <mat-icon class="trophy">emoji_events</mat-icon>
+          <div>
+            <strong>Resolved: {{ topic.electedCandidate }}</strong>
+            <p class="provenance">{{ topic.electedProvenance }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <div class="candidates-list">
+      @for (candidate of candidates; track candidate.name) {
+        <mat-card class="candidate-card">
+          <mat-card-content>
+            <div class="candidate-header">
+              @if (topic.mode === 'approval') {
+                <mat-checkbox
+                  [disabled]="topic.status !== 'OPEN'"
+                  [checked]="approvals.has(candidate.name)"
+                  (change)="toggleApproval(candidate.name)">
+                </mat-checkbox>
+              }
+              @if (topic.mode === 'sole') {
+                <mat-radio-button
+                  [disabled]="topic.status !== 'OPEN'"
+                  [checked]="soleChoice === candidate.name"
+                  (click)="soleChoice = candidate.name">
+                </mat-radio-button>
+              }
+              @if (topic.mode === 'ranked-condorcet') {
+                <button mat-icon-button
+                        [disabled]="topic.status !== 'OPEN'"
+                        (click)="toggleRanking(candidate.name)"
+                        [matBadge]="rankOf(candidate.name) || null"
+                        matBadgeColor="primary"
+                        matBadgeSize="small">
+                  <mat-icon>{{ rankOf(candidate.name) ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                </button>
+              }
+              <div class="candidate-title">
+                <h3>{{ candidate.displayName }}</h3>
+                @if (candidate.description) {
+                  <p class="candidate-description">{{ candidate.description }}</p>
+                }
+              </div>
+            </div>
+            <div class="share-row">
+              <span class="share-bar-track">
+                <span class="share-bar-fill" [style.width.%]="(candidate.count / maxCount()) * 100"></span>
+              </span>
+              <span class="share-value">{{ candidate.count }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+
+    @if (topic.mode === 'ranked-condorcet' && topic.status === 'OPEN') {
+      <p class="ranking-help">Click candidates in the order you prefer them — first click = most preferred.</p>
+    }
+
+    @if (topic.status === 'OPEN') {
+      <section class="submit-section">
+        @if (isAuthenticated$ | async) {
+          <button mat-raised-button color="primary" [disabled]="!canSubmit || submitting" (click)="submitVote()">
+            @if (submitting) {
+              <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+            } @else {
+              Cast Vote
+            }
+          </button>
+          @if (submitError) {
+            <p class="submit-error">{{ submitError }}</p>
+          }
+          @if (submitSuccess) {
+            <p class="submit-success">
+              <mat-icon>check_circle</mat-icon> Your vote was recorded.
+            </p>
+          }
+        } @else {
+          <div class="login-prompt">
+            <span>Log in to cast your vote.</span>
+            <button mat-stroked-button (click)="login()">Log In</button>
+          </div>
+        }
+      </section>
+    }
+
+    <section class="admin-actions">
+      <p class="admin-note">
+        These actions aren't role-gated yet on the backend — anyone can trigger them today.
+      </p>
+      @if (topic.status === 'OPEN') {
+        <button mat-stroked-button (click)="closeTopic()">Close Voting</button>
+      }
+      @if (topic.status === 'CLOSED') {
+        <button mat-stroked-button color="primary" (click)="syncToPolari()">Sync Result to Polari</button>
+      }
+    </section>
+  }
+</div>

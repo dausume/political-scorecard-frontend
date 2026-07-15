@@ -3,6 +3,12 @@
     <button mat-stroked-button routerLink="/">
       <mat-icon>home</mat-icon> Home
     </button>
+    <button mat-stroked-button routerLink="/score-map">
+      <mat-icon>map</mat-icon> View on Map
+    </button>
+    <button mat-stroked-button routerLink="/accountability">
+      <mat-icon>gavel</mat-icon> Accountability Hub
+    </button>
   </nav>
 
   <header class="page-header">
@@ -66,8 +72,21 @@
     }
   </section>
 
+  @if (loading) {
+    <section class="loading-state">
+      <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      <span>Loading categories from Polari&rsquo;s scoring engine&hellip;</span>
+    </section>
+  }
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
   <!-- Categories Grid -->
-  <section class="categories-grid">
+  <section class="categories-grid" [hidden]="loading">
     @for (category of filteredCategories; track category.id) {
       <mat-card class="category-card"
                 [class.prioritized]="getPriority(category.id) === 'high'"
@@ -93,6 +112,9 @@
                   (click)="cyclePriority(category.id)"
                   [class]="'priority-button ' + getPriority(category.id)">
             <mat-icon>{{ getPriorityIcon(getPriority(category.id)) }}</mat-icon>
+          </button>
+          <button mat-button [routerLink]="['/polari-concepts', category.id, 'score']">
+            <mat-icon>query_stats</mat-icon> View Score
           </button>
           <span class="spacer"></span>
           <button mat-button

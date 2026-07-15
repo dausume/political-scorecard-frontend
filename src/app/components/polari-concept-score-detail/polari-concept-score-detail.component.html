@@ -1,0 +1,121 @@
+<div class="detail-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/political-categories">
+      <mat-icon>arrow_back</mat-icon> Back to Categories
+    </button>
+  </nav>
+
+  @if (loading) {
+    <section class="loading-state">
+      <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      <span>Computing the live score from Polari&rsquo;s scoring engine&hellip;</span>
+    </section>
+  }
+
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
+  @if (report && !loading) {
+    <header class="detail-header">
+      <h1>{{ report.displayName }}</h1>
+      <p class="description">{{ report.description }}</p>
+      <div class="meta-chips">
+        <mat-chip-set>
+          <mat-chip>{{ report.aggregation }}</mat-chip>
+          @if (report.levelized) {
+            <mat-chip>levelized to best = 100</mat-chip>
+          }
+          <mat-chip>{{ report.totalWeight }} total weight</mat-chip>
+        </mat-chip-set>
+      </div>
+      @if (report.requiredContexts.length > 0) {
+        <p class="required-contexts">
+          Required contexts: {{ report.requiredContexts.join(', ') }}
+        </p>
+      }
+      @if (report.nestedConcepts.length > 0) {
+        <p class="nested-concepts">
+          Composes:
+          @for (n of report.nestedConcepts; track n) {
+            <a [routerLink]="['/polari-concepts', n, 'score']">{{ n }}</a>
+          }
+        </p>
+      }
+      <p class="aggregation-note">
+        <mat-icon>info_outline</mat-icon>
+        {{ report.aggregationNote }}
+      </p>
+    </header>
+
+    <div class="subjects-list">
+      @for (subject of report.subjects; track subject.subject) {
+        <mat-expansion-panel class="subject-panel">
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ subject.displayName }}</mat-panel-title>
+            <mat-panel-description>
+              <div class="score-row">
+                <span class="score-bar-track">
+                  <span class="score-bar-fill" [style.width.%]="subject.initialScore * 100"></span>
+                </span>
+                <span class="score-value">
+                  {{ subject.levelizedScore !== null
+                    ? (subject.levelizedScore | number:'1.0-1') + ' / 100'
+                    : (subject.initialScore | number:'1.2-2') + ' / 1.0' }}
+                </span>
+                @if (subject.termsMissing.length > 0) {
+                  <mat-icon class="missing-icon" [title]="subject.termsMissing.length + ' term(s) missing'">warning_amber</mat-icon>
+                }
+              </div>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          @if (subject.termsMissing.length > 0) {
+            <p class="missing-terms">
+              Missing (contributes 0, stays in the denominator): {{ subject.termsMissing.join(', ') }}
+            </p>
+          }
+
+          <table class="breakdown-table">
+            <thead>
+              <tr>
+                <th>Term / concept</th>
+                <th>Weight</th>
+                <th>Raw</th>
+                <th>Normalized</th>
+                <th>Weighted</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (entry of subject.breakdown; track entryLabel(entry) + entry.weight) {
+                <tr [class.entry-missing]="!entry.found">
+                  <td>
+                    {{ entryLabel(entry) }}
+                    @if (entry.kind === 'concept') {
+                      <mat-chip class="nested-chip">nested</mat-chip>
+                    }
+                  </td>
+                  <td>{{ entry.weight }}</td>
+                  <td>{{ entry.found && entry.raw !== undefined ? entry.raw : '&mdash;' }} {{ entry.unit || '' }}</td>
+                  <td>{{ entry.found && entry.normalized !== undefined ? (entry.normalized | number:'1.2-2') : '&mdash;' }}</td>
+                  <td>{{ entry.found && entry.weighted !== undefined ? (entry.weighted | number:'1.2-2') : '&mdash;' }}</td>
+                  <td>
+                    @if (entry.found) {
+                      <mat-icon class="found-icon">check_circle</mat-icon>
+                    } @else {
+                      <span class="entry-error">{{ entry.error || 'missing' }}</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </mat-expansion-panel>
+      }
+    </div>
+  }
+</div>

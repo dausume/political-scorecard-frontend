@@ -1,0 +1,96 @@
+<div class="hub-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/political-categories">
+      <mat-icon>arrow_back</mat-icon> Back to Categories
+    </button>
+    <button mat-stroked-button routerLink="/policy-votes/authorize-staff">
+      <mat-icon>admin_panel_settings</mat-icon> Authorize a Vote-Record Submitter
+    </button>
+  </nav>
+
+  <header class="hub-header">
+    <h1>Accountability Hub</h1>
+    <p class="subtitle">
+      Real policy and politician scores, computed live from confirmed evidence and actual
+      voting records — every score below is relative to the concept selected here.
+    </p>
+  </header>
+
+  @if (loading) {
+    <section class="loading-state">
+      <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      <span>Loading policies, politicians, and cohorts from Polari&rsquo;s scoring engine&hellip;</span>
+    </section>
+  }
+
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
+  @if (!loading && !error) {
+    <mat-form-field appearance="outline" class="concept-select">
+      <mat-label>Score against concept</mat-label>
+      <mat-select [(ngModel)]="selectedConcept">
+        @for (c of concepts; track c.name) {
+          <mat-option [value]="c.name">{{ c.displayName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div class="hub-columns">
+      <section class="hub-column">
+        <h2><mat-icon>description</mat-icon> Policies</h2>
+        @if (policies.length === 0) {
+          <p class="empty-note">No policy ScoreSubjects found.</p>
+        }
+        <div class="item-list">
+          @for (p of policies; track p.name) {
+            <mat-card class="item-card" (click)="goToPolicy(p.name)">
+              <mat-card-content>
+                <strong>{{ p.displayName }}</strong>
+                <p>{{ p.description }}</p>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      </section>
+
+      <section class="hub-column">
+        <h2><mat-icon>person</mat-icon> Politicians</h2>
+        @if (politicians.length === 0) {
+          <p class="empty-note">No politician ScoreSubjects found.</p>
+        }
+        <div class="item-list">
+          @for (p of politicians; track p.name) {
+            <mat-card class="item-card" (click)="goToPolitician(p.name)">
+              <mat-card-content>
+                <strong>{{ p.displayName }}</strong>
+                <p>{{ p.description }}</p>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      </section>
+
+      <section class="hub-column">
+        <h2><mat-icon>groups</mat-icon> Cohorts</h2>
+        @if (cohorts.length === 0) {
+          <p class="empty-note">No ScoreGroups with politician members found.</p>
+        }
+        <div class="item-list">
+          @for (c of cohorts; track c.name) {
+            <mat-card class="item-card" (click)="goToCohort(c.name)">
+              <mat-card-content>
+                <strong>{{ c.displayName }}</strong>
+                <p>{{ c.memberSubjectNames.length }} member(s)</p>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      </section>
+    </div>
+  }
+</div>

@@ -1,0 +1,55 @@
+<div class="votes-container">
+  <header class="page-header">
+    <h1>Public Votes</h1>
+    <p class="subtitle">
+      Cast your vote on which drafted definition — proposed by different professional and
+      interest groups in Polari — the community should actually use.
+    </p>
+  </header>
+
+  @if (loading) {
+    <section class="loading-state">
+      <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      <span>Loading votes&hellip;</span>
+    </section>
+  }
+
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
+  @if (!loading && !error) {
+    <div class="topics-list">
+      @for (topic of topics; track topic.id) {
+        <mat-card class="topic-card" (click)="openTopic(topic.id)">
+          <mat-card-header>
+            <mat-card-title>{{ topic.title }}</mat-card-title>
+            <mat-card-subtitle>
+              <mat-chip-set>
+                <mat-chip [class]="'status-chip ' + topic.status.toLowerCase()">{{ topic.status }}</mat-chip>
+                <mat-chip>{{ topic.mode }}</mat-chip>
+                <mat-chip>{{ topic.totalBallots }} ballots</mat-chip>
+              </mat-chip-set>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ topic.description }}</p>
+            @if (topic.electedCandidate) {
+              <p class="elected-line">
+                <mat-icon>emoji_events</mat-icon>
+                Resolved to: <strong>{{ topic.electedCandidate }}</strong>
+              </p>
+            }
+          </mat-card-content>
+        </mat-card>
+      } @empty {
+        <div class="empty-state">
+          <p>No public votes yet.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

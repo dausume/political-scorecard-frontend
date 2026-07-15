@@ -1,0 +1,51 @@
+.authorize-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.page-nav {
+  margin-bottom: 1.5rem;
+}
+
+.authorize-header {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+}
+
+.full-width {
+  width: 100%;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.submit-error {
+  color: var(--color-error);
+  font-size: 0.85rem;
+}
+
+.submit-success {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #2e7d32;
+  font-size: 0.85rem;
+}
+
+.not-admin-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}

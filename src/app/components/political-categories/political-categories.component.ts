@@ -11,8 +11,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PoliticalCategory, CategoryPriority, UserCategoryPreference } from '../../classes/political-category/political-category';
-import { MOCK_POLITICAL_CATEGORIES } from '../../state/mock-data/political-categories.mock';
+import { PolariScoringService } from '../../services/polari/polari-scoring.service';
+import { ScoreConceptSummary } from '../../models/polari-scoring/polari-scoring-types';
 
 const STORAGE_KEY = 'political-category-preferences';
 
@@ -31,7 +33,8 @@ const STORAGE_KEY = 'political-category-preferences';
     MatFormFieldModule,
     MatInputModule,
     MatTabsModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './political-categories.component.html',
   styleUrl: './political-categories.component.scss'
@@ -42,9 +45,57 @@ export class PoliticalCategoriesComponent implements OnInit {
   searchQuery: string = '';
   activeFilter: 'all' | 'high' | 'normal' | 'low' = 'all';
 
+  /** 2026-07-14 (Democratic Scorecard revamp): categories are now
+   *  Polari ScoreConcepts, live from Polari's scoring engine, not
+   *  MOCK_POLITICAL_CATEGORIES. See DEMOCRATIC_SCORECARD_REVAMP_PLAN.md. */
+  loading = false;
+  error: string | null = null;
+
+  constructor(private polariScoring: PolariScoringService) {}
+
   ngOnInit(): void {
-    this.categories = MOCK_POLITICAL_CATEGORIES;
     this.loadPreferences();
+    this.loadCategories();
+  }
+
+  private loadCategories(): void {
+    this.loading = true;
+    this.error = null;
+    this.polariScoring.getConcepts().subscribe({
+      next: (concepts) => {
+        this.categories = concepts.map(c => this.toPoliticalCategory(c));
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Could not reach Polari’s scoring engine — '
+          + (err?.message || 'unknown error');
+        this.categories = [];
+        this.loading = false;
+      },
+    });
+  }
+
+  /** ScoreConcept → PoliticalCategory. `parentCategories` is left empty:
+   *  Polari's nesting is parent-knows-children (a concept's own
+   *  term_weights_json can reference a child concept), not child-knows-
+   *  parents, so there's no direct field to read a concept's parents
+   *  from without scanning every OTHER concept's term list — not worth
+   *  doing until a real page needs the hierarchy rendered as a tree. */
+  private toPoliticalCategory(concept: ScoreConceptSummary): PoliticalCategory {
+    return new PoliticalCategory({
+      id: concept.name,
+      name: concept.displayName || concept.name,
+      description: concept.description,
+      isRoot: true,
+      parentCategories: [],
+      // Polari's ScoreConcept carries no icon/color — mock data had a
+      // hand-picked one per category; a neutral shared default here is
+      // honest (no per-concept metadata exists yet) rather than a
+      // guessed name→icon mapping that would silently misrepresent
+      // concepts it doesn't recognize.
+      icon: 'topic',
+      color: '#5c6bc0',
+    });
   }
 
   private loadPreferences(): void {

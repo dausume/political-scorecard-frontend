@@ -63,7 +63,7 @@ export const LABOR_QUALITY_TERMS: LaborQualityTerm[] = [
 
 // Sample state data matching the spreadsheet
 // Values are the PRE-NORMALIZED raw data
-export interface StateLabor Data {
+export interface StateLaborData {
   state: string;
   unionParticipation: number; // Percentage
   laborForceParticipationRate: number; // Percentage
@@ -71,7 +71,7 @@ export interface StateLabor Data {
   impoverishedWorkforce: number; // Percentage (will be inverted)
 }
 
-export const STATE_LABOR_DATA: StateLabor Data[] = [
+export const STATE_LABOR_DATA: StateLaborData[] = [
   {
     state: 'Alabama',
     unionParticipation: 5.1, // Low union participation
@@ -135,7 +135,7 @@ export const TOTAL_WEIGHT =
  * Calculate the normalized score for a state
  * This matches the spreadsheet calculation exactly
  */
-export function calculateStateLaborScore(stateData: StateLabor Data): {
+export function calculateStateLaborScore(stateData: StateLaborData): {
   state: string;
   // Normalized values [0, 1]
   unionNormalized: number;

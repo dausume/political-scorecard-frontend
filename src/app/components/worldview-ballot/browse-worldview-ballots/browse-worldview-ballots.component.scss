@@ -31,6 +31,17 @@
     color: var(--text-tertiary);
     margin: 0.5rem 0;
   }
+
+  .public-votes-link {
+    display: inline-block;
+    font-weight: 600;
+    color: var(--brand-blue-action);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .filter-section {
@@ -57,6 +68,26 @@
       border-color: var(--brand-blue-action);
     }
   }
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  justify-content: center;
+  color: var(--text-tertiary);
+}
+
+.error-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-error-bg);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--color-error);
+  margin-bottom: 1.5rem;
 }
 
 .ballots-list {
@@ -127,6 +158,18 @@
         color: var(--text-secondary);
       }
     }
+  }
+
+  .kind-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+    background: var(--surface-secondary);
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    margin-bottom: 0.75rem;
   }
 
   .ballot-card-description {

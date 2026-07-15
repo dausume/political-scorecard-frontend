@@ -1,0 +1,89 @@
+<div class="results-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/browse-worldview-ballots">
+      <mat-icon>arrow_back</mat-icon> Back to Elections & Votes
+    </button>
+  </nav>
+
+  @if (loading) {
+    <section class="loading-state">
+      <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      <span>Loading live results from Polari&rsquo;s scoring engine&hellip;</span>
+    </section>
+  }
+
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
+  @if (tally && !loading) {
+    <header class="results-header">
+      <h1>{{ tally.displayName }}</h1>
+      <div class="fork-context">
+        <span class="fork-label">Decision procedure</span>
+        <a [routerLink]="['/decision-procedures', tally.decisionProcedure]">{{ tally.decisionProcedure }}</a>
+        <span class="fork-sep">&rsaquo;</span>
+        <span class="fork-label">Fork</span>
+        <span class="fork-name">{{ tally.fork }}</span>
+      </div>
+      <div class="meta-chips">
+        <mat-chip-set>
+          <mat-chip>{{ tally.mode }}</mat-chip>
+          <mat-chip [class]="'status-chip ' + tally.status">{{ tally.status }}</mat-chip>
+          <mat-chip>{{ tally.ballotsCounted }} / {{ tally.ballotsCast }} ballots counted</mat-chip>
+        </mat-chip-set>
+      </div>
+      <p class="note">{{ tally.note }}</p>
+    </header>
+
+    <div class="candidates-list">
+      @for (row of tally.results; track row.candidate) {
+        <mat-card class="candidate-card" [class.winner]="isWinner(row.candidate)">
+          <mat-card-header>
+            <mat-card-title>
+              @if (isWinner(row.candidate)) {
+                <mat-icon class="winner-icon">emoji_events</mat-icon>
+              }
+              {{ row.candidate }}
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="share-row">
+              <span class="share-bar-track">
+                <span class="share-bar-fill" [style.width.%]="row.share * 100"></span>
+              </span>
+              <span class="share-value">{{ (row.share * 100) | number:'1.0-1' }}%</span>
+              @if (row.approvals !== undefined) {
+                <span class="detail">{{ row.approvals }} approvals</span>
+              }
+              @if (row.votes !== undefined) {
+                <span class="detail">{{ row.votes }} votes</span>
+              }
+              @if (weightFor(row.candidate) !== null) {
+                <span class="detail">weight {{ weightFor(row.candidate) | number:'1.2-2' }}</span>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+
+    @if (tally.refusedBallots.length > 0) {
+      <mat-card class="refused-card">
+        <mat-card-header>
+          <mat-card-title>Refused ballots</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @for (r of tally.refusedBallots; track r.ballot) {
+            <div class="refused-row">
+              <strong>{{ r.ballot }}</strong>: {{ r.error }}
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</div>

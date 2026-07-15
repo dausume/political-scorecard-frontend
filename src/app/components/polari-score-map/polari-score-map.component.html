@@ -1,0 +1,75 @@
+<div class="map-page">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/">
+      <mat-icon>home</mat-icon> Home
+    </button>
+  </nav>
+
+  <header class="page-header">
+    <h1>Housing Affordability — by State</h1>
+    <p class="subtitle">
+      Same states, same underlying data — the color you see depends entirely on which
+      worldview's weighting you pick. That's the point: there's no one "objective" map.
+    </p>
+  </header>
+
+  <mat-button-toggle-group
+    [value]="selectedConcept"
+    (change)="onConceptChange($event.value)"
+    class="concept-toggle">
+    @for (option of conceptOptions; track option.name) {
+      <mat-button-toggle [value]="option.name">{{ option.label }}</mat-button-toggle>
+    }
+  </mat-button-toggle-group>
+
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
+  @if (missingSubjects.length > 0) {
+    <p class="missing-note">
+      <mat-icon>info_outline</mat-icon>
+      No map boundary available for: {{ missingSubjects.join(', ') }} (not a US state — omitted
+      from the map honestly rather than silently dropped from the underlying score).
+    </p>
+  }
+
+  <div class="map-wrapper">
+    @if (loading) {
+      <div class="loading-overlay">
+        <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
+      </div>
+    }
+    <svg [attr.viewBox]="'0 0 ' + viewWidth + ' ' + viewHeight" class="us-map">
+      @for (state of contextStates; track state.abbreviation) {
+        <path [attr.d]="state.path" class="context-state"></path>
+      }
+      @for (state of scoredStates; track state.abbreviation) {
+        <path
+          [attr.d]="state.path"
+          [attr.fill]="fillFor(state.score)"
+          class="scored-state"
+          [class.hovered]="hovered?.abbreviation === state.abbreviation"
+          (mouseenter)="setHovered(state)"
+          (mouseleave)="setHovered(null)">
+        </path>
+      }
+    </svg>
+
+    @if (hovered) {
+      <div class="tooltip">
+        <strong>{{ hovered.name }}</strong>
+        <span>{{ hovered.score !== null ? (hovered.score | number:'1.0-1') + ' / 100' : 'no data' }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="legend">
+    <span>Lower score</span>
+    <div class="legend-gradient"></div>
+    <span>Higher score</span>
+  </div>
+</div>

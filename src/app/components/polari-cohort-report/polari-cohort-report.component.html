@@ -1,0 +1,124 @@
+<div class="report-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/accountability">
+      <mat-icon>arrow_back</mat-icon> Back to Accountability Hub
+    </button>
+  </nav>
+
+  @if (groupName && conceptName) {
+    <mat-form-field appearance="outline" class="timeframe-select">
+      <mat-label>Timeframe</mat-label>
+      <mat-select [(ngModel)]="timeframeName" (selectionChange)="onTimeframeChange()">
+        <mat-option value="">All time</mat-option>
+        @for (t of timeframes; track t.name) {
+          <mat-option [value]="t.name">{{ t.displayName }} ({{ t.start }} &ndash; {{ t.end }})</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+
+  @if (loading) {
+    <section class="loading-state">
+      <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      <span>Computing the live cohort report from Polari&rsquo;s scoring engine&hellip;</span>
+    </section>
+  }
+
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
+  @if (report && !loading) {
+    <header class="report-header">
+      <h1>{{ report.displayName }}</h1>
+      <div class="meta-chips">
+        <mat-chip-set>
+          <mat-chip>{{ report.groupType }}</mat-chip>
+          <mat-chip>scored against
+            <a [routerLink]="['/polari-concepts', report.concept, 'score']">{{ report.concept }}</a>
+          </mat-chip>
+          @if (report.agreementPolicy) {
+            <mat-chip>bands: {{ report.agreementPolicy }}</mat-chip>
+          }
+        </mat-chip-set>
+      </div>
+      <div class="score-summary">
+        <div class="score-tile">
+          <span class="score-tile-label">Cohort mean score</span>
+          <span class="score-tile-value">
+            {{ report.cohortMeanScore !== null ? (report.cohortMeanScore | number:'1.2-2') : '&mdash;' }}
+          </span>
+        </div>
+      </div>
+      <p class="note">{{ report.note }}</p>
+    </header>
+
+    <section class="members-section">
+      <h2>Members ({{ report.members.length }})</h2>
+      <table class="members-table">
+        <thead>
+          <tr>
+            <th>Politician</th>
+            <th>Score</th>
+            <th>Stance</th>
+            <th>Participation</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of report.members; track m.politician) {
+            <tr [class.member-errored]="m.error">
+              <td>
+                <a [routerLink]="['/politician-scores', m.politician]" [queryParams]="{concept: report.concept}">
+                  {{ m.politician }}
+                </a>
+              </td>
+              <td>{{ m.score !== null ? (m.score | number:'1.2-2') : '&mdash;' }}</td>
+              <td>{{ m.stance !== null ? (m.stance | number:'1.2-2') : '&mdash;' }}</td>
+              <td>{{ m.participation !== null ? (m.participation | percent:'1.0-0') : '&mdash;' }}</td>
+            </tr>
+            @if (m.error) {
+              <tr class="member-error-row">
+                <td colspan="4">{{ m.error }}</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <section class="cohesion-section">
+      <h2>Vote cohesion by policy</h2>
+      <table class="cohesion-table">
+        <thead>
+          <tr>
+            <th>Policy</th>
+            <th>Yea</th>
+            <th>Nay</th>
+            <th>Abstain</th>
+            <th>Dominant fraction</th>
+            <th>Band</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of report.voteCohesion; track c.policy) {
+            <tr>
+              <td>
+                <a [routerLink]="['/policy-scores', c.policy]" [queryParams]="{concept: report.concept}">
+                  {{ c.policy }}
+                </a>
+              </td>
+              <td>{{ c.yea }}</td>
+              <td>{{ c.nay }}</td>
+              <td>{{ c.abstain }}</td>
+              <td>{{ c.dominantFraction | percent:'1.0-0' }}</td>
+              <td><mat-chip [class]="'band-chip ' + c.band">{{ c.band }}</mat-chip></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  }
+</div>

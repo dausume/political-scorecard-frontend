@@ -1,0 +1,55 @@
+<div class="authorize-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/accountability">
+      <mat-icon>arrow_back</mat-icon> Back to Accountability Hub
+    </button>
+  </nav>
+
+  <header class="authorize-header">
+    <h1>Authorize a politician's vote-record submitter</h1>
+    <p class="subtitle">
+      Admin-only. Adds a Keycloak user to a politician's own authorized-submitter group —
+      they'll then be able to submit that politician's vote records without needing an
+      official source citation.
+    </p>
+  </header>
+
+  <ng-container *ngIf="isAdmin$ | async; else notAdmin">
+    <mat-card class="form-card">
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Politician</mat-label>
+          <input matInput [(ngModel)]="form.politicianName" placeholder="politician-name">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Keycloak username</mat-label>
+          <input matInput [(ngModel)]="form.username">
+        </mat-form-field>
+
+        @if (submitError) {
+          <p class="submit-error">{{ submitError }}</p>
+        }
+        @if (submitMessage) {
+          <p class="submit-success">
+            <mat-icon>check_circle</mat-icon> {{ submitMessage }}
+          </p>
+        }
+
+        <button mat-flat-button color="primary" [disabled]="submitting" (click)="submit()">
+          @if (submitting) {
+            <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+          } @else {
+            Authorize
+          }
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+  <ng-template #notAdmin>
+    <div class="not-admin-notice">
+      <mat-icon>lock</mat-icon>
+      <span>Only policy voting admins can authorize submitters.</span>
+    </div>
+  </ng-template>
+</div>
