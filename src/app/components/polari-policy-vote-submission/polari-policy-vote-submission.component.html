@@ -1,0 +1,104 @@
+<div class="submission-container">
+  <nav class="page-nav">
+    <button mat-stroked-button (click)="backToPolitician()">
+      <mat-icon>arrow_back</mat-icon> Back to Politician Score
+    </button>
+  </nav>
+
+  <header class="submission-header">
+    <h1>Submit a vote record</h1>
+    <p class="subtitle">
+      Record how <strong>{{ politicianName }}</strong> voted on a policy. Unlike an
+      assertion, a vote record has no review step &mdash; it counts toward this
+      politician's score as soon as it's accepted, so submission is restricted to two
+      paths:
+    </p>
+    <ul class="paths-list">
+      <li><strong>Policy voting admin</strong>, citing an official government source.</li>
+      <li>
+        <strong>The politician themselves, or someone they've personally authorized</strong>
+        (a cabinet member or assistant added by an admin).
+      </li>
+    </ul>
+  </header>
+
+  @if (submitted) {
+    <mat-card class="success-card">
+      <mat-card-content>
+        <mat-icon class="success-icon">check_circle</mat-icon>
+        <p>Submitted as <code>{{ submitted.voteName }}</code>, authorized via
+          <strong>{{ submitted.authorizedVia }}</strong>.</p>
+        <button mat-stroked-button (click)="backToPolitician()">Back to Politician Score</button>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <ng-container *ngIf="isAuthenticated$ | async; else loginPrompt">
+      <mat-card class="form-card">
+        <mat-card-content>
+          @if (isAdmin$ | async) {
+            <mat-chip-set>
+              <mat-chip class="admin-chip">You hold the policy voting admin role</mat-chip>
+            </mat-chip-set>
+          }
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Policy</mat-label>
+            <input matInput [(ngModel)]="form.policyName" placeholder="policy-name">
+          </mat-form-field>
+
+          <div class="vote-row">
+            <mat-radio-group [(ngModel)]="form.vote">
+              <mat-radio-button value="yea">Yea</mat-radio-button>
+              <mat-radio-button value="nay">Nay</mat-radio-button>
+              <mat-radio-button value="abstain">Abstain</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Vote date</mat-label>
+            <input matInput type="date" [(ngModel)]="form.voteDate">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Chamber (optional)</mat-label>
+            <input matInput [(ngModel)]="form.chamber">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Session (optional)</mat-label>
+            <input matInput [(ngModel)]="form.session">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Official source URL{{ (isAdmin$ | async) ? ' (required)' : ' (optional)' }}</mat-label>
+            <input matInput [(ngModel)]="form.officialSourceUrl"
+                   placeholder="link to the official roll-call record">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Notes (optional)</mat-label>
+            <textarea matInput rows="2" [(ngModel)]="form.notes"></textarea>
+          </mat-form-field>
+
+          @if (submitError) {
+            <p class="submit-error">{{ submitError }}</p>
+          }
+
+          <button mat-flat-button color="primary" [disabled]="submitting" (click)="submit()">
+            @if (submitting) {
+              <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+            } @else {
+              Submit vote record
+            }
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </ng-container>
+    <ng-template #loginPrompt>
+      <div class="login-prompt">
+        <span>Log in to submit a vote record.</span>
+        <button mat-stroked-button (click)="login()">Log In</button>
+      </div>
+    </ng-template>
+  }
+</div>

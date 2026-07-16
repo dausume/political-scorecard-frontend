@@ -1,0 +1,139 @@
+<div class="score-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/accountability">
+      <mat-icon>arrow_back</mat-icon> Back to Accountability Hub
+    </button>
+  </nav>
+
+  @if (politicianName && conceptName) {
+    <mat-form-field appearance="outline" class="timeframe-select">
+      <mat-label>Timeframe</mat-label>
+      <mat-select [(ngModel)]="timeframeName" (selectionChange)="onTimeframeChange()">
+        <mat-option value="">All time</mat-option>
+        @for (t of timeframes; track t.name) {
+          <mat-option [value]="t.name">{{ t.displayName }} ({{ t.start }} &ndash; {{ t.end }})</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+
+  @if (loading) {
+    <section class="loading-state">
+      <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      <span>Computing the live politician score from Polari&rsquo;s scoring engine&hellip;</span>
+    </section>
+  }
+
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
+  @if (report && !loading) {
+    <header class="score-header">
+      <h1>{{ report.displayName }}</h1>
+      <div class="meta-chips">
+        <mat-chip-set>
+          <mat-chip>scored against
+            <a [routerLink]="['/polari-concepts', report.concept, 'score']">{{ report.concept }}</a>
+          </mat-chip>
+          @if (report.timeframe) {
+            <mat-chip>timeframe: {{ report.timeframe }}</mat-chip>
+          }
+          @if (report.votesOutOfTimeframe > 0) {
+            <mat-chip>{{ report.votesOutOfTimeframe }} vote(s) outside timeframe</mat-chip>
+          }
+        </mat-chip-set>
+      </div>
+      <button mat-stroked-button class="submit-vote-button"
+              [routerLink]="['/politician-scores', politicianName, 'submit-vote']"
+              [queryParams]="{concept: conceptName}">
+        <mat-icon>how_to_vote</mat-icon> Submit a vote record
+      </button>
+      <div class="score-summary">
+        <div class="score-tile">
+          <span class="score-tile-label">Score</span>
+          <span class="score-tile-value">{{ report.score | number:'1.2-2' }}</span>
+        </div>
+        <div class="score-tile">
+          <span class="score-tile-label">Stance</span>
+          <span class="score-tile-value">{{ report.stance | number:'1.2-2' }}</span>
+        </div>
+        <div class="score-tile">
+          <span class="score-tile-label">Decisive votes</span>
+          <span class="score-tile-value">{{ report.decisiveVotes }}</span>
+        </div>
+        <div class="score-tile">
+          <span class="score-tile-label">Participation</span>
+          <span class="score-tile-value">
+            {{ report.participation !== null ? (report.participation | percent:'1.0-0') : '&mdash;' }}
+          </span>
+        </div>
+      </div>
+      <p class="note">{{ report.note }}</p>
+    </header>
+
+    <section class="votes-section">
+      <h2>Vote breakdown ({{ report.voteBreakdown.length }})</h2>
+      <table class="votes-table">
+        <thead>
+          <tr>
+            <th>Policy</th>
+            <th>Vote</th>
+            <th>Date</th>
+            <th>Policy score</th>
+            <th>Contribution</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of report.voteBreakdown; track v.policy) {
+            <tr>
+              <td>
+                <a [routerLink]="['/policy-scores', v.policy]" [queryParams]="{concept: report.concept}">
+                  {{ v.policy }}
+                </a>
+              </td>
+              <td>
+                <mat-chip [class]="'vote-chip ' + v.vote">{{ v.vote }}</mat-chip>
+              </td>
+              <td>{{ v.voteDate || '&mdash;' }}</td>
+              <td>{{ v.policyScore | number:'1.2-2' }}</td>
+              <td>{{ v.contribution | number:'1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+    @if (report.abstains && report.abstains.length > 0) {
+      <section class="abstains-section">
+        <h2>Abstentions ({{ report.abstains.length }})</h2>
+        <p class="section-note">A participation gap, never counted as a stance.</p>
+        <div class="abstains-list">
+          @for (a of report.abstains; track a.policy) {
+            <div class="abstain-row">{{ a.policy }} &mdash; {{ a.voteDate || 'undated' }}</div>
+          }
+        </div>
+      </section>
+    }
+
+    @if (report.unscoreablePolicies && report.unscoreablePolicies.length > 0) {
+      <section class="unscoreable-section">
+        <h2>Unscoreable policies ({{ report.unscoreablePolicies.length }})</h2>
+        <p class="section-note">
+          Voted on, but the policy itself has no confirmed assertions to score against this
+          concept — named, not silently skipped.
+        </p>
+        <div class="unscoreable-list">
+          @for (u of report.unscoreablePolicies; track u.policy) {
+            <div class="unscoreable-row">
+              <strong>{{ u.policy }}</strong>: {{ u.error }}
+            </div>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

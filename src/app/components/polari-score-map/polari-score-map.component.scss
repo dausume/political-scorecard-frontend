@@ -1,0 +1,115 @@
+.map-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.page-nav {
+  margin-bottom: 1.5rem;
+}
+
+.page-header {
+  margin-bottom: 1rem;
+
+  .subtitle {
+    color: var(--text-secondary);
+    max-width: 700px;
+  }
+}
+
+.concept-toggle {
+  margin-bottom: 1rem;
+}
+
+.error-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-error-bg);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--color-error);
+  margin-bottom: 1rem;
+}
+
+.missing-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.map-wrapper {
+  position: relative;
+  background: var(--surface-secondary, #f5f5f5);
+  border-radius: var(--radius-lg, 8px);
+  padding: 1rem;
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 2;
+}
+
+.us-map {
+  width: 100%;
+  height: auto;
+  display: block;
+
+  .context-state {
+    fill: #e0e0e0;
+    stroke: #ffffff;
+    stroke-width: 1;
+  }
+
+  .scored-state {
+    stroke: #ffffff;
+    stroke-width: 1.5;
+    cursor: pointer;
+    transition: opacity 0.1s;
+
+    &:hover, &.hovered {
+      opacity: 0.8;
+      stroke: #333333;
+      stroke-width: 2.5;
+    }
+  }
+}
+
+.tooltip {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--surface-primary, #fff);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+
+  .legend-gradient {
+    width: 160px;
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(to right, hsl(0, 65%, 50%), hsl(60, 65%, 50%), hsl(120, 65%, 50%));
+  }
+}

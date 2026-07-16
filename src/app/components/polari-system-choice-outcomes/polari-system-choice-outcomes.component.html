@@ -1,0 +1,137 @@
+<div class="outcomes-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/browse-worldview-ballots">
+      <mat-icon>arrow_back</mat-icon> Back to Elections & Votes
+    </button>
+  </nav>
+
+  @if (loading) {
+    <section class="loading-state">
+      <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      <span>Loading system-choice outcomes from Polari&rsquo;s scoring engine&hellip;</span>
+    </section>
+  }
+
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
+  @if (report && !loading) {
+    <header class="outcomes-header">
+      <h1>Implications: {{ report.fork }}</h1>
+      <p class="subtitle">Outcome term: <code>{{ report.outcomeTerm }}</code></p>
+      <p class="caveat">
+        <mat-icon>info_outline</mat-icon>
+        {{ report.note }}
+      </p>
+    </header>
+
+    <div class="groups-list">
+      @for (group of report.groups; track group.criterion) {
+        <mat-card class="group-card">
+          <mat-card-header>
+            <mat-card-title>{{ group.criterion }}</mat-card-title>
+            <mat-card-subtitle>
+              {{ group.jurisdictionCount }} jurisdiction(s)
+              @if (group.missingCount > 0) {
+                &middot; {{ group.missingCount }} missing a value
+              }
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="average-row">
+              <span class="average-label">Group average</span>
+              <span class="average-value">
+                {{ group.averageValue !== null ? (group.averageValue | number:'1.1-2') : 'no data' }}
+              </span>
+            </div>
+            <table class="jurisdictions-table">
+              <thead>
+                <tr><th>Jurisdiction</th><th>Value</th><th>Note</th></tr>
+              </thead>
+              <tbody>
+                @for (j of group.jurisdictions; track j.jurisdiction) {
+                  <tr>
+                    <td>{{ j.displayName }}</td>
+                    <td>{{ j.value !== null ? (j.value | number:'1.1-2') : '&mdash;' }}</td>
+                    <td class="jurisdiction-note">{{ j.note }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+
+    @if (assertions.length > 0) {
+      <section class="assertions-section">
+        <h2>Assertions</h2>
+        <p class="section-note">
+          Claims that a system choice affects a real-world score, each tracked through a
+          multi-round validity vote &mdash; not a forced verdict.
+        </p>
+        <div class="assertions-list">
+          @for (a of assertions; track a.name) {
+            <mat-card class="assertion-card">
+              <mat-card-header>
+                <mat-card-title>{{ a.displayName }}</mat-card-title>
+                <mat-card-subtitle>
+                  {{ a.direction === 'supports' ? 'supports' : 'harms' }}
+                  <code>{{ a.termName }}</code>
+                  &middot; strength {{ a.strength | number:'1.2-2' }}
+                </mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <mat-chip-set>
+                  <mat-chip [class]="'status-chip ' + a.status">{{ a.status }}</mat-chip>
+                </mat-chip-set>
+                @if (a.evidence.length > 0) {
+                  <ul class="evidence-list">
+                    @for (e of a.evidence; track e) {
+                      <li>{{ e }}</li>
+                    }
+                  </ul>
+                }
+                <span class="asserted-by">asserted by {{ a.assertedBy }}</span>
+
+                @if (validityFor(a.name); as validity) {
+                  <div class="validity-report">
+                    @if (latestRound(validity); as latest) {
+                      <div class="validity-round">
+                        <span>round {{ latest.round }}</span>
+                        <mat-chip class="band-chip">{{ latest.band }}</mat-chip>
+                        <span>{{ latest.valid }} valid / {{ latest.invalid }} invalid / {{ latest.abstain }} abstain</span>
+                        <span>leaning: {{ latest.leaning }}</span>
+                      </div>
+                    }
+                    @if (validity.suggestion; as suggestion) {
+                      <p class="suggestion">
+                        <mat-icon>lightbulb_outline</mat-icon>
+                        {{ suggestion.action }} &mdash; {{ suggestion.evidence }}
+                      </p>
+                    }
+                    <p class="validity-note">{{ validity.note }}</p>
+                  </div>
+                } @else {
+                  <div class="validity-action">
+                    <button mat-stroked-button (click)="loadValidity(a.name)" [disabled]="isLoadingValidity(a.name)">
+                      @if (isLoadingValidity(a.name)) {
+                        <mat-progress-spinner diameter="16" mode="indeterminate"></mat-progress-spinner>
+                      } @else {
+                        View validity vote
+                      }
+                    </button>
+                  </div>
+                }
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

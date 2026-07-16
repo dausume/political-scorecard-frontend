@@ -1,0 +1,76 @@
+.submission-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.page-nav {
+  margin-bottom: 1.5rem;
+}
+
+.submission-header {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-card {
+  mat-form-field {
+    display: block;
+    margin-bottom: 0.75rem;
+
+    &:not(.full-width) {
+      max-width: 320px;
+    }
+  }
+}
+
+.direction-row {
+  margin-bottom: 0.75rem;
+
+  mat-radio-button {
+    margin-right: 1rem;
+  }
+}
+
+.submit-error {
+  color: var(--color-error);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.success-card {
+  text-align: center;
+
+  .success-icon {
+    color: #2e7d32;
+    font-size: 2.5rem;
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+
+  .success-note {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+}
+
+.login-prompt {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+}

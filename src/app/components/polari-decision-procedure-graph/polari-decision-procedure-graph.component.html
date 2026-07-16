@@ -1,0 +1,104 @@
+<div class="graph-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/browse-worldview-ballots">
+      <mat-icon>arrow_back</mat-icon> Back to Elections & Votes
+    </button>
+  </nav>
+
+  @if (loading) {
+    <section class="loading-state">
+      <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      <span>Loading the decision procedure from Polari&rsquo;s scoring engine&hellip;</span>
+    </section>
+  }
+
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
+  @if (procedure && !loading) {
+    <header class="graph-header">
+      <h1>{{ procedure.decisionProcedure }}</h1>
+      <p class="note">{{ procedure.note }}</p>
+    </header>
+
+    <div class="tree-root">
+      @for (root of treeRoots; track root.key) {
+        <ng-container *ngTemplateOutlet="nodeTpl; context: { node: root }"></ng-container>
+      }
+    </div>
+  }
+</div>
+
+<ng-template #nodeTpl let-node="node">
+  <div class="tree-branch">
+    @if (node.outcome) {
+      <div class="outcome-label">
+        <mat-icon>arrow_downward</mat-icon>
+        <span>{{ node.outcome }}</span>
+      </div>
+    }
+
+    @if (node.kind === 'terminal') {
+      <mat-card class="terminal-card">
+        <mat-card-content>
+          <mat-icon>flag</mat-icon>
+          <strong>{{ node.label }}</strong>
+          <p class="edge-description">{{ node.edgeDescription }}</p>
+        </mat-card-content>
+      </mat-card>
+    } @else {
+      <mat-card class="fork-card">
+        <mat-card-header>
+          <mat-card-title>{{ node.label }}</mat-card-title>
+          @if (node.fork?.vote) {
+            <mat-card-subtitle>
+              vote: <a [routerLink]="['/polari-logic-fork-votes', node.fork!.vote]">{{ node.fork!.vote }}</a>
+              ({{ node.fork!.voteStatus }})
+            </mat-card-subtitle>
+          } @else {
+            <mat-card-subtitle>no vote proposed for this fork</mat-card-subtitle>
+          }
+        </mat-card-header>
+        <mat-card-content>
+          <div class="criteria-list">
+            @for (c of node.fork?.candidateCriteria; track c.name) {
+              <div class="criterion-row"
+                   [class.resolved-vote]="isResolvedByVote(c.name, node.fork)"
+                   [class.resolved-default]="isIncumbentDefault(c.name, node.fork)">
+                @if (isResolvedByVote(c.name, node.fork)) {
+                  <mat-icon class="resolved-icon">how_to_vote</mat-icon>
+                } @else if (isIncumbentDefault(c.name, node.fork)) {
+                  <mat-icon class="resolved-icon">verified</mat-icon>
+                }
+                <div class="criterion-text">
+                  <div class="criterion-name">
+                    {{ c.displayName }}
+                    @if (c.isCurrentDefault) {
+                      <mat-chip class="default-chip">incumbent default</mat-chip>
+                    }
+                  </div>
+                  <p class="criterion-description">{{ c.description }}</p>
+                  <span class="proposed-by">proposed by {{ c.proposedBy }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    @if (node.children.length > 0) {
+      <div class="children-row">
+        @for (child of node.children; track child.key) {
+          <div class="child-col">
+            <ng-container *ngTemplateOutlet="nodeTpl; context: { node: child }"></ng-container>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</ng-template>

@@ -3,6 +3,9 @@
     <button class="back-btn" (click)="goBack()">← Back to Current Ballot</button>
     <h2>Browse Active Worldview Ballots</h2>
     <p class="browse-subtitle">Select a different ballot to review and provide your input</p>
+    <a routerLink="/polari-votes" class="public-votes-link">
+      Looking to actually cast a vote? Go to Public Votes &rarr;
+    </a>
   </div>
 
   <div class="filter-section">
@@ -32,18 +35,29 @@
     </button>
   </div>
 
-  <div class="ballots-list">
+  <div class="loading-state" *ngIf="loading">
+    <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+    <span>Loading elections from Polari&rsquo;s scoring engine&hellip;</span>
+  </div>
+
+  <div class="error-state" *ngIf="error">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <div class="ballots-list" *ngIf="!loading">
     <div
       *ngFor="let ballot of filteredBallots"
       class="ballot-card"
       [class.active]="ballot.status === 'active'"
       [class.pending]="ballot.status === 'pending'"
       [class.closed]="ballot.status === 'closed'"
-      (click)="selectBallot(ballot.id)">
+      (click)="selectBallot(ballot)">
       <div class="ballot-card-header">
         <h3>{{ ballot.name }}</h3>
         <span class="status-badge" [class]="ballot.status">{{ ballot.status }}</span>
       </div>
+      <span class="kind-badge">{{ kindLabel(ballot.kind) }}</span>
       <p class="ballot-card-description">{{ ballot.description }}</p>
       <div class="ballot-card-footer">
         <span class="response-count">{{ ballot.responseCount }} responses</span>
@@ -52,7 +66,7 @@
     </div>
   </div>
 
-  <div *ngIf="filteredBallots.length === 0" class="no-ballots">
+  <div *ngIf="!loading && !error && filteredBallots.length === 0" class="no-ballots">
     <p>No ballots found for the selected filter.</p>
   </div>
 </div>

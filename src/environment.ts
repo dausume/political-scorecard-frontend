@@ -13,7 +13,14 @@ export interface Environment {
   production: boolean;
   backendHttpsUri: string;
   backendUri: string;
+  /** Polari's FRONTEND (for the "open in Polari" link) — not the API. */
   polariResearchFrameworkUrl: string;
+  /** Polari's backend API base (no trailing slash) — e.g.
+   *  `${polariApiUrl}/api/scoring/concepts/{name}/score`. Added
+   *  2026-07-14 (Democratic Scorecard revamp) — previously
+   *  polariResearchFrameworkUrl was reused for exactly one hyperlink
+   *  and nothing called the API; this is the real seam. */
+  polariApiUrl: string;
   keycloak: {
     authority: string;
     clientId: string;
@@ -32,6 +39,7 @@ const productionConfig: Environment = {
   backendHttpsUri: 'https://api.psc.polari-systems.org/',
   backendUri: 'https://api.psc.polari-systems.org/',
   polariResearchFrameworkUrl: 'https://prf.polari-systems.org',
+  polariApiUrl: 'https://api.prf.polari-systems.org',
   keycloak: {
     authority: 'https://auth.polari-systems.org/realms/Political-Scorecard',
     clientId: 'political-scorecard-frontend',
@@ -49,6 +57,7 @@ const suiteConfig: Environment = {
   backendHttpsUri: 'https://localhost:2083/',
   backendUri: 'https://localhost:2083/',
   polariResearchFrameworkUrl: 'https://localhost:2087',
+  polariApiUrl: 'https://localhost:2096',
   keycloak: {
     authority: 'https://localhost:8443/realms/Political-Scorecard',
     clientId: 'political-scorecard-frontend',
@@ -66,6 +75,7 @@ const bareMetalConfig: Environment = {
   backendHttpsUri: 'https://localhost:8580/',
   backendUri: 'http://localhost:8580/',
   polariResearchFrameworkUrl: 'http://localhost:4201',
+  polariApiUrl: 'http://localhost:3000',
   keycloak: {
     authority: 'https://localhost:8443/realms/Political-Scorecard',
     clientId: 'political-scorecard-frontend',
@@ -118,6 +128,7 @@ function getEnvironment(): Environment {
       backendHttpsUri: runtimeConfig.backendHttpsUri || runtimeConfig.backendUri || '',
       backendUri: runtimeConfig.backendUri || '',
       polariResearchFrameworkUrl: runtimeConfig.polariResearchFrameworkUrl || '',
+      polariApiUrl: runtimeConfig.polariApiUrl || '',
       keycloak: {
         authority: runtimeConfig.keycloak?.authority || '',
         clientId: runtimeConfig.keycloak?.clientId || 'political-scorecard-frontend',
@@ -155,6 +166,7 @@ function getEnvironment(): Environment {
         backendHttpsUri: `https://api.psc.${nipIoBase}/`,
         backendUri: `https://api.psc.${nipIoBase}/`,
         polariResearchFrameworkUrl: `https://prf.${nipIoBase}`,
+        polariApiUrl: `https://api.prf.${nipIoBase}`,
         keycloak: {
           authority: `https://auth.${nipIoBase}/realms/Political-Scorecard`,
           clientId: 'political-scorecard-frontend',

@@ -1,0 +1,185 @@
+.detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.page-nav {
+  margin-bottom: 1.5rem;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.error-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-error-bg);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--color-error);
+  margin-bottom: 1.5rem;
+}
+
+.topic-header {
+  margin-bottom: 1.5rem;
+
+  .meta-chips {
+    margin: 0.5rem 0;
+  }
+
+  .status-chip.open {
+    background-color: var(--positive-bg, #e8f5e9);
+  }
+
+  .status-chip.closed {
+    background-color: var(--brand-amber-light, #fff3e0);
+  }
+
+  .status-chip.synced {
+    background-color: var(--brand-sky-light);
+  }
+
+  .description {
+    color: var(--text-secondary);
+  }
+
+  .results-note {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-tertiary);
+  }
+}
+
+.elected-card {
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #f5a623;
+
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .trophy {
+    color: #f5a623;
+  }
+
+  .provenance {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0.25rem 0 0;
+  }
+}
+
+.candidates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.candidate-card {
+  .candidate-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .candidate-title {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 0.25rem;
+    }
+  }
+
+  .candidate-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+.share-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  .share-bar-track {
+    flex: 1;
+    display: block;
+    height: 8px;
+    border-radius: 4px;
+    background-color: var(--border-light);
+    overflow: hidden;
+  }
+
+  .share-bar-fill {
+    display: block;
+    height: 100%;
+    background-color: var(--brand-sky);
+    border-radius: 4px;
+  }
+
+  .share-value {
+    min-width: 2rem;
+    text-align: right;
+    font-weight: 600;
+  }
+}
+
+.ranking-help {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.submit-section {
+  margin: 1.5rem 0;
+
+  .submit-error {
+    color: var(--color-error);
+    margin-top: 0.5rem;
+  }
+
+  .submit-success {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #2e7d32;
+    margin-top: 0.5rem;
+  }
+
+  .login-prompt {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-secondary);
+  }
+}
+
+.admin-actions {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .admin-note {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    font-style: italic;
+    margin: 0;
+  }
+}

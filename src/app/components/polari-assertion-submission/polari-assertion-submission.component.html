@@ -1,0 +1,112 @@
+<div class="submission-container">
+  <nav class="page-nav">
+    <button mat-stroked-button (click)="backToPolicy()">
+      <mat-icon>arrow_back</mat-icon> Back to Policy Score
+    </button>
+  </nav>
+
+  <header class="submission-header">
+    <h1>Submit an assertion</h1>
+    <p class="subtitle">
+      Claim that a specific piece of <strong>{{ policyName }}</strong>'s text supports or
+      harms a scoring concept or term. Your claim lands under review &mdash; it has
+      <strong>zero effect on any score</strong> until a human confirms it through Polari's
+      review process.
+    </p>
+  </header>
+
+  @if (submitted) {
+    <mat-card class="success-card">
+      <mat-card-content>
+        <mat-icon class="success-icon">check_circle</mat-icon>
+        <p>Submitted as <code>{{ submitted.assertionName }}</code>, status <strong>asserted</strong>.</p>
+        <p class="success-note">
+          This claim will not count toward any score until it's reviewed and confirmed.
+        </p>
+        <button mat-stroked-button (click)="backToPolicy()">Back to Policy Score</button>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <ng-container *ngIf="isAuthenticated$ | async; else loginPrompt">
+      <mat-card class="form-card">
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>What does this claim assert?</mat-label>
+            <textarea matInput rows="2" [(ngModel)]="form.intent"
+                      placeholder="e.g. raises the minimum wage for hourly workers"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Quote (optional)</mat-label>
+            <textarea matInput rows="2" [(ngModel)]="form.quote"
+                      placeholder="the literal span of policy text this is about"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Assertion type</mat-label>
+            <mat-select [(ngModel)]="form.assertionType">
+              <mat-option value="score-impact">Score impact</mat-option>
+              <mat-option value="dependency">Dependency (carries over another policy's score)</mat-option>
+              <mat-option value="decorative">Decorative (carries no score weight)</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          @if (form.assertionType === 'dependency') {
+            <mat-form-field appearance="outline">
+              <mat-label>Depends on policy</mat-label>
+              <input matInput [(ngModel)]="form.dependsOnPolicy" placeholder="policy-name">
+            </mat-form-field>
+          }
+
+          @if (form.assertionType !== 'decorative') {
+            <div class="direction-row">
+              <mat-radio-group [(ngModel)]="form.direction">
+                <mat-radio-button value="supports">Supports</mat-radio-button>
+                <mat-radio-button value="harms">Harms</mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Strength (0&ndash;1)</mat-label>
+              <input matInput type="number" min="0" max="1" step="0.05" [(ngModel)]="form.strength">
+            </mat-form-field>
+          }
+
+          <mat-form-field appearance="outline">
+            <mat-label>Concept (optional)</mat-label>
+            <input matInput [(ngModel)]="form.conceptName" placeholder="concept-name">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Term (optional)</mat-label>
+            <input matInput [(ngModel)]="form.termName" placeholder="term-name">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Notes / source (optional)</mat-label>
+            <textarea matInput rows="2" [(ngModel)]="form.notes"
+                      placeholder="where does this claim come from?"></textarea>
+          </mat-form-field>
+
+          @if (submitError) {
+            <p class="submit-error">{{ submitError }}</p>
+          }
+
+          <button mat-flat-button color="primary" [disabled]="submitting" (click)="submit()">
+            @if (submitting) {
+              <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+            } @else {
+              Submit for review
+            }
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </ng-container>
+    <ng-template #loginPrompt>
+      <div class="login-prompt">
+        <span>Log in to submit an assertion.</span>
+        <button mat-stroked-button (click)="login()">Log In</button>
+      </div>
+    </ng-template>
+  }
+</div>

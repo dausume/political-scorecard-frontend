@@ -1,0 +1,118 @@
+<div class="score-container">
+  <nav class="page-nav">
+    <button mat-stroked-button routerLink="/accountability">
+      <mat-icon>arrow_back</mat-icon> Back to Accountability Hub
+    </button>
+  </nav>
+
+  @if (loading) {
+    <section class="loading-state">
+      <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      <span>Computing the live policy score from Polari&rsquo;s scoring engine&hellip;</span>
+    </section>
+  }
+
+  @if (error) {
+    <section class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </section>
+  }
+
+  @if (report && !loading) {
+    <header class="score-header">
+      <h1>{{ report.displayName }}</h1>
+      <div class="meta-chips">
+        <mat-chip-set>
+          <mat-chip>scored against
+            <a [routerLink]="['/polari-concepts', report.concept, 'score']">{{ report.concept }}</a>
+          </mat-chip>
+          <mat-chip>{{ report.includeStatuses.join(', ') }} assertions only</mat-chip>
+        </mat-chip-set>
+      </div>
+      <button mat-stroked-button class="submit-assertion-button"
+              [routerLink]="['/policy-scores', policyName, 'submit-assertion']"
+              [queryParams]="{concept: conceptName}">
+        <mat-icon>add_comment</mat-icon> Submit an assertion
+      </button>
+      <div class="score-summary">
+        <div class="score-tile">
+          <span class="score-tile-label">Score</span>
+          <span class="score-tile-value">{{ report.score | number:'1.2-2' }}</span>
+        </div>
+        <div class="score-tile">
+          <span class="score-tile-label">Stance</span>
+          <span class="score-tile-value">{{ report.stance | number:'1.2-2' }}</span>
+        </div>
+        <div class="score-tile">
+          <span class="score-tile-label">Total weight</span>
+          <span class="score-tile-value">{{ report.totalWeight | number:'1.2-2' }}</span>
+        </div>
+      </div>
+      <p class="note">{{ report.note }}</p>
+    </header>
+
+    <section class="used-section">
+      <h2>Assertions used ({{ report.assertionsUsed.length }})</h2>
+      <div class="assertions-list">
+        @for (a of report.assertionsUsed; track a.assertion) {
+          <mat-card class="assertion-card" [class.harms]="a.direction === 'harms'">
+            <mat-card-header>
+              <mat-card-title>{{ a.intent }}</mat-card-title>
+              <mat-card-subtitle>
+                &ldquo;{{ a.quote }}&rdquo;
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="assertion-meta">
+                @if (a.direction) {
+                  <mat-chip [class]="a.direction">{{ a.direction }}</mat-chip>
+                }
+                @if (a.term) {
+                  <mat-chip>term: {{ a.term }} ({{ (a.termShare || 0) | percent:'1.0-1' }} share)</mat-chip>
+                }
+                @if (a.dependsOn) {
+                  <mat-chip>depends on: {{ a.dependsOn }} (child score {{ a.childScore | number:'1.2-2' }})</mat-chip>
+                }
+                <mat-chip>stance {{ a.stance | number:'1.2-2' }}</mat-chip>
+                <mat-chip>strength {{ a.strength | number:'1.2-2' }}</mat-chip>
+                <mat-chip>weight {{ a.weight | number:'1.3-3' }}</mat-chip>
+              </div>
+              <span class="asserted-by">asserted by {{ a.assertedBy }}</span>
+              @if (a.evidence.items.length > 0) {
+                <ul class="evidence-list">
+                  @for (e of a.evidence.items; track e.evidence) {
+                    <li>
+                      <span class="evidence-grade">{{ e.grade }}</span>
+                      &mdash; &ldquo;{{ e.quote }}&rdquo;
+                    </li>
+                  }
+                </ul>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </section>
+
+    @if (report.excluded && report.excluded.length > 0) {
+      <section class="excluded-section">
+        <h2>Excluded ({{ report.excluded.length }})</h2>
+        <p class="section-note">
+          Named, never silently dropped — assertions that exist but did not count toward
+          this score.
+        </p>
+        <div class="excluded-list">
+          @for (e of report.excluded; track e.assertion) {
+            <div class="excluded-row">
+              <strong>{{ e.intent }}</strong> &mdash; {{ e.reason }}
+              @if (e.suggestion) {
+                <span class="suggestion-hint">({{ e.suggestion.action }})</span>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

@@ -1,0 +1,122 @@
+.results-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.page-nav {
+  margin-bottom: 1.5rem;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.error-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-error-bg);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--color-error);
+  margin-bottom: 1.5rem;
+}
+
+.results-header {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .meta-chips {
+    margin-bottom: 0.5rem;
+  }
+
+  .status-chip.closed {
+    background-color: var(--color-error-bg);
+  }
+
+  .note {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+}
+
+.candidates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.candidate-card {
+  &.winner {
+    border-left: 4px solid #f5a623;
+  }
+
+  .winner-icon {
+    color: #f5a623;
+    vertical-align: middle;
+    margin-right: 0.25rem;
+  }
+}
+
+.share-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+
+  .share-bar-track {
+    flex: 1;
+    display: block;
+    height: 10px;
+    border-radius: 5px;
+    background-color: var(--border-light);
+    overflow: hidden;
+  }
+
+  .share-bar-fill {
+    display: block;
+    height: 100%;
+    background-color: var(--brand-sky);
+    border-radius: 5px;
+  }
+
+  .share-value {
+    min-width: 3.5rem;
+    text-align: right;
+  }
+
+  .detail {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+}
+
+.explanation-body {
+  white-space: pre-line;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.missing-display {
+  color: var(--color-error);
+  font-style: italic;
+}
+
+.refused-card {
+  margin-top: 1.5rem;
+}
+
+.refused-row {
+  padding: 0.35rem 0;
+  font-size: 0.9rem;
+  color: var(--color-error);
+}

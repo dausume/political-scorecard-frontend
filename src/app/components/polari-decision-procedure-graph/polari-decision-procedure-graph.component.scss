@@ -1,0 +1,160 @@
+.graph-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  overflow-x: auto;
+}
+
+.page-nav {
+  margin-bottom: 1.5rem;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.error-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-error-bg);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--color-error);
+  margin-bottom: 1.5rem;
+}
+
+.graph-header {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .note {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+}
+
+.tree-root {
+  display: flex;
+  gap: 2rem;
+}
+
+.tree-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 320px;
+}
+
+.outcome-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--brand-sky);
+  margin: 0.5rem 0;
+
+  mat-icon {
+    font-size: 1.1rem;
+    height: 1.1rem;
+    width: 1.1rem;
+  }
+}
+
+.fork-card {
+  width: 100%;
+  border-left: 4px solid var(--brand-sky);
+}
+
+.terminal-card {
+  width: 100%;
+  border-left: 4px solid #f5a623;
+
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .edge-description {
+    flex-basis: 100%;
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+}
+
+.criteria-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.criterion-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+
+  &.resolved-vote {
+    border-color: var(--brand-sky);
+    background-color: color-mix(in srgb, var(--brand-sky) 8%, transparent);
+  }
+
+  &.resolved-default {
+    border-color: #999;
+  }
+
+  .resolved-icon {
+    color: var(--brand-sky);
+    flex-shrink: 0;
+  }
+
+  .criterion-name {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .default-chip {
+    font-size: 0.7rem;
+    min-height: 1.4rem;
+    padding: 0 0.5rem;
+  }
+
+  .criterion-description {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    margin: 0.25rem 0;
+  }
+
+  .proposed-by {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+}
+
+.children-row {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+  align-items: flex-start;
+}
+
+.child-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
