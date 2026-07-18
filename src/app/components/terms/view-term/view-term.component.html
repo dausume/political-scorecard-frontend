@@ -35,6 +35,14 @@
           </div>
         </div>
 
+        <!-- Provenance: who asserted this term, via which Polari instance -->
+        <div class="provenance-section" *ngIf="provenance.length > 0">
+          <div class="provenance-badge" *ngFor="let row of provenance">
+            <mat-icon>verified</mat-icon>
+            <span>Asserted by <strong>{{ row.groupName }}</strong> via Polari instance <strong>{{ row.instanceName }}</strong></span>
+          </div>
+        </div>
+
         <mat-divider></mat-divider>
 
         <div class="term-details-section">

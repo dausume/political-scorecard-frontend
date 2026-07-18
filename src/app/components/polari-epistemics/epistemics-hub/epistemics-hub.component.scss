@@ -1,0 +1,27 @@
+.epistemics-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+
+  .intro {
+    color: var(--text-secondary, #666);
+    max-width: 800px;
+  }
+
+  .section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .section-card {
+    display: flex;
+    flex-direction: column;
+
+    mat-card-content {
+      flex: 1;
+      color: var(--text-secondary, #666);
+    }
+  }
+}

@@ -1,0 +1,29 @@
+.survival-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+
+  .intro {
+    color: var(--text-secondary, #666);
+    max-width: 800px;
+  }
+
+  .section {
+    margin: 20px 0;
+  }
+
+  .report-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+
+    mat-form-field {
+      min-width: 240px;
+    }
+  }
+
+  .error {
+    color: var(--error-text, #b3261e);
+  }
+}

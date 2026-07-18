@@ -1,0 +1,49 @@
+<div class="survival-page">
+  <h1>Cost-of-Living Survival Reports</h1>
+  <p class="intro">
+    Live from Polari's survival engine: what it costs to survive per location,
+    baseline vs reported, with every number traceable to its source. This page
+    is the survival endpoints' first consumer (DMV cost-of-living plan, col-6).
+  </p>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Survival report</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="report-form">
+        <mat-form-field appearance="outline" *ngIf="knownLocations.length > 0">
+          <mat-label>Location</mat-label>
+          <mat-select [(ngModel)]="location">
+            <mat-option *ngFor="let loc of knownLocations" [value]="loc">{{ loc }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" *ngIf="knownLocations.length === 0">
+          <mat-label>Location</mat-label>
+          <input matInput [(ngModel)]="location" placeholder="dmv-region" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Month (optional)</mat-label>
+          <input matInput [(ngModel)]="month" placeholder="2026-06" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="loadReport()"
+                [disabled]="!location || loadingReport">Load report</button>
+      </div>
+      <mat-spinner *ngIf="loadingReport" diameter="32"></mat-spinner>
+      <p *ngIf="reportError" class="error">{{ reportError }}</p>
+      <app-polari-report-view [report]="report"></app-polari-report-view>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Walkthrough</mat-card-title>
+      <mat-card-subtitle>The engine's seeded end-to-end demonstration.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingWalkthrough" diameter="32"></mat-spinner>
+      <p *ngIf="walkthroughError" class="error">{{ walkthroughError }}</p>
+      <app-polari-report-view [report]="walkthrough"></app-polari-report-view>
+    </mat-card-content>
+  </mat-card>
+</div>

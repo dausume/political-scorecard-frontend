@@ -1,0 +1,134 @@
+<div class="worldview-scorer">
+  <h1>Worldview Scorer</h1>
+  <p class="intro">
+    A worldview is a group-hosted set of scored concepts with the group's
+    elected weights. Every number here is computed live by Polari's scoring
+    engine over real contextualized data — including terms the group asserted
+    to the scorecard through its authoritative Polari instance.
+  </p>
+
+  <mat-spinner *ngIf="loadingGroups" diameter="32"></mat-spinner>
+  <p *ngIf="groupsError" class="error">{{ groupsError }}</p>
+
+  <div *ngIf="!loadingGroups && groups.length === 0 && !groupsError" class="empty">
+    No ScoreGroup hosts a concept set yet.
+  </div>
+
+  <ng-container *ngIf="groups.length > 0">
+    <div class="picker-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Worldview (group-hosted concept set)</mat-label>
+        <mat-select [ngModel]="selected?.name"
+                    (ngModelChange)="select(groupByName($any($event)))">
+          <mat-option *ngFor="let group of groups" [value]="group.name">
+            {{ group.displayName }} ({{ group.groupType }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Policy (optional aggregate scope)</mat-label>
+        <input matInput [(ngModel)]="policy" (change)="loadAggregate()" />
+      </mat-form-field>
+    </div>
+
+    <mat-card class="section" *ngIf="selected">
+      <mat-card-header>
+        <mat-card-title>Engine aggregate — {{ selected.displayName }}</mat-card-title>
+        <mat-card-subtitle>
+          Polari's own group-weighted reading (authoritative).
+          <span *ngIf="selected.weightsProvenance"> Weights: {{ selected.weightsProvenance }}</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-spinner *ngIf="loadingAggregate" diameter="28"></mat-spinner>
+        <p *ngIf="aggregateError" class="error">{{ aggregateError }}</p>
+        <app-polari-report-view [report]="aggregate"></app-polari-report-view>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="section" *ngIf="selected">
+      <mat-card-header>
+        <mat-card-title>Per-concept readings + what-if weighting</mat-card-title>
+        <mat-card-subtitle>
+          Scores are the engine's live per-concept readings. Adjusting weights
+          below is a LOCAL PREVIEW over those real scores — the recorded group
+          weighting only changes through a worldview election.
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-spinner *ngIf="loadingConcepts" diameter="28"></mat-spinner>
+        <div class="scroll-x" *ngIf="!loadingConcepts">
+          <table class="concept-table">
+            <thead>
+              <tr>
+                <th>Concept</th><th>Engine score</th><th>Recorded weight</th>
+                <th>What-if weight</th><th>Weighted contribution</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let row of rows">
+                <tr>
+                  <td class="mono">{{ row.concept }}</td>
+                  <td>
+                    <span *ngIf="row.score !== null">{{ row.score | number:'1.0-3' }}</span>
+                    <span *ngIf="row.smallSample" class="chip warn">small sample</span>
+                    <span *ngIf="row.error" class="error">{{ row.error }}</span>
+                  </td>
+                  <td>{{ row.weight }}</td>
+                  <td>
+                    <input class="weight-input" type="number" step="0.1"
+                           [(ngModel)]="row.whatIfWeight" />
+                  </td>
+                  <td>{{ contribution(row) }}</td>
+                  <td>
+                    <button mat-button (click)="row.expanded = !row.expanded"
+                            [disabled]="!row.report">
+                      {{ row.expanded ? 'hide' : 'reading' }}
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="row.expanded">
+                  <td colspan="6" class="reading-cell">
+                    <app-polari-report-view [report]="row.report"></app-polari-report-view>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+        <div class="totals" *ngIf="!loadingConcepts">
+          <div class="total-card">
+            <span class="total-label">Recorded weighting</span>
+            <span class="total-value">{{ recordedTotal !== null ? (recordedTotal | number:'1.0-3') : 'unrated' }}</span>
+          </div>
+          <div class="total-card" [class.differs]="whatIfDiffers">
+            <span class="total-label">What-if preview <em>(local, not recorded)</em></span>
+            <span class="total-value">{{ whatIfTotal !== null ? (whatIfTotal | number:'1.0-3') : 'unrated' }}</span>
+          </div>
+          <button mat-stroked-button (click)="resetWhatIf()" [disabled]="!whatIfDiffers">
+            Reset to recorded weights
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="section" *ngIf="selected && provenance.length > 0">
+      <mat-card-header>
+        <mat-card-title>Group-asserted terms</mat-card-title>
+        <mat-card-subtitle>
+          Terms this group made available through its authoritative instance
+          (authority-checked, full verdict on record).
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <ul class="provenance-list">
+          <li *ngFor="let row of provenance">
+            <span class="mono">{{ row.termName }}</span>
+            <span class="hint"> for {{ row.contextName }} via {{ row.instanceName }}
+              ({{ row.requestedBy }})</span>
+          </li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+</div>

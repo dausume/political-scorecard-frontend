@@ -8,4 +8,5 @@ export * from './contextualized-terms.mock';
 export * from './labor-quality-score-sample';
 export * from './labor-quality-contextualized-terms.mock';
 export * from './labor-quality-worldview-ballot.mock';
-export * from './labor-quality-score-test';
+// labor-quality-score-test removed 2026-07-17 — the client-side worldview
+// scorer was replaced by the Polari-backed Worldview Scorer.

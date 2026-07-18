@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { selectAuthUser } from '../../../state/selectors/auth.selectors';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -51,12 +55,15 @@ import { Term } from '../../../classes/terms/term';
   templateUrl: './election-creator.component.html',
   styleUrls: ['./election-creator.component.scss']
 })
-export class ElectionCreatorComponent {
+export class ElectionCreatorComponent implements OnDestroy {
+  private destroy$ = new Subject<void>();
+
   electionForm: FormGroup;
   loading = false;
 
   electionStatuses = ['DRAFT', 'ACTIVE', 'CLOSED', 'ARCHIVED'];
-  currentUserId = 'current-user-id'; // TODO: Get from auth service
+  // Real user id from the NgRx auth store ('' = not logged in; submission is blocked)
+  currentUserId = '';
 
   selectedElectionTypes: string[] = [];
   availableElectionTypes = [
@@ -105,7 +112,8 @@ export class ElectionCreatorComponent {
     private router: Router,
     private electionsApi: WorldviewElectionsApiService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private store: Store
   ) {
     this.electionForm = this.fb.group({
       name: ['', Validators.required],
@@ -115,6 +123,16 @@ export class ElectionCreatorComponent {
       startDate: [''],
       endDate: ['']
     });
+
+    // Real user identity from the NgRx auth store
+    this.store.select(selectAuthUser)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => this.currentUserId = user?.id ?? '');
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   openElectionTypeSelector(): void {
@@ -241,6 +259,11 @@ export class ElectionCreatorComponent {
   }
 
   createElection(): void {
+    if (!this.currentUserId) {
+      this.snackBar.open('Please log in to create an election', 'Close', { duration: 3000 });
+      return;
+    }
+
     if (!this.electionForm.valid) {
       this.snackBar.open('Please fill in all required fields', 'Close', { duration: 3000 });
       return;

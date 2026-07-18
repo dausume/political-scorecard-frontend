@@ -1,0 +1,75 @@
+<div class="epistemics-page">
+  <h1>Credibility</h1>
+  <p class="intro">
+    Every assertion's credibility is read in group and individual units
+    and kept separate per credibility basis — never flattened into a
+    single number. Contributor standing is inspectable the same way.
+  </p>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Assertion lookup</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingAssertions" diameter="32"></mat-spinner>
+      <p *ngIf="assertionsError" class="error">{{ assertionsError }}</p>
+      <div class="lookup-form" *ngIf="!loadingAssertions">
+        <mat-form-field appearance="outline" *ngIf="assertions.length > 0">
+          <mat-label>Assertion</mat-label>
+          <mat-select [(ngModel)]="assertion" (selectionChange)="loadAssertionReadings()">
+            <mat-option *ngFor="let name of assertions" [value]="name">{{ name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" *ngIf="assertions.length === 0">
+          <mat-label>Assertion</mat-label>
+          <input matInput [(ngModel)]="assertion" placeholder="assertion name" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="loadAssertionReadings()"
+                [disabled]="!assertion || loadingCredibility || loadingByBasis">Load readings</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section" *ngIf="assertion">
+    <mat-card-header>
+      <mat-card-title>Credibility reading (group/individual units)</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingCredibility" diameter="32"></mat-spinner>
+      <p *ngIf="credibilityError" class="error">{{ credibilityError }}</p>
+      <app-polari-report-view [report]="credibility"></app-polari-report-view>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section" *ngIf="assertion">
+    <mat-card-header>
+      <mat-card-title>By credibility basis — never flattened</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingByBasis" diameter="32"></mat-spinner>
+      <p *ngIf="byBasisError" class="error">{{ byBasisError }}</p>
+      <app-polari-report-view [report]="byBasis"></app-polari-report-view>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Contributor standing</mat-card-title>
+      <mat-card-subtitle>Look up a contributor's live standing.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="lookup-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Contributor name</mat-label>
+          <input matInput [(ngModel)]="contributor" placeholder="contributor name"
+                 (keydown.enter)="loadStanding()" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="loadStanding()"
+                [disabled]="!contributor.trim() || loadingStanding">Look up</button>
+      </div>
+      <mat-spinner *ngIf="loadingStanding" diameter="32"></mat-spinner>
+      <p *ngIf="standingError" class="error">{{ standingError }}</p>
+      <app-polari-report-view [report]="standing"></app-polari-report-view>
+    </mat-card-content>
+  </mat-card>
+</div>

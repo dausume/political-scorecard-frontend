@@ -1,0 +1,55 @@
+.epistemics-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+
+  .intro {
+    color: var(--text-secondary, #666);
+    max-width: 800px;
+  }
+
+  .section {
+    margin: 20px 0;
+  }
+
+  .error {
+    color: var(--error-text, #b3261e);
+  }
+
+  .entry-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .entry-button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover {
+      background: var(--hover-bg, rgba(0, 0, 0, 0.04));
+    }
+
+    &.selected {
+      border-color: var(--primary-color, #3f51b5);
+    }
+
+    .entry-status {
+      color: var(--text-secondary, #666);
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  }
+}

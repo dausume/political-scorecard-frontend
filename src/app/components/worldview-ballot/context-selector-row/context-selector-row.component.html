@@ -31,49 +31,12 @@
     </div>
   </div>
 
-  <!-- Core context: full score display -->
+  <!-- Per-context score chips retired 2026-07-17: scoring moved to the Worldview Scorer. -->
   @if (isCore) {
-    <div class="context-score" *ngIf="contextScore">
-      <div class="score-header">Context Score</div>
-      <div class="score-value" [style.color]="getScoreColor()">
-        {{ getScorePercentage() }}
-      </div>
-      <div class="score-details">
-        <div class="detail-item">
-          <span class="detail-label">Positive:</span>
-          <span class="detail-value">+{{ contextScore.positiveContribution.toFixed(3) }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Negative:</span>
-          <span class="detail-value">-{{ contextScore.negativeContribution.toFixed(3) }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Terms:</span>
-          <span class="detail-value">{{ contextScore.termsEvaluated }}/{{ contextScore.termsEvaluated + contextScore.termsMissing }}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="context-score no-data" *ngIf="!contextScore">
-      <div class="score-header">Context Score</div>
+    <div class="context-score no-data">
       <div class="no-data-message">
-        Select contexts and add weighted terms to see score
+        Scoring moved to the Worldview Scorer
       </div>
-    </div>
-  }
-
-  <!-- Comparative context: compressed score display -->
-  @if (!isCore) {
-    <div class="context-score-compact" *ngIf="contextScore">
-      <div class="score-header">Score</div>
-      <div class="score-value" [style.color]="getScoreColor()">
-        {{ getScorePercentage() }}
-      </div>
-    </div>
-
-    <div class="context-score-compact no-data" *ngIf="!contextScore">
-      <div class="score-header">Score</div>
-      <div class="score-value">N/A</div>
     </div>
   }
 </div>

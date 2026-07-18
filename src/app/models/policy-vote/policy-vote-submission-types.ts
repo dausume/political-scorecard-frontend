@@ -36,3 +36,17 @@ export interface StaffAuthorization {
   politicianName: string;
   username: string;
 }
+
+/** A Keycloak user as the admin endpoints report it. */
+export interface KeycloakUserRef {
+  id: string;
+  username: string;
+}
+
+/** One politician's authorized-submitter group with its members
+ *  (`GET /api/policy-votes/authorizations`, admin-only). */
+export interface PoliticianAuthorizations {
+  politicianName: string;
+  groupId: string;
+  members: KeycloakUserRef[];
+}

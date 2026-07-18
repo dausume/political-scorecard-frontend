@@ -39,6 +39,8 @@ import {
   PolariScoreSubjectSummary,
   PolariScoreGroupSummary,
   PolariTimeframeSummary,
+  PolariWorldviewGroup,
+  GroupAggregateReport,
 } from '../../models/polari-scoring/polari-scoring-types';
 
 @Injectable({ providedIn: 'root' })
@@ -252,6 +254,44 @@ export class PolariScoringService {
         });
       }),
     );
+  }
+
+  /** ScoreGroups read as WORLDVIEWS: the group-hosted concept set
+   *  (member_concept_names_json) with the group's elected weights
+   *  (member_weights_json + provenance) — the real replacement for
+   *  the legacy client-side worldview scorer's mocked term pool. */
+  getWorldviewGroups(): Observable<PolariWorldviewGroup[]> {
+    return this.http.get<any>(`${this.BASE_URL}/ScoreGroup`).pipe(
+      map(envelope => {
+        const rows: any[] = envelope?.[0]?.['ScoreGroup']?.[0]?.data ?? [];
+        return rows.map(r => {
+          const parse = (text: string, fallback: unknown) => {
+            try {
+              return JSON.parse(text || '') ?? fallback;
+            } catch {
+              return fallback;
+            }
+          };
+          return {
+            name: r.name,
+            displayName: r.display_name || r.name,
+            groupType: r.group_type || '',
+            description: r.description || '',
+            memberConceptNames: parse(r.member_concept_names_json, []) as string[],
+            memberWeights: parse(r.member_weights_json, {}) as Record<string, number>,
+            weightsProvenance: r.weights_provenance || '',
+          } as PolariWorldviewGroup;
+        });
+      }),
+    );
+  }
+
+  /** Polari's SERVER-SIDE group-weighted aggregate — the engine's own
+   *  worldview score, optionally scoped to one policy. */
+  getGroupAggregate(groupName: string, policy?: string): Observable<GroupAggregateReport> {
+    const params = policy ? { params: { policy } } : {};
+    return this.http.get<GroupAggregateReport>(
+      `${this.API_URL}/groups/${encodeURIComponent(groupName)}/aggregate`, params);
   }
 
   /** Every named timeframe (`ScoreContext` rows with

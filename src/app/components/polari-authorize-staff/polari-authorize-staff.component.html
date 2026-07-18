@@ -52,4 +52,77 @@
       <span>Only policy voting admins can authorize submitters.</span>
     </div>
   </ng-template>
+
+  <mat-card class="form-card list-card">
+    <mat-card-header>
+      <mat-card-title>Current authorizations</mat-card-title>
+      <mat-card-subtitle>Who may submit each politician's vote records.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (loadingAuthorizations) {
+        <mat-progress-spinner diameter="24" mode="indeterminate"></mat-progress-spinner>
+      } @else if (authorizationsAdminOnly) {
+        <p class="admin-only-note">This section is visible to policy voting admins only.</p>
+      } @else if (authorizationsError) {
+        <p class="submit-error">{{ authorizationsError }}</p>
+      } @else if (authorizations.length === 0) {
+        <p class="admin-only-note">No staff authorizations exist yet.</p>
+      } @else {
+        <table class="auth-table">
+          <thead>
+            <tr><th>Politician</th><th>Authorized submitters</th></tr>
+          </thead>
+          <tbody>
+            @for (auth of authorizations; track auth.politicianName) {
+              <tr>
+                <td>{{ auth.politicianName }}</td>
+                <td>
+                  @if (auth.members.length === 0) {
+                    <span class="admin-only-note">no members</span>
+                  }
+                  @for (member of auth.members; track member.id) {
+                    <span class="member-row">
+                      {{ member.username }}
+                      <button mat-stroked-button color="warn"
+                              [disabled]="revoking === auth.politicianName + ':' + member.username"
+                              (click)="revoke(auth.politicianName, member.username)">
+                        Revoke
+                      </button>
+                    </span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        @if (revokeError) {
+          <p class="submit-error">{{ revokeError }}</p>
+        }
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="form-card list-card">
+    <mat-card-header>
+      <mat-card-title>policy-voting-admin holders</mat-card-title>
+      <mat-card-subtitle>Everyone currently holding the admin role.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (loadingAdmins) {
+        <mat-progress-spinner diameter="24" mode="indeterminate"></mat-progress-spinner>
+      } @else if (adminsAdminOnly) {
+        <p class="admin-only-note">This section is visible to policy voting admins only.</p>
+      } @else if (adminsError) {
+        <p class="submit-error">{{ adminsError }}</p>
+      } @else if (admins.length === 0) {
+        <p class="admin-only-note">No admin role holders reported.</p>
+      } @else {
+        <ul class="admin-list">
+          @for (admin of admins; track admin.id) {
+            <li>{{ admin.username }}</li>
+          }
+        </ul>
+      }
+    </mat-card-content>
+  </mat-card>
 </div>

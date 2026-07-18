@@ -1,0 +1,266 @@
+<div class="governance-page">
+  <h1>Fork Governance (Mechanism C)</h1>
+  <p class="intro">
+    Community control over the scorecard's decision logic: open a vote over a
+    logic fork's candidate criteria, cast ballots on open votes, and wire
+    decision-procedure edges. Results tallies live on each vote's own page.
+  </p>
+  <p class="auth-note" *ngIf="!(isAuthenticated$ | async)">
+    You are not logged in — the lists below are readable, but creating votes,
+    casting ballots, and adding edges all require login.
+  </p>
+
+  <!-- a. Open logic-fork votes -->
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Open logic-fork votes</mat-card-title>
+      <mat-card-subtitle>Click a vote to cast a ballot; open its page for the live tally.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingVotes" diameter="32"></mat-spinner>
+      <p *ngIf="votesError" class="error">{{ votesError }}</p>
+      <p *ngIf="!loadingVotes && !votesError && votes.length === 0" class="empty">
+        No logic-fork votes exist yet — create the first one below.
+      </p>
+      <table class="votes-table" *ngIf="votes.length > 0">
+        <thead>
+          <tr><th>Name</th><th>Fork</th><th>Mode</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let vote of votes"
+              [class.selected]="selectedVote?.name === vote.name"
+              (click)="selectVote(vote)">
+            <td>{{ vote.name }}</td>
+            <td>{{ vote.fork_name }}</td>
+            <td>{{ vote.mode }}</td>
+            <td>{{ vote.status }}</td>
+            <td>
+              <a mat-button color="accent"
+                 [routerLink]="'/polari-logic-fork-votes/' + vote.name"
+                 (click)="$event.stopPropagation()">Results</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- b. Cast a ballot -->
+  <mat-card class="section" *ngIf="selectedVote && (isAuthenticated$ | async)">
+    <mat-card-header>
+      <mat-card-title>Cast a ballot — {{ selectedVote.display_name || selectedVote.name }}</mat-card-title>
+      <mat-card-subtitle>
+        Mode: {{ selectedVote.mode }}. Casting as {{ (user$ | async)?.name }} (recorded server-side from your token).
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p *ngIf="candidates.length === 0" class="empty">
+        This vote lists no candidate criteria — nothing to choose from.
+      </p>
+
+      <!-- approval: check every candidate you approve of -->
+      <div *ngIf="selectedVote.mode === 'approval' && candidates.length > 0" class="candidate-list">
+        <mat-checkbox *ngFor="let candidate of candidates"
+                      [checked]="approvals.has(candidate)"
+                      (change)="toggleApproval(candidate, $event.checked)">
+          {{ candidate }}
+        </mat-checkbox>
+      </div>
+
+      <!-- sole: pick exactly one -->
+      <mat-form-field appearance="outline" *ngIf="selectedVote.mode === 'sole' && candidates.length > 0">
+        <mat-label>Your choice</mat-label>
+        <mat-select [(ngModel)]="soleChoice">
+          <mat-option *ngFor="let candidate of candidates" [value]="candidate">{{ candidate }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- ranked-condorcet: click candidates in preference order -->
+      <div *ngIf="selectedVote.mode === 'ranked-condorcet' && candidates.length > 0" class="ranking-builder">
+        <p class="hint">Click candidates in preference order (most preferred first).</p>
+        <div class="candidate-buttons">
+          <button mat-stroked-button *ngFor="let candidate of candidates"
+                  [disabled]="ranking.includes(candidate)"
+                  (click)="addToRanking(candidate)">{{ candidate }}</button>
+        </div>
+        <ol class="ranking" *ngIf="ranking.length > 0">
+          <li *ngFor="let candidate of ranking">{{ candidate }}</li>
+        </ol>
+        <button mat-button color="warn" *ngIf="ranking.length > 0" (click)="resetRanking()">Reset ranking</button>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Notes (optional)</mat-label>
+        <input matInput [(ngModel)]="ballotNotes" />
+      </mat-form-field>
+
+      <p *ngIf="ballotError" class="error">{{ ballotError }}</p>
+      <p *ngIf="ballotResult" class="success">
+        Ballot recorded on '{{ ballotResult.voteName }}' as {{ ballotResult.voter }}.
+      </p>
+      <app-polari-report-view *ngIf="ballotResult" [report]="ballotResult"></app-polari-report-view>
+
+      <button mat-flat-button color="primary"
+              [disabled]="!ballotReady || castingBallot"
+              (click)="castBallot()">
+        {{ castingBallot ? 'Casting…' : 'Cast ballot' }}
+      </button>
+    </mat-card-content>
+  </mat-card>
+  <p class="auth-note" *ngIf="selectedVote && !(isAuthenticated$ | async)">
+    Log in to cast a ballot on '{{ selectedVote.name }}'.
+  </p>
+
+  <!-- c. Create a logic-fork vote -->
+  <mat-card class="section" *ngIf="isAuthenticated$ | async">
+    <mat-card-header>
+      <mat-card-title>Create a logic-fork vote</mat-card-title>
+      <mat-card-subtitle>Open a community vote over which criteria a logic fork should use.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p *ngIf="criteriaError" class="error">{{ criteriaError }}</p>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Name (unique id)</mat-label>
+          <input matInput [(ngModel)]="voteForm.name" placeholder="vote-fork-x-2026" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Display name (optional)</mat-label>
+          <input matInput [(ngModel)]="voteForm.display_name" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" *ngIf="knownForks.length > 0">
+          <mat-label>Fork (known)</mat-label>
+          <mat-select [(ngModel)]="voteForm.fork_name">
+            <mat-option *ngFor="let fork of knownForks" [value]="fork">{{ fork }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Fork name{{ knownForks.length > 0 ? ' (or type freely)' : '' }}</mat-label>
+          <input matInput [(ngModel)]="voteForm.fork_name" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Mode</mat-label>
+          <mat-select [(ngModel)]="voteForm.mode">
+            <mat-option value="approval">approval</mat-option>
+            <mat-option value="sole">sole</mat-option>
+            <mat-option value="ranked-condorcet">ranked-condorcet</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" *ngIf="criterionNames.length > 0">
+          <mat-label>Candidate criteria (known)</mat-label>
+          <mat-select [(ngModel)]="selectedCandidates" multiple>
+            <mat-option *ngFor="let criterion of criterionNames" [value]="criterion">{{ criterion }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Add a candidate by name</mat-label>
+          <input matInput [(ngModel)]="extraCandidate" (keydown.enter)="addExtraCandidate()" />
+        </mat-form-field>
+        <button mat-stroked-button class="inline-button" [disabled]="!extraCandidate.trim()"
+                (click)="addExtraCandidate()">Add candidate</button>
+        <mat-form-field appearance="outline">
+          <mat-label>Decision procedure (optional)</mat-label>
+          <input matInput [(ngModel)]="voteForm.decision_procedure_name" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Opens date (optional)</mat-label>
+          <input matInput [(ngModel)]="voteForm.opens_date" placeholder="2026-07-16" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Closes date (optional)</mat-label>
+          <input matInput [(ngModel)]="voteForm.closes_date" placeholder="2026-08-16" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description (optional)</mat-label>
+          <input matInput [(ngModel)]="voteForm.description" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Notes (optional)</mat-label>
+          <input matInput [(ngModel)]="voteForm.notes" />
+        </mat-form-field>
+      </div>
+
+      <p class="chosen" *ngIf="allChosenCandidates.length > 0">
+        Candidates:
+        <span class="chip" *ngFor="let candidate of allChosenCandidates">
+          {{ candidate }}
+          <button mat-icon-button class="chip-remove" *ngIf="extraCandidates.includes(candidate)"
+                  (click)="removeExtraCandidate(candidate)" aria-label="Remove">×</button>
+        </span>
+      </p>
+
+      <p *ngIf="createVoteError" class="error">{{ createVoteError }}</p>
+      <p *ngIf="createVoteResult" class="success">Vote '{{ createVoteResult.name }}' created.</p>
+
+      <button mat-flat-button color="primary"
+              [disabled]="!voteFormReady || creatingVote"
+              (click)="createVote()">
+        {{ creatingVote ? 'Creating…' : 'Create vote' }}
+      </button>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- d. Add a decision-procedure edge -->
+  <mat-card class="section" *ngIf="isAuthenticated$ | async">
+    <mat-card-header>
+      <mat-card-title>Add a decision-procedure edge</mat-card-title>
+      <mat-card-subtitle>
+        Wire one step of a procedure's fork graph. Set exactly ONE of
+        to-fork / to-terminal; leave from-fork empty to make this the
+        procedure's START edge.
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Edge name (unique id)</mat-label>
+          <input matInput [(ngModel)]="edgeForm.name" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" *ngIf="knownProcedures.length > 0">
+          <mat-label>Decision procedure (known)</mat-label>
+          <mat-select [(ngModel)]="edgeForm.decision_procedure_name">
+            <mat-option *ngFor="let procedure of knownProcedures" [value]="procedure">{{ procedure }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Decision procedure name{{ knownProcedures.length > 0 ? ' (or type freely)' : '' }}</mat-label>
+          <input matInput [(ngModel)]="edgeForm.decision_procedure_name" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>From fork (empty = START edge)</mat-label>
+          <input matInput [(ngModel)]="edgeForm.from_fork" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>From outcome</mat-label>
+          <input matInput [(ngModel)]="edgeForm.from_outcome" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>To fork</mat-label>
+          <input matInput [(ngModel)]="edgeForm.to_fork" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>To terminal</mat-label>
+          <input matInput [(ngModel)]="edgeForm.to_terminal" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description (optional)</mat-label>
+          <input matInput [(ngModel)]="edgeForm.description" />
+        </mat-form-field>
+      </div>
+      <p class="hint">
+        Exactly one of to-fork / to-terminal should be set — the backend
+        rejects edges that set both or neither, and its error is shown
+        verbatim below.
+      </p>
+
+      <p *ngIf="edgeError" class="error">{{ edgeError }}</p>
+      <p *ngIf="edgeResult" class="success">Edge '{{ edgeResult.name }}' created.</p>
+
+      <button mat-flat-button color="primary"
+              [disabled]="!edgeFormReady || creatingEdge"
+              (click)="createEdge()">
+        {{ creatingEdge ? 'Adding…' : 'Add edge' }}
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

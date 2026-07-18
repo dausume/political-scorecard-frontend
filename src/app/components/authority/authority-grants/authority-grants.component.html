@@ -1,0 +1,115 @@
+<mat-card class="section">
+  <mat-card-header>
+    <mat-card-title>Authority grants (on Polari)</mat-card-title>
+    <mat-card-subtitle>
+      A group or instance with no authority yet is claimed first-come as
+      PRIMARY (self-claim); afterward only the primary grants SHARED
+      authority. Your Keycloak identity travels with each call and Polari
+      re-verifies it.
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field appearance="outline">
+      <mat-label>Polari instance (registry)</mat-label>
+      <mat-select [(ngModel)]="selectedInstance" (selectionChange)="loadReport()">
+        <mat-option *ngFor="let instance of instances" [value]="instance.name">{{ instance.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="grant-form" *ngIf="user; else loginNote">
+      <h3>Claim / grant authority</h3>
+      <mat-form-field appearance="outline">
+        <mat-label>On</mat-label>
+        <mat-select [(ngModel)]="grant.kind">
+          <mat-option value="group">a group</mat-option>
+          <mat-option value="instance">a Polari instance</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ grant.kind === 'group' ? 'ScoreGroup name' : 'Instance name' }}</mat-label>
+        <input matInput [(ngModel)]="grant.targetName"
+               [placeholder]="grant.kind === 'group' ? 'housing-justice-coalition' : 'polari-a'" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Grantee subject (Keycloak sub)</mat-label>
+        <input matInput [(ngModel)]="grant.subject" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Grantee username</mat-label>
+        <input matInput [(ngModel)]="grant.username" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <mat-select [(ngModel)]="grant.role">
+          <mat-option value="primary">primary</mat-option>
+          <mat-option value="shared">shared</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-flat-button color="primary" (click)="submitGrant()"
+              [disabled]="!grant.targetName || !grant.subject || !selectedInstance">Submit grant</button>
+      <div *ngIf="grantResult" class="result-note">
+        <p *ngIf="grantResult['ok']">✓ Grant recorded
+          <span *ngIf="grantResult['bootstrap']">(bootstrap primary claim)</span>.</p>
+        <div *ngIf="!grantResult['ok']" class="refusal">
+          <p>{{ grantResult['error'] }}</p>
+          <pre *ngIf="grantResult['suggestion']">{{ asJson(grantResult['suggestion']) }}</pre>
+        </div>
+      </div>
+
+      <h3>Propose a group ↔ instance binding</h3>
+      <p class="hint">Requires YOUR authority on both the group and the instance;
+        the binding then waits for scorecard-side activation below.</p>
+      <mat-form-field appearance="outline">
+        <mat-label>Group name</mat-label>
+        <input matInput [(ngModel)]="proposeGroupName" />
+      </mat-form-field>
+      <button mat-stroked-button color="primary" (click)="proposeBinding()"
+              [disabled]="!proposeGroupName || !selectedInstance">Propose on Polari</button>
+      <div *ngIf="proposeResult" class="result-note">
+        <p *ngIf="proposeResult['ok']">✓ Proposed — status
+          {{ $any(proposeResult['binding'])?.status }}.</p>
+        <div *ngIf="!proposeResult['ok']" class="refusal">
+          <p>{{ proposeResult['error'] }}</p>
+        </div>
+      </div>
+    </div>
+    <ng-template #loginNote><p>Log in to claim or grant authority.</p></ng-template>
+
+    <div *ngIf="report && report['ok']" class="report">
+      <h3>Current grants + bindings on {{ selectedInstance }}</h3>
+      <div class="report-cols">
+        <div>
+          <h4>Group grants</h4>
+          <ul>
+            <li *ngFor="let grantRow of $any(report['groupGrants'])">
+              <span class="mono">{{ grantRow.groupName }}</span> →
+              {{ grantRow.username || grantRow.subject }}
+              <span class="chip">{{ grantRow.role }}</span>
+              <span class="chip" [class.chip-revoked]="grantRow.status !== 'active'">{{ grantRow.status }}</span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Instance grants</h4>
+          <ul>
+            <li *ngFor="let grantRow of $any(report['instanceGrants'])">
+              <span class="mono">{{ grantRow.instanceName }}</span> →
+              {{ grantRow.username || grantRow.subject }}
+              <span class="chip">{{ grantRow.role }}</span>
+              <span class="chip" [class.chip-revoked]="grantRow.status !== 'active'">{{ grantRow.status }}</span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Polari-side bindings</h4>
+          <ul>
+            <li *ngFor="let bindingRow of $any(report['bindings'])">
+              {{ bindingRow.groupName }} ↔ <span class="mono">{{ bindingRow.instanceName }}</span>
+              <span class="chip" [class.chip-active]="bindingRow.status === 'active'">{{ bindingRow.status }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

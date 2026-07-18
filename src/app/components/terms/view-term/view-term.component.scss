@@ -137,3 +137,28 @@
     padding: 2rem;
   }
 }
+
+.provenance-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.75rem 0 1rem;
+
+  .provenance-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 16px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-size: 0.85rem;
+    width: fit-content;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}

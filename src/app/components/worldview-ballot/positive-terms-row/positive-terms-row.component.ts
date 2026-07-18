@@ -1,8 +1,7 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ContextualizedTerm } from '../../../classes/terms/contextualized-term';
 
 export interface Term {
   id: string;
@@ -23,20 +22,15 @@ export interface TermWeight {
   templateUrl: './positive-terms-row.component.html',
   styleUrl: './positive-terms-row.component.scss'
 })
-export class PositiveTermsRowComponent implements OnChanges {
+// Contextualized-value display retired 2026-07-17 — live scoring was replaced
+// by the Polari-backed Worldview Scorer (/worldview-scorer).
+export class PositiveTermsRowComponent {
   @Input() terms: Term[] = [];
-  @Input() contextualizedTermsMap: Map<string, ContextualizedTerm | undefined> = new Map();
   @Output() removeTerm = new EventEmitter<Term>();
   @Output() weightChange = new EventEmitter<TermWeight>();
 
   // Track weights for each term (default to 50)
   termWeights: Map<string, number> = new Map();
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['contextualizedTermsMap']) {
-      console.log('[POSITIVE-TERMS-ROW] 🔴 contextualizedTermsMap changed:', this.contextualizedTermsMap);
-    }
-  }
 
   onRemoveTerm(term: Term) {
     this.termWeights.delete(term.id);
@@ -65,17 +59,5 @@ export class PositiveTermsRowComponent implements OnChanges {
     const currentWeight = this.getTermWeight(term.id);
     const newWeight = Math.max(0, currentWeight - 5);
     this.onWeightChange(term, newWeight);
-  }
-
-  hasContextualizedTerm(term: Term): boolean {
-    return this.contextualizedTermsMap.get(term.id) !== undefined;
-  }
-
-  getContextualizedTerm(term: Term): ContextualizedTerm | undefined {
-    return this.contextualizedTermsMap.get(term.id);
-  }
-
-  getMissingContextsMessage(term: Term): string {
-    return 'Term not defined for this context';
   }
 }

@@ -4,14 +4,14 @@
   <!-- Worldview Ballot Section - Front and Center -->
   <mat-card class="featured-section worldview-section">
     <div class="section-header">
-      <h2>Cast Your Worldview Ballot</h2>
+      <h2>Worldview Scores, Live</h2>
       <p class="worldview-description">
-        Participate in the democratic process by weighting terms according to your worldview.
-        Your votes help shape the linear equations that score policies, solutions, and competitors.
+        Worldviews are group-hosted concept sets scored by Polari's real engine.
+        Ballot casting for elections lives under Worldview Elections.
       </p>
     </div>
     <div class="worldview-ballot-preview">
-      <app-worldview-ballot></app-worldview-ballot>
+      <app-polari-worldview-scorer></app-polari-worldview-scorer>
     </div>
   </mat-card>
 
@@ -89,6 +89,54 @@
         <button mat-raised-button color="accent" routerLink="/political-groups">Political Groups</button>
         <button mat-raised-button color="accent" routerLink="/professional-groups">Professional Groups</button>
       </div>
+    </mat-card>
+
+    <mat-card class="feature-card terms-card">
+      <h3>Cost-of-Living Survival</h3>
+      <p>
+        What it costs to survive per location — live baseline-vs-reported
+        survival reports from Polari's cost-of-living engine.
+      </p>
+      <button mat-raised-button color="accent" routerLink="/survival">Survival Reports</button>
+    </mat-card>
+
+    <mat-card class="feature-card terms-card">
+      <h3>Court Cases</h3>
+      <p>
+        Disputes advanced fork-by-fork through compiled no-code decision
+        procedures, with the full execution log inspectable at every step.
+      </p>
+      <button mat-raised-button color="accent" routerLink="/court-cases">Court Cases</button>
+    </mat-card>
+
+    <mat-card class="feature-card terms-card">
+      <h3>Epistemics &amp; Trust</h3>
+      <p>
+        How the scorecard grounds its claims: term proofs, term
+        competitions, credibility bases, source trust, and legislation
+        tracking.
+      </p>
+      <button mat-raised-button color="accent" routerLink="/epistemics">Epistemics &amp; Trust</button>
+    </mat-card>
+
+    <mat-card class="feature-card terms-card">
+      <h3>Fork Governance</h3>
+      <p>
+        Community control over decision logic: create logic-fork votes over
+        candidate criteria, cast approval/sole/ranked ballots, and wire
+        decision-procedure edges.
+      </p>
+      <button mat-raised-button color="accent" routerLink="/governance">Fork Governance</button>
+    </mat-card>
+
+    <mat-card class="feature-card terms-card">
+      <h3>Group ↔ Polari Authority</h3>
+      <p>
+        Bind a group to its authoritative Polari instance and assert complex
+        data (terms, contexts) to the scorecard through authority-checked,
+        provenance-carrying signals.
+      </p>
+      <button mat-raised-button color="accent" routerLink="/authority">Authority Hub</button>
     </mat-card>
   </div>
 

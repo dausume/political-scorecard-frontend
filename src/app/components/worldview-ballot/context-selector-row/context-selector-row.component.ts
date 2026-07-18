@@ -1,9 +1,11 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TermContext, TermContextType, TimeframeContext, LocationContext } from '../../../classes/terms/contextualized-term';
 import { WeightedWorldviewTerm } from '../../../classes/terms/weighted-worldview-term';
-import { WorldviewScoringService, ContextScore } from '../../../services/scoring/worldview-scoring.service';
+
+// Per-context score chips were removed 2026-07-17 — the client-side scorer
+// was replaced by the Polari-backed Worldview Scorer (/worldview-scorer).
 
 interface TimeframeOption {
   label: string;
@@ -24,17 +26,13 @@ interface LocationOption {
   templateUrl: './context-selector-row.component.html',
   styleUrl: './context-selector-row.component.scss'
 })
-export class ContextSelectorRowComponent implements OnChanges {
+export class ContextSelectorRowComponent implements OnInit, OnChanges {
   @Input() contexts: TermContext[] = [];
   @Input() weightedTerms: WeightedWorldviewTerm[] = [];
   @Input() isCore: boolean = true; // True for core context, false for comparative
   @Output() contextsChange = new EventEmitter<TermContext[]>();
 
-  contextScore: ContextScore | null = null;
-
   TermContextType = TermContextType;
-
-  constructor(private scoringService: WorldviewScoringService) {}
 
   // Available timeframe options
   timeframeOptions: TimeframeOption[] = [
@@ -59,51 +57,13 @@ export class ContextSelectorRowComponent implements OnChanges {
 
   ngOnInit() {
     this.initializeSelections();
-    this.calculateScore();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Recalculate score whenever contexts or weighted terms change
-    if (changes['contexts'] || changes['weightedTerms']) {
-      // Re-initialize selections if contexts changed
-      if (changes['contexts']) {
-        this.initializeSelections();
-      }
-      this.calculateScore();
+    // Re-initialize selections if contexts changed
+    if (changes['contexts']) {
+      this.initializeSelections();
     }
-  }
-
-  calculateScore(): void {
-    if (this.contexts.length > 0 && this.weightedTerms.length > 0) {
-      this.contextScore = this.scoringService.calculateContextScore(
-        this.weightedTerms,
-        this.contexts
-      );
-    } else {
-      this.contextScore = null;
-    }
-  }
-
-  getScorePercentage(): string {
-    return this.contextScore
-      ? this.scoringService.formatScoreAsPercentage(this.contextScore.totalScore)
-      : 'N/A';
-  }
-
-  getScoreDescription(): string {
-    return this.contextScore
-      ? this.scoringService.getScoreDescription(this.contextScore.totalScore)
-      : 'No data';
-  }
-
-  getScoreColor(): string {
-    if (!this.contextScore) return '#6c757d';
-    const score = this.contextScore.totalScore;
-    if (score >= 0.8) return '#28a745';
-    if (score >= 0.6) return '#20c997';
-    if (score >= 0.4) return '#ffc107';
-    if (score >= 0.2) return '#fd7e14';
-    return '#dc3545';
   }
 
   initializeSelections() {

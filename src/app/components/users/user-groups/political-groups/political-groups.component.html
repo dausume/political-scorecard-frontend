@@ -106,6 +106,18 @@
       </mat-form-field>
     </section>
 
+    @if (groupsLoading) {
+      <div class="auth-checking">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading groups...</p>
+      </div>
+    } @else if (groupsError) {
+      <div class="empty-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ groupsError }}</p>
+      </div>
+    }
+
     <section class="groups-grid">
       @for (group of filteredGroups; track group.id) {
         <mat-card class="group-card" [style.border-left-color]="group.color">

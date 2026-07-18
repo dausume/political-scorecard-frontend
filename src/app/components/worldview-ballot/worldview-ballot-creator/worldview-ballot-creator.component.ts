@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -13,8 +13,11 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
+import { selectAuthUser } from '../../../state/selectors/auth.selectors';
 import { ContextsApiService, TermContextDTO } from '../../../services/api/contexts-api.service';
 import { ContextualizedTermsApiService, ContextualizedTermDTO } from '../../../services/api/contextualized-terms-api.service';
 import { WorldviewElectionsApiService, WorldviewElectionDTO } from '../../../services/api/worldview-elections-api.service';
@@ -55,7 +58,9 @@ import { CriticalContextsApiService, CriticalContextDTO } from '../../../service
   templateUrl: './worldview-ballot-creator.component.html',
   styleUrls: ['./worldview-ballot-creator.component.scss']
 })
-export class WorldviewBallotCreatorComponent implements OnInit {
+export class WorldviewBallotCreatorComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
   // Form groups for each step
   electionForm!: FormGroup;
   personalContextsForm!: FormGroup;
@@ -75,11 +80,12 @@ export class WorldviewBallotCreatorComponent implements OnInit {
   // Context types for selection
   contextTypes = ['TIMEFRAME', 'LOCATION', 'DEMOGRAPHIC', 'ECONOMIC', 'CUSTOM'];
 
-  // Current user ID (should be fetched from auth service)
-  currentUserId: string = 'current-user-id'; // TODO: Get from auth service
+  // Current user ID from the auth store ('' = not logged in; submission is disabled)
+  currentUserId: string = '';
 
   constructor(
     private fb: FormBuilder,
+    private store: Store,
     private electionsApi: WorldviewElectionsApiService,
     private ballotsApi: WorldviewBallotsApiService,
     private contextsApi: ContextsApiService,
@@ -92,6 +98,16 @@ export class WorldviewBallotCreatorComponent implements OnInit {
   ngOnInit(): void {
     this.initializeForms();
     this.loadExistingData();
+
+    // Real user identity from the NgRx auth store
+    this.store.select(selectAuthUser)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => this.currentUserId = user?.id ?? '');
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**
@@ -252,6 +268,10 @@ export class WorldviewBallotCreatorComponent implements OnInit {
    * Create the worldview ballot
    */
   async createWorldviewBallot(): Promise<void> {
+    if (!this.currentUserId) {
+      this.snackBar.open('Please log in to create a worldview ballot', 'Close', { duration: 3000 });
+      return;
+    }
     if (!this.isFormValid()) {
       this.snackBar.open('Please fill in all required fields and ensure weights sum to 100%', 'Close', { duration: 3000 });
       return;
@@ -336,7 +356,8 @@ export class WorldviewBallotCreatorComponent implements OnInit {
   }
 
   isFormValid(): boolean {
-    return this.electionForm.valid &&
+    return !!this.currentUserId &&
+           this.electionForm.valid &&
            this.personalContextsForm.valid &&
            this.termScoresForm.valid &&
            this.criticalContextsForm.valid &&

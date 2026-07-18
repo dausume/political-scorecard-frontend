@@ -15,7 +15,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
 import { Group } from '../../../../classes/group/group';
-import { MOCK_POLITICAL_GROUPS } from '../../../../state/mock-data/groups.mock';
 import { selectIsAuthenticated, selectAuthStatus, selectAuthUserRoles } from '../../../../state/selectors/auth.selectors';
 import { AuthStatus } from '../../../../state/reducers/auth.reducer';
 import { AuthSessionService } from '../../../../services/auth/auth-session.service';
@@ -44,6 +43,8 @@ import { AuthActions } from '../../../../state/actions/auth.actions';
 })
 export class PoliticalGroupsComponent implements OnInit {
   groups: Group[] = [];
+  groupsLoading = false;
+  groupsError: string | null = null;
   searchQuery: string = '';
   joinedGroupNames: Set<string> = new Set();
 
@@ -65,8 +66,23 @@ export class PoliticalGroupsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.groups = MOCK_POLITICAL_GROUPS;
+    this.loadGroups();
     this.loadMyGroups();
+  }
+
+  private loadGroups(): void {
+    this.groupsLoading = true;
+    this.groupsError = null;
+    this.groupApi.getDirectory('Political-Group').subscribe({
+      next: (groups) => {
+        this.groups = groups;
+        this.groupsLoading = false;
+      },
+      error: (err) => {
+        this.groupsError = err?.error?.message || 'Failed to load political groups';
+        this.groupsLoading = false;
+      }
+    });
   }
 
   get filteredGroups(): Group[] {

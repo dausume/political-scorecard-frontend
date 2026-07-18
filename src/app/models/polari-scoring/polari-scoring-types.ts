@@ -683,6 +683,26 @@ export interface PolariScoreGroupSummary {
   description: string;
 }
 
+/** A ScoreGroup read as a WORLDVIEW: its hosted concept set and the
+ *  group's elected weights (see getWorldviewGroups). */
+export interface PolariWorldviewGroup {
+  name: string;
+  displayName: string;
+  groupType: string;
+  description: string;
+  memberConceptNames: string[];
+  memberWeights: Record<string, number>;
+  weightsProvenance: string;
+}
+
+/** /groups/{name}/aggregate — the engine's own group-weighted
+ *  worldview score (shape passed through defensively). */
+export interface GroupAggregateReport {
+  ok: boolean;
+  error?: string;
+  [key: string]: unknown;
+}
+
 /** A `ScoreContext` row with `context_type: 'timeframe'` — a named
  *  date range (`timeframes.py::frame_of_context`) politician/cohort
  *  scoring can be scoped to. Read the same generic-CRUDE way as

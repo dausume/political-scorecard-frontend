@@ -1,4 +1,7 @@
 <div class="worldview-ballot-container" [class.minimized]="isMinimized">
+  <p class="scoring-moved-note">
+    Live scoring has moved to the <a routerLink="/worldview-scorer">Worldview Scorer</a> — this page builds ballots for worldview elections.
+  </p>
   <!-- Minimized View -->
   <div *ngIf="isMinimized" class="minimized-view">
     <div class="minimized-header">
@@ -120,14 +123,12 @@
         <div class="categorized-terms-container">
           <app-positive-terms-row
             [terms]="positiveTerms"
-            [contextualizedTermsMap]="positiveContextualizedTermsMap"
             (removeTerm)="handleRemovePositive($event)"
             (weightChange)="handlePositiveWeightChange($event)">
           </app-positive-terms-row>
 
           <app-negative-terms-row
             [terms]="negativeTerms"
-            [contextualizedTermsMap]="negativeContextualizedTermsMap"
             (removeTerm)="handleRemoveNegative($event)"
             (weightChange)="handleNegativeWeightChange($event)">
           </app-negative-terms-row>

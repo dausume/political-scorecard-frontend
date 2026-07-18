@@ -1,0 +1,24 @@
+<div class="report-view" *ngIf="report">
+  <dl *ngIf="flatEntries.length > 0" class="kv">
+    <ng-container *ngFor="let entry of flatEntries">
+      <dt>{{ entry[0] }}</dt>
+      <dd>{{ entry[1] }}</dd>
+    </ng-container>
+  </dl>
+  <div *ngFor="let table of tables" class="report-table">
+    <h4>{{ table.key }}</h4>
+    <div class="scroll-x">
+      <table>
+        <thead>
+          <tr><th *ngFor="let column of table.columns">{{ column }}</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of table.rows">
+            <td *ngFor="let column of table.columns">{{ cell(row, column) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <pre *ngIf="restJson">{{ restJson }}</pre>
+</div>

@@ -1,0 +1,73 @@
+<div class="epistemics-page">
+  <h1>Sources &amp; Trust</h1>
+  <p class="intro">
+    Every number the scorecard cites traces back to a source with an
+    inspectable trust record: the glossary of known sources and the
+    reliability readings of the providers behind them.
+  </p>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Source glossary</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingGlossary" diameter="32"></mat-spinner>
+      <p *ngIf="glossaryError" class="error">{{ glossaryError }}</p>
+      <app-polari-report-view [report]="glossary"></app-polari-report-view>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Provider reliability</mat-card-title>
+      <mat-card-subtitle>Per provider group: its retrievals, how the network's
+        independent re-pulls judged them, and other factors.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="lookup-row">
+        <mat-form-field appearance="outline" *ngIf="groupNames.length > 0">
+          <mat-label>Provider group</mat-label>
+          <mat-select [(ngModel)]="reliabilityGroup">
+            <mat-option *ngFor="let group of groupNames" [value]="group">{{ group }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" *ngIf="groupNames.length === 0">
+          <mat-label>Provider group</mat-label>
+          <input matInput [(ngModel)]="reliabilityGroup" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="loadReliability()"
+                [disabled]="!reliabilityGroup || loadingReliability">Load reading</button>
+      </div>
+      <mat-spinner *ngIf="loadingReliability" diameter="32"></mat-spinner>
+      <p *ngIf="reliabilityError" class="error">{{ reliabilityError }}</p>
+      <app-polari-report-view [report]="reliability"></app-polari-report-view>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Source report</mat-card-title>
+      <mat-card-subtitle>Full trust report for a single source.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="lookup-form">
+        <mat-form-field appearance="outline" *ngIf="sourceNames.length > 0">
+          <mat-label>Source</mat-label>
+          <mat-select [(ngModel)]="source" (selectionChange)="loadSourceReport()">
+            <mat-option *ngFor="let name of sourceNames" [value]="name">{{ name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" *ngIf="sourceNames.length === 0">
+          <mat-label>Source name</mat-label>
+          <input matInput [(ngModel)]="source" placeholder="source name"
+                 (keydown.enter)="loadSourceReport()" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="loadSourceReport()"
+                [disabled]="!source.trim() || loadingSource">Load report</button>
+      </div>
+      <mat-spinner *ngIf="loadingSource" diameter="32"></mat-spinner>
+      <p *ngIf="sourceError" class="error">{{ sourceError }}</p>
+      <app-polari-report-view [report]="sourceReport"></app-polari-report-view>
+    </mat-card-content>
+  </mat-card>
+</div>

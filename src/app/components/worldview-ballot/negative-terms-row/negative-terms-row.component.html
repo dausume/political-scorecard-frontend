@@ -7,26 +7,9 @@
     <div *ngIf="terms.length === 0" class="empty-state">
       No negative terms categorized yet. Use the sorting row below to add terms.
     </div>
-    <div *ngFor="let term of terms" class="term-card" [class.missing-context]="!hasContextualizedTerm(term)">
+    <div *ngFor="let term of terms" class="term-card">
       <div class="term-content">
-        <div class="term-left" *ngIf="getContextualizedTerm(term) as ctTerm">
-          <div class="normalization-info">
-            <div class="norm-item">
-              <span class="norm-label">Pre-normalized:</span>
-              <span class="norm-value">{{ ctTerm.getFormattedPreNormalizedValue() }}</span>
-            </div>
-            <div class="norm-item">
-              <span class="norm-label">Post-normalized:</span>
-              <span class="norm-value">{{ ctTerm.postNormalizedValue.toFixed(4) }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="term-left" *ngIf="!getContextualizedTerm(term)">
-          <div class="missing-contexts-info">
-            <span class="error-icon">⚠</span>
-            <span class="error-message">{{ getMissingContextsMessage(term) }}</span>
-          </div>
-        </div>
+        <!-- Contextualized-value panel retired 2026-07-17: scoring moved to the Worldview Scorer. -->
         <div class="term-main">
           <div class="term-header">
             <h4>{{ term.name }}</h4>

@@ -27,8 +27,8 @@ import { AuthUser } from '../../../classes/auth-user';
 import { LegislationDTO, LegislationAnnotationDTO, AnnotationBody, AnnotationSelection } from '../../../models/legislation.model';
 import { WorldviewElectionsApiService, WorldviewElectionDTO } from '../../../services/api/worldview-elections-api.service';
 import { AuthSessionService } from '../../../services/auth/auth-session.service';
-import { MOCK_POLITICAL_CATEGORIES } from '../../../state/mock-data/political-categories.mock';
-import { MOCK_ALL_GROUPS } from '../../../state/mock-data/groups.mock';
+import { TermsApiService } from '../../../services/api/terms-api.service';
+import { GroupApiService } from '../../../services/api/group-api.service';
 import { PoliticalCategory } from '../../../classes/political-category/political-category';
 import { Group } from '../../../classes/group/group';
 
@@ -299,8 +299,8 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
   solutionTitle = '';
   solutionDescription = '';
 
-  categories: PoliticalCategory[] = MOCK_POLITICAL_CATEGORIES;
-  groups: Group[] = MOCK_ALL_GROUPS;
+  categories: PoliticalCategory[] = [];
+  groups: Group[] = [];
   intentCategoryId = '';
   intentGroupId = '';
   intentSentiment: 'GOOD' | 'BAD' | 'NEUTRAL' = 'NEUTRAL';
@@ -318,11 +318,34 @@ export class LegislationAnnotatorComponent implements OnInit, OnDestroy, AfterVi
     private renderer: Renderer2,
     private electionsApi: WorldviewElectionsApiService,
     private actionsSubject: ActionsSubject,
-    private authSession: AuthSessionService
+    private authSession: AuthSessionService,
+    private termsApi: TermsApiService,
+    private groupApi: GroupApiService
   ) {}
 
   ngOnInit(): void {
     this.legislationId = this.route.snapshot.paramMap.get('id') || '';
+
+    // Real intent-annotation option sources: distinct term categories + the group directory.
+    this.termsApi.loadCategories()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (categoryNames) => {
+          this.categories = categoryNames.map(name => new PoliticalCategory({
+            id: name,
+            name: name,
+            description: ''
+          }));
+        },
+        error: () => this.categories = []
+      });
+
+    this.groupApi.getDirectory()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (groups) => this.groups = groups,
+        error: () => this.groups = []
+      });
 
     this.store.select(selectAuthUser)
       .pipe(takeUntil(this.destroy$))

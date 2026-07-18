@@ -1,0 +1,54 @@
+.section {
+  margin: 20px 0;
+}
+
+.signal-form mat-form-field {
+  margin-right: 12px;
+  min-width: 200px;
+
+  &.wide {
+    min-width: 320px;
+  }
+}
+
+.verdict {
+  margin-top: 16px;
+
+  .admitted {
+    color: var(--success-text, #1e7e34);
+  }
+
+  .refused {
+    color: var(--error-text, #b3261e);
+  }
+
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+
+    &.check-pass {
+      background: var(--success-surface, #e6f4ea);
+    }
+
+    &.check-fail {
+      background: var(--error-surface, #fdecea);
+    }
+
+    .check-name {
+      font-weight: 600;
+      min-width: 160px;
+    }
+
+    .check-evidence {
+      margin: 0;
+      flex: 1;
+      font-size: 0.8em;
+      overflow-x: auto;
+      background: transparent;
+    }
+  }
+}

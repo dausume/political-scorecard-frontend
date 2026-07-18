@@ -14,7 +14,9 @@ import { AppState } from '../../../state/app.state';
 import { TermsActions } from '../../../state/actions/terms.actions';
 import * as TermsSelectors from '../../../state/selectors/terms.selectors';
 import { ContextualizedTermTableComponent } from '../contextualized-term-table/contextualized-term-table.component';
-import { getContextualizedTermsForTerm } from '../../../state/mock-data/contextualized-terms.mock';
+import { ContextualizedTermsApiService } from '../../../services/api/contextualized-terms-api.service';
+import { mapContextualizedTermDTOs } from '../../../services/api/contextualized-term-mapper';
+import { AuthorityApiService, TermProvenance } from '../../../services/api/authority-api.service';
 
 @Component({
   selector: 'app-view-term',
@@ -36,6 +38,8 @@ export class ViewTermComponent implements OnInit, OnDestroy {
   termId: string | null = null;
   term: Term | null = null;
   contextualizedTerms: ContextualizedTerm[] = [];
+  provenance: TermProvenance[] = [];
+  private loadedDataForTermId: string | null = null;
 
   // Observables from store
   allTerms$: Observable<Term[]>;
@@ -46,7 +50,9 @@ export class ViewTermComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private contextualizedTermsApi: ContextualizedTermsApiService,
+    private authorityApi: AuthorityApiService
   ) {
     this.allTerms$ = this.store.select(TermsSelectors.selectAllTerms);
     this.loading$ = this.store.select(TermsSelectors.selectTermsLoading);
@@ -72,11 +78,30 @@ export class ViewTermComponent implements OnInit, OnDestroy {
       .subscribe(terms => {
         if (this.termId) {
           this.term = terms.find(t => t.id === this.termId) || null;
-          if (this.term) {
-            // Load contextualized terms for this term
-            this.contextualizedTerms = getContextualizedTermsForTerm(this.term.id);
+          if (this.term && this.loadedDataForTermId !== this.term.id) {
+            this.loadedDataForTermId = this.term.id;
+            this.loadContextualizedTerms(this.term.id);
+            this.loadProvenance(this.term.id);
           }
         }
+      });
+  }
+
+  private loadContextualizedTerms(termId: string): void {
+    this.contextualizedTermsApi.getContextualizedTermsByTermId(termId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (dtos) => this.contextualizedTerms = mapContextualizedTermDTOs(dtos),
+        error: () => this.contextualizedTerms = []
+      });
+  }
+
+  private loadProvenance(termId: string): void {
+    this.authorityApi.getProvenance(termId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (rows) => this.provenance = rows || [],
+        error: () => this.provenance = []
       });
   }
 

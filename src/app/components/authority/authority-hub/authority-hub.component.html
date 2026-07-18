@@ -1,0 +1,136 @@
+<div class="authority-hub">
+  <h1>Group ↔ Polari Authority</h1>
+  <p class="intro">
+    A group of any kind can designate a Polari instance as its authoritative
+    data source. A person holding authority on <em>both</em> the group and the
+    instance defines the binding on the Polari side; activating it here defines
+    the scorecard side. Once bound, the group asserts complex matters (like
+    making a term available for a context) through that instance — every
+    admission is checked by Keycloak-verified authority on both sides and
+    recorded with its full evidence verdict.
+  </p>
+
+  <div *ngIf="error" class="error-banner">{{ error }}</div>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Registered Polari instances</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p *ngIf="loading">Loading…</p>
+      <table *ngIf="!loading && instances.length > 0" class="data-table">
+        <thead>
+          <tr><th>Name</th><th>Base URL</th><th>Status</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let instance of instances">
+            <td class="mono">{{ instance.name }}</td>
+            <td class="mono">{{ instance.baseUrl }}</td>
+            <td><span class="chip" [class.chip-active]="instance.status === 'active'">{{ instance.status }}</span></td>
+            <td>{{ instance.description }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="!loading && instances.length === 0">No instances registered.</p>
+
+      <div *ngIf="isAuthenticated$ | async" class="inline-form">
+        <h3>Register an instance <span class="hint">(admin — policy-voting-admin)</span></h3>
+        <mat-form-field appearance="outline"><mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="newInstance.name" placeholder="polari-materials-lab" />
+        </mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Base URL</mat-label>
+          <input matInput [(ngModel)]="newInstance.baseUrl" placeholder="http://prf-backend:3000" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="wide"><mat-label>Description</mat-label>
+          <input matInput [(ngModel)]="newInstance.description" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="registerInstance()"
+                [disabled]="!newInstance.name || !newInstance.baseUrl">Register</button>
+        <p *ngIf="registerResult" class="result-note">{{ registerResult }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <app-authority-grants [instances]="instances"></app-authority-grants>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Group ↔ instance bindings</mat-card-title>
+      <mat-card-subtitle>
+        Active means defined on BOTH sides — proposed on Polari by someone
+        authoritative on the group and the instance, then confirmed here.
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <table *ngIf="bindings.length > 0" class="data-table">
+        <thead>
+          <tr><th>Group</th><th>Type</th><th>Instance</th><th>Status</th><th>Created by</th><th>Confirmed</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let binding of bindings">
+            <td>{{ binding.groupName }}</td>
+            <td>{{ binding.groupType }}</td>
+            <td class="mono">{{ binding.instanceName }}</td>
+            <td><span class="chip" [class.chip-active]="binding.status === 'active'">{{ binding.status }}</span></td>
+            <td>{{ binding.createdByUsername || binding.createdBySub }}</td>
+            <td>{{ binding.confirmedAt }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="bindings.length === 0">No bindings yet.</p>
+
+      <div *ngIf="isAuthenticated$ | async" class="inline-form">
+        <h3>Activate a binding <span class="hint">(requires a Polari-side proposal first — see grants above)</span></h3>
+        <mat-form-field appearance="outline"><mat-label>Group name</mat-label>
+          <input matInput [(ngModel)]="newBinding.groupName" />
+        </mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Group type</mat-label>
+          <mat-select [(ngModel)]="newBinding.groupType">
+            <mat-option value="Political-Group">Political-Group</mat-option>
+            <mat-option value="Professional-Group">Professional-Group</mat-option>
+            <mat-option value="civic">civic</mat-option>
+            <mat-option value="custom">custom</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Instance</mat-label>
+          <mat-select [(ngModel)]="newBinding.instanceName">
+            <mat-option *ngFor="let instance of instances" [value]="instance.name">{{ instance.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="createBinding()"
+                [disabled]="!newBinding.groupName || !newBinding.instanceName">Activate binding</button>
+        <div *ngIf="bindingResult" class="result-note">
+          <p *ngIf="bindingResult['ok']">✓ Binding active on both sides.</p>
+          <p *ngIf="!bindingResult['ok']" class="refusal">{{ bindingResult['error'] }}</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <app-term-signal [instances]="instances" (admitted)="reload()"></app-term-signal>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Provenance trail</mat-card-title>
+      <mat-card-subtitle>Terms admitted through authority-checked signals.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <table *ngIf="provenance.length > 0" class="data-table">
+        <thead>
+          <tr><th>Term</th><th>Context</th><th>Asserted by group</th><th>Via instance</th><th>Requested by</th><th>Admitted</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of provenance">
+            <td>{{ row.termName }}</td>
+            <td>{{ row.contextName }}</td>
+            <td>{{ row.groupName }}</td>
+            <td class="mono">{{ row.instanceName }}</td>
+            <td>{{ row.requestedBy }}</td>
+            <td>{{ row.admittedAt }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="provenance.length === 0">Nothing admitted yet.</p>
+    </mat-card-content>
+  </mat-card>
+</div>

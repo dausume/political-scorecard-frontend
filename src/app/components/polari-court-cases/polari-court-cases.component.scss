@@ -1,0 +1,79 @@
+.court-cases-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+
+  .intro {
+    color: var(--text-secondary, #666);
+    max-width: 800px;
+  }
+
+  .columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+
+    .case-list {
+      flex: 1 1 340px;
+    }
+
+    .case-detail {
+      flex: 2 1 520px;
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-medium, #eee);
+      cursor: pointer;
+
+      &.selected {
+        background: var(--surface-secondary, #f0f4ff);
+      }
+
+      .case-name {
+        font-family: monospace;
+        overflow-wrap: anywhere;
+      }
+    }
+  }
+
+  .chip {
+    padding: 1px 8px;
+    border-radius: 10px;
+    background: var(--surface-secondary, #eee);
+    font-size: 0.8em;
+    white-space: nowrap;
+  }
+
+  .create-form, .advance-form {
+    margin-top: 16px;
+
+    mat-form-field {
+      margin-right: 10px;
+      min-width: 200px;
+
+      &.wide {
+        min-width: 340px;
+      }
+    }
+  }
+
+  .hint {
+    color: var(--text-secondary, #888);
+    font-size: 0.9em;
+  }
+
+  .error {
+    color: var(--error-text, #b3261e);
+  }
+}

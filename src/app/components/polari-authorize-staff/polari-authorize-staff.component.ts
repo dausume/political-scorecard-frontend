@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -14,7 +14,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PolicyVoteSubmissionApiService } from '../../services/api/policy-vote-submission-api.service';
 import { AppState } from '../../state/app.state';
 import * as AuthSelectors from '../../state/selectors/auth.selectors';
-import { StaffAuthorization } from '../../models/policy-vote/policy-vote-submission-types';
+import {
+  KeycloakUserRef,
+  PoliticianAuthorizations,
+  StaffAuthorization,
+} from '../../models/policy-vote/policy-vote-submission-types';
 
 /**
  * Admin-only page (2026-07-14): lets a policy-voting-admin designate
@@ -42,7 +46,7 @@ import { StaffAuthorization } from '../../models/policy-vote/policy-vote-submiss
   templateUrl: './polari-authorize-staff.component.html',
   styleUrl: './polari-authorize-staff.component.scss',
 })
-export class PolariAuthorizeStaffComponent {
+export class PolariAuthorizeStaffComponent implements OnInit {
   isAdmin$: Observable<boolean>;
 
   form: StaffAuthorization = { politicianName: '', username: '' };
@@ -51,12 +55,90 @@ export class PolariAuthorizeStaffComponent {
   submitError: string | null = null;
   submitMessage: string | null = null;
 
+  // Current authorizations (admin-only; a 403 shows the note instead).
+  authorizations: PoliticianAuthorizations[] = [];
+  loadingAuthorizations = false;
+  authorizationsAdminOnly = false;
+  authorizationsError: string | null = null;
+  revoking: string | null = null;
+  revokeError: string | null = null;
+
+  // policy-voting-admin holders (same admin-only handling).
+  admins: KeycloakUserRef[] = [];
+  loadingAdmins = false;
+  adminsAdminOnly = false;
+  adminsError: string | null = null;
+
   constructor(
     private voteApi: PolicyVoteSubmissionApiService,
     private store: Store<AppState>,
   ) {
     this.isAdmin$ = this.store.select(AuthSelectors.selectAuthUserRoles)
       .pipe(map(roles => roles.includes('policy-voting-admin')));
+  }
+
+  ngOnInit(): void {
+    this.loadAuthorizations();
+    this.loadAdmins();
+  }
+
+  loadAuthorizations(): void {
+    this.loadingAuthorizations = true;
+    this.authorizationsAdminOnly = false;
+    this.authorizationsError = null;
+    this.voteApi.listAuthorizations().subscribe({
+      next: (authorizations) => {
+        this.authorizations = authorizations || [];
+        this.loadingAuthorizations = false;
+      },
+      error: (err) => {
+        this.loadingAuthorizations = false;
+        if (err?.status === 403 || err?.status === 401) {
+          this.authorizationsAdminOnly = true;
+        } else {
+          this.authorizationsError = err?.error?.message || 'Could not load authorizations.';
+        }
+      },
+    });
+  }
+
+  loadAdmins(): void {
+    this.loadingAdmins = true;
+    this.adminsAdminOnly = false;
+    this.adminsError = null;
+    this.voteApi.listAdmins().subscribe({
+      next: (admins) => {
+        this.admins = admins || [];
+        this.loadingAdmins = false;
+      },
+      error: (err) => {
+        this.loadingAdmins = false;
+        if (err?.status === 403 || err?.status === 401) {
+          this.adminsAdminOnly = true;
+        } else {
+          this.adminsError = err?.error?.message || 'Could not load admins.';
+        }
+      },
+    });
+  }
+
+  revoke(politicianName: string, username: string): void {
+    this.revoking = `${politicianName}:${username}`;
+    this.revokeError = null;
+    this.voteApi.revokeStaff(politicianName, username).subscribe({
+      next: (response) => {
+        this.revoking = null;
+        if (response.success) {
+          this.loadAuthorizations();
+        } else {
+          this.revokeError = response.message || 'Revocation failed.';
+        }
+      },
+      error: (err) => {
+        this.revoking = null;
+        this.revokeError = err?.error?.message || err?.message || 'Could not revoke.';
+      },
+    });
   }
 
   submit(): void {

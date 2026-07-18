@@ -1,0 +1,23 @@
+<div class="epistemics-page">
+  <h1>Epistemics &amp; Trust</h1>
+  <p class="intro">
+    How the scorecard grounds its claims: terms carry proofs, competing
+    terms are read against each other, credibility is tracked per basis
+    (never flattened), and every source and provider has an inspectable
+    trust record. Pick a section to see the live readings.
+  </p>
+
+  <div class="section-grid">
+    <mat-card class="section-card" *ngFor="let section of sections">
+      <mat-card-header>
+        <mat-card-title>{{ section.title }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ section.description }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button color="primary" [routerLink]="section.link">Open</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

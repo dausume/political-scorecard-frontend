@@ -1,0 +1,96 @@
+<div class="epistemics-page">
+  <h1>Legislation Trust</h1>
+  <p class="intro">
+    Trust surfaces for the legislative pipeline: policy drafts and what
+    carries over between them, venue-mismatch patterns, and tracked
+    legislation with contributions, burial checks, and voting records.
+  </p>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Policy drafts</mat-card-title>
+      <mat-card-subtitle>Pick a draft to read its carryover.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingDrafts" diameter="32"></mat-spinner>
+      <p *ngIf="draftsError" class="error">{{ draftsError }}</p>
+      <ul *ngIf="draftList" class="entry-list">
+        <li *ngFor="let draft of draftList">
+          <button type="button" class="entry-button"
+                  [class.selected]="entryName(draft) === selectedDraft"
+                  (click)="selectDraft(draft)">
+            <span class="entry-name">{{ entryName(draft) }}</span>
+            <span *ngIf="entryStatus(draft)" class="entry-status">{{ entryStatus(draft) }}</span>
+          </button>
+        </li>
+      </ul>
+      <app-polari-report-view *ngIf="!draftList" [report]="draftsReport"></app-polari-report-view>
+      <div *ngIf="selectedDraft" class="subsection">
+        <h4>Carryover — {{ selectedDraft }}</h4>
+        <mat-spinner *ngIf="loadingCarryover" diameter="32"></mat-spinner>
+        <p *ngIf="carryoverError" class="error">{{ carryoverError }}</p>
+        <app-polari-report-view [report]="carryover"></app-polari-report-view>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Venue-mismatch patterns</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingVenuePatterns" diameter="32"></mat-spinner>
+      <p *ngIf="venuePatternsError" class="error">{{ venuePatternsError }}</p>
+      <app-polari-report-view [report]="venuePatterns"></app-polari-report-view>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Legislation tracking</mat-card-title>
+      <mat-card-subtitle>Pick a record for its contributions and burial check.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingLegislation" diameter="32"></mat-spinner>
+      <p *ngIf="legislationError" class="error">{{ legislationError }}</p>
+      <ul *ngIf="legislationList" class="entry-list">
+        <li *ngFor="let record of legislationList">
+          <button type="button" class="entry-button"
+                  [class.selected]="entryName(record) === selectedRecord"
+                  (click)="selectRecord(record)">
+            <span class="entry-name">{{ entryName(record) }}</span>
+            <span *ngIf="entryStatus(record)" class="entry-status">{{ entryStatus(record) }}</span>
+          </button>
+        </li>
+      </ul>
+      <app-polari-report-view *ngIf="!legislationList" [report]="legislationReport"></app-polari-report-view>
+      <div *ngIf="selectedRecord" class="subsection">
+        <h4>Contributions — {{ selectedRecord }}</h4>
+        <mat-spinner *ngIf="loadingContributions" diameter="32"></mat-spinner>
+        <p *ngIf="contributionsError" class="error">{{ contributionsError }}</p>
+        <app-polari-report-view [report]="contributions"></app-polari-report-view>
+      </div>
+      <div *ngIf="selectedRecord" class="subsection">
+        <h4>Burial check — {{ selectedRecord }}</h4>
+        <mat-spinner *ngIf="loadingBurial" diameter="32"></mat-spinner>
+        <p *ngIf="burialError" class="error">{{ burialError }}</p>
+        <app-polari-report-view [report]="burial"></app-polari-report-view>
+      </div>
+      <div class="subsection">
+        <h4>Legislator voting record</h4>
+        <div class="lookup-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Legislator name</mat-label>
+            <input matInput [(ngModel)]="legislator" placeholder="legislator name"
+                   (keydown.enter)="loadVotingRecord()" />
+          </mat-form-field>
+          <button mat-flat-button color="primary" (click)="loadVotingRecord()"
+                  [disabled]="!legislator.trim() || loadingVotingRecord">Look up</button>
+        </div>
+        <mat-spinner *ngIf="loadingVotingRecord" diameter="32"></mat-spinner>
+        <p *ngIf="votingRecordError" class="error">{{ votingRecordError }}</p>
+        <app-polari-report-view [report]="votingRecord"></app-polari-report-view>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environment';
 import { ApiResponse } from '../../models/polari-vote/polari-vote-types';
 import {
+  KeycloakUserRef,
+  PoliticianAuthorizations,
   PolicyVoteSubmission,
   StaffAuthorization,
 } from '../../models/policy-vote/policy-vote-submission-types';
@@ -34,5 +37,26 @@ export class PolicyVoteSubmissionApiService {
   authorizeStaff(authorization: StaffAuthorization): Observable<ApiResponse<StaffAuthorization>> {
     return this.http.post<ApiResponse<StaffAuthorization>>(
       `${this.API_URL}/authorize-staff`, authorization);
+  }
+
+  /** Admin-only (403 otherwise) — every politician's authorized-submitter
+   *  group with its current members. */
+  listAuthorizations(): Observable<PoliticianAuthorizations[]> {
+    return this.http.get<ApiResponse<PoliticianAuthorizations[]>>(
+      `${this.API_URL}/authorizations`)
+      .pipe(map(response => response.data));
+  }
+
+  /** Admin-only — removes a user from a politician's authorized-submitter
+   *  group (the undo of `authorizeStaff`). */
+  revokeStaff(politicianName: string, username: string): Observable<ApiResponse<StaffAuthorization>> {
+    return this.http.post<ApiResponse<StaffAuthorization>>(
+      `${this.API_URL}/revoke-staff`, { politicianName, username });
+  }
+
+  /** Admin-only — who currently holds ROLE_policy-voting-admin. */
+  listAdmins(): Observable<KeycloakUserRef[]> {
+    return this.http.get<ApiResponse<KeycloakUserRef[]>>(`${this.API_URL}/admins`)
+      .pipe(map(response => response.data));
   }
 }

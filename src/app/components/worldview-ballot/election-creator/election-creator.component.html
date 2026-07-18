@@ -202,7 +202,7 @@
       <button mat-button (click)="cancel()">Cancel</button>
       <button mat-raised-button color="primary"
               (click)="createElection()"
-              [disabled]="loading || !electionForm.valid">
+              [disabled]="loading || !electionForm.valid || !currentUserId">
         <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
         <span *ngIf="!loading">Create Election</span>
       </button>

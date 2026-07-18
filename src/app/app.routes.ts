@@ -28,6 +28,8 @@ export const routes: Routes = [
     { path: 'worldview-elections/create', loadComponent: () => import('./components/worldview-ballot/election-creator/election-creator.component').then(m => m.ElectionCreatorComponent) },
     { path: 'worldview-elections/:electionId/debate', loadComponent: () => import('./components/debate/election-debate/election-debate.component').then(m => m.ElectionDebateComponent) },
     { path: 'worldview-ballots/create', loadComponent: () => import('./components/worldview-ballot/worldview-ballot-creator/worldview-ballot-creator.component').then(m => m.WorldviewBallotCreatorComponent) },
+    // The REAL worldview scorer — group-hosted concept sets scored live by Polari's engine (replaces the retired client-side scorer).
+    { path: 'worldview-scorer', loadComponent: () => import('./components/polari-worldview-scorer/polari-worldview-scorer.component').then(m => m.PolariWorldviewScorerComponent) },
     { path: 'worldview-ballot', loadComponent: () => import('./components/worldview-ballot/worldview-ballot.component').then(m => m.WorldviewBallotComponent) },
     { path: 'browse-worldview-ballots', loadComponent: () => import('./components/worldview-ballot/browse-worldview-ballots/browse-worldview-ballots.component').then(m => m.BrowseWorldviewBallotsComponent) },
     // Real Polari WorldviewElection results (read-only) — 2026-07-14 Phase 3a.
@@ -51,6 +53,24 @@ export const routes: Routes = [
     { path: 'politician-scores/:name/submit-vote', loadComponent: () => import('./components/polari-policy-vote-submission/polari-policy-vote-submission.component').then(m => m.PolariPolicyVoteSubmissionComponent) },
     { path: 'policy-votes/authorize-staff', loadComponent: () => import('./components/polari-authorize-staff/polari-authorize-staff.component').then(m => m.PolariAuthorizeStaffComponent) },
     { path: 'cohort-reports/:name', loadComponent: () => import('./components/polari-cohort-report/polari-cohort-report.component').then(m => m.PolariCohortReportComponent) },
+    // DMV cost-of-living survival reports — the survival endpoints'
+    // first frontend consumer (DMV plan §7 col-6).
+    { path: 'survival', loadComponent: () => import('./components/polari-survival/polari-survival.component').then(m => m.PolariSurvivalComponent) },
+    // Court cases (ncg-2): fork-by-fork adjudication through compiled
+    // no-code decision procedures; writes proxied via PSC backend.
+    { path: 'court-cases', loadComponent: () => import('./components/polari-court-cases/polari-court-cases.component').then(m => m.PolariCourtCasesComponent) },
+    // Epistemics & trust hub — term proofs, term competition, credibility bases, source trust, legislation tracking (all read-only off Polari's live epistemics routes).
+    { path: 'epistemics', loadComponent: () => import('./components/polari-epistemics/epistemics-hub/epistemics-hub.component').then(m => m.EpistemicsHubComponent) },
+    { path: 'epistemics/proofs', loadComponent: () => import('./components/polari-epistemics/term-proofs-page/term-proofs-page.component').then(m => m.TermProofsPageComponent) },
+    { path: 'epistemics/term-competition', loadComponent: () => import('./components/polari-epistemics/term-competition-page/term-competition-page.component').then(m => m.TermCompetitionPageComponent) },
+    { path: 'epistemics/credibility', loadComponent: () => import('./components/polari-epistemics/credibility-page/credibility-page.component').then(m => m.CredibilityPageComponent) },
+    { path: 'epistemics/sources', loadComponent: () => import('./components/polari-epistemics/sources-trust-page/sources-trust-page.component').then(m => m.SourcesTrustPageComponent) },
+    { path: 'epistemics/legislation', loadComponent: () => import('./components/polari-epistemics/legislation-trust-page/legislation-trust-page.component').then(m => m.LegislationTrustPageComponent) },
+    // Fork governance (mechanism C): create logic-fork votes, cast mode-aware ballots, wire decision-procedure edges.
+    { path: 'governance', loadComponent: () => import('./components/polari-governance/polari-governance.component').then(m => m.PolariGovernanceComponent) },
+    // Group ↔ Polari-instance authority: instance registry, both-sides
+    // bindings, authority grants, term-availability signals + provenance.
+    { path: 'authority', loadComponent: () => import('./components/authority/authority-hub/authority-hub.component').then(m => m.AuthorityHubComponent) },
     // PSC-hosted public votes — real ballot casting, PSC's own backend
     // (2026-07-14 Phase 3b ballot-hosting architecture move).
     { path: 'polari-votes', loadComponent: () => import('./components/polari-votes/polari-vote-list/polari-vote-list.component').then(m => m.PolariVoteListComponent) },

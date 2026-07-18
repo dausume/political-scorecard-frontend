@@ -1,0 +1,56 @@
+<div class="epistemics-page">
+  <h1>Term Competition</h1>
+  <p class="intro">
+    Competing terms vie to define each scored concept. Pick a concept to
+    read the live competition standings, or look up the relations a
+    single term participates in.
+  </p>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Competition by concept</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-spinner *ngIf="loadingConcepts" diameter="32"></mat-spinner>
+      <p *ngIf="conceptsError" class="error">{{ conceptsError }}</p>
+      <div class="lookup-form" *ngIf="!loadingConcepts">
+        <mat-form-field appearance="outline" *ngIf="concepts.length > 0">
+          <mat-label>Concept</mat-label>
+          <mat-select [(ngModel)]="concept" (selectionChange)="loadCompetition()">
+            <mat-option *ngFor="let name of concepts" [value]="name">{{ name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" *ngIf="concepts.length === 0">
+          <mat-label>Concept</mat-label>
+          <input matInput [(ngModel)]="concept" placeholder="concept name" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="loadCompetition()"
+                [disabled]="!concept || loadingCompetition">Load report</button>
+      </div>
+      <mat-spinner *ngIf="loadingCompetition" diameter="32"></mat-spinner>
+      <p *ngIf="competitionError" class="error">{{ competitionError }}</p>
+      <app-polari-report-view [report]="competition"></app-polari-report-view>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section">
+    <mat-card-header>
+      <mat-card-title>Term relations</mat-card-title>
+      <mat-card-subtitle>Look up the relations a single term participates in.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="lookup-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Term name</mat-label>
+          <input matInput [(ngModel)]="term" placeholder="term name"
+                 (keydown.enter)="loadRelations()" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="loadRelations()"
+                [disabled]="!term.trim() || loadingRelations">Look up</button>
+      </div>
+      <mat-spinner *ngIf="loadingRelations" diameter="32"></mat-spinner>
+      <p *ngIf="relationsError" class="error">{{ relationsError }}</p>
+      <app-polari-report-view [report]="relations"></app-polari-report-view>
+    </mat-card-content>
+  </mat-card>
+</div>

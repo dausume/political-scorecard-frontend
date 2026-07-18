@@ -1,0 +1,125 @@
+.worldview-scorer {
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 24px 16px;
+
+  .intro {
+    color: var(--text-secondary, #666);
+    max-width: 820px;
+  }
+
+  .section {
+    margin: 20px 0;
+  }
+
+  .picker-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    mat-form-field {
+      min-width: 320px;
+    }
+  }
+
+  .scroll-x {
+    overflow-x: auto;
+  }
+
+  .concept-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-medium, #ddd);
+    }
+
+    th {
+      color: var(--text-secondary, #666);
+    }
+
+    .weight-input {
+      width: 76px;
+      padding: 4px 6px;
+      border: 1px solid var(--border-medium, #ccc);
+      border-radius: 4px;
+      background: var(--surface-primary, #fff);
+      color: var(--text-primary, #222);
+    }
+
+    .reading-cell {
+      background: var(--surface-secondary, #fafafa);
+    }
+  }
+
+  .mono {
+    font-family: monospace;
+  }
+
+  .chip {
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 0.8em;
+    margin-left: 6px;
+
+    &.warn {
+      background: var(--warning-surface, #fff4e5);
+      color: var(--warning-text, #8a5300);
+    }
+  }
+
+  .totals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    margin-top: 16px;
+
+    .total-card {
+      display: flex;
+      flex-direction: column;
+      padding: 10px 16px;
+      border: 1px solid var(--border-medium, #ddd);
+      border-radius: 8px;
+
+      &.differs {
+        border-color: var(--accent, #6750a4);
+      }
+
+      .total-label {
+        color: var(--text-secondary, #666);
+        font-size: 0.85em;
+      }
+
+      .total-value {
+        font-size: 1.5em;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .provenance-list {
+    list-style: none;
+    padding: 0;
+
+    li {
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border-medium, #eee);
+    }
+  }
+
+  .hint {
+    color: var(--text-secondary, #888);
+  }
+
+  .error {
+    color: var(--error-text, #b3261e);
+  }
+
+  .empty {
+    color: var(--text-secondary, #666);
+    padding: 24px 0;
+  }
+}
