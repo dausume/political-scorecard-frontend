@@ -11,8 +11,13 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+    # Run as the HOST user so files written through the source bind mount
+    # (.angular/ cache etc.) stay host-owned instead of root-owned. HOME gives
+    # the mapped user a writable npm/ng home inside the container.
+    user: "${UID:-1000}:${GID:-1000}"
     environment:
       - NODE_ENV=dev
+      - HOME=/tmp/npmhome
     command: npm run start
 
 networks:
