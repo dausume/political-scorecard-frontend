@@ -3,12 +3,13 @@ import { RouterOutlet, Router } from '@angular/router';
 import { AuthSessionService } from './services/auth/auth-session.service'
 import { HeaderBarComponent } from './components/header-bar/header-bar.component';
 import { CertificateTrustPromptComponent } from './components/certificate-trust-prompt/certificate-trust-prompt.component';
+import { DemoNoticeComponent } from './components/demo-notice/demo-notice.component';
 import { CertificateTrustService } from './services/certificate-trust.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderBarComponent, CertificateTrustPromptComponent],
+  imports: [RouterOutlet, HeaderBarComponent, CertificateTrustPromptComponent, DemoNoticeComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

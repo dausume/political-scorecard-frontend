@@ -9,6 +9,22 @@
 // Priority: runtime-config.json > URL detection > build-time defaults
 // ==============================================================================
 
+/** The demo notice stanza (demo-notice component); written by the staging/prod
+ *  setup scripts into runtime-config.json, absent elsewhere. */
+export interface DemoNotice {
+  enabled: boolean;
+  title?: string;
+  message?: string;
+  termsUrl?: string;
+  version?: string;
+}
+
+/** The demo stanza of the loaded runtime config, or null. */
+export function getDemoNotice(): DemoNotice | null {
+  const raw = runtimeConfig as { demo?: DemoNotice } | null;
+  return raw && raw.demo ? raw.demo : null;
+}
+
 export interface Environment {
   production: boolean;
   backendHttpsUri: string;
